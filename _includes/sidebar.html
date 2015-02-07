@@ -4,15 +4,12 @@
     {% if site.data.theme.social.gravatar %}
     <img src="http://www.gravatar.com/avatar/{{ site.data.theme.social.gravatar }}?s=200" id="gravatar" alt="My photo"/>
     {% else %}
-    <img src="/logo.png" id="logo" alt="Blog logo"/>
+    <img src="/logo.jpg" id="gravatar" alt="Blog logo"/>
     {% endif %}
   </a>
   <h2>I'm <a href="/">{{ site.data.theme.name }}</a>.</h2>
   <div id="bio">
-    <p>A brief bio or something witty.</p>
-    <p>
-      Edit me in <code>_includes/sidebar.html</code>
-    </p>
+    <p>Christian, husband, father, and software engineer</p>
   </div>
   <div id="social">
     {% include social.html %}
