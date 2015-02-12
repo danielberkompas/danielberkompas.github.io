@@ -1,0 +1,82 @@
+==================================================================
+https://keybase.io/dberkom
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of http://blog.danielberkompas.com
+  * I am dberkom (https://keybase.io/dberkom) on keybase.
+  * I have a public key with fingerprint 3231 92F3 2380 DF70 97E9  DB82 A53C DADD 426D 840C
+
+To claim this, I am signing this object:
+
+{
+    "body": {
+        "client": {
+            "name": "keybase.io node.js client",
+            "version": "0.7.5"
+        },
+        "key": {
+            "fingerprint": "323192f32380df7097e9db82a53cdadd426d840c",
+            "host": "keybase.io",
+            "key_id": "A53CDADD426D840C",
+            "uid": "be52cabab60d492928e419f25779a300",
+            "username": "dberkom"
+        },
+        "merkle_root": {
+            "ctime": 1423757063,
+            "hash": "e935a1a4c73383f76d3986159a976dd02030bf904f8d62002c5922302a0b3a0ae95346b0253b6bce0347f2471851894c7386c99f58306bd40f400beace5ded59",
+            "seqno": 154402
+        },
+        "service": {
+            "hostname": "blog.danielberkompas.com",
+            "protocol": "http:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1423757196,
+    "expire_in": 157680000,
+    "prev": "484cb266e060d94b9f0547581fdbe81a660fbfe03b962c9ea3a5f05764434f18",
+    "seqno": 6,
+    "tag": "signature"
+}
+
+which yields the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Comment: GPGTools - https://gpgtools.org
+
+owFVkn9QFGUYx09A5jw4ZczSElMWKGe8ud79ve+pFXqakYyO0YwGcu6Pd+82727P
+2+OQLi1EVJRGSEwDkmkENXOGgqYsZkzSDMcfaNrgkL+mDHE0FA1DSOtdoyn3n312
+38/zfZ7v87yV9niLbUTjjK4LswJrk0ccuyZZcs93VMQISVeKCVeMkP0aCkbMKCgG
+EOEilqNiSTSQU9OnBHUFOd8wpgwzDiKKwoamBzEFnLyTJVY5TNxMVrWgF4VDYc3U
+ImiKJiGl4pcAFJUHkEdQkQRKZGlZERWFoThFYICMJX26EXmkKvFQ06Mp+G8WS892
+Z7ndmHdjfjY+K3x4ICGWkkVJlDigMJCClIAYEqoUy/NQpAEwQQOFhy0pEgov1wNm
+uwEc+ZEnrOsPPcsRzSRIhqJ5lgccjRsSDR/OQZBmRVJkZJ6mBVrlOYWGAkeyUIQ4
+VgAFaCCpEDCqoHAUAJTMQoqiASUCiRaBiCBLM5wEKJaWOElGgGZ4lWJ4UmBJAZqy
+AidDqLICDThJYYDKACAhUUasghQWYgcGWhHUcXMswwBqlfkdjmoyMvs2pzZsTvLr
+XqciBjXk/8dmSDScMnbrIEJhPaLLuh9Tvkgk5DIHsD9SHDLTipDkGRb0SFpQwfv7
+/4JJjD46HBJyDgKtDGlh5NFMguU5AeDHrIOiWJIRGFmiOA4BvBXISFAFLMOzAqni
+BQikyHFAlVQ8CQlylAyRSIssRniOYWhGJYX/LONKEdGLJQ3NGxQjhWFErCqPS02w
+jLBZEkfGmTfYYhuV8u+1vvdhimXzzRvWpJ6BQethZml3anG2Mnfrrw1FRxp2rU0q
+HX2qiiyjx1d1nvd99H7Z6J+OJz5Wl/HgfP701Dl5a6adG9kY12Wbs+x6QF0RHWe5
+Ir9ST5Y8O/iM4+BnibUTv720fFbrm973FuhlT83ssVufW//gmqu+0OiNTWkbVxFq
+7yudsL/3RmHSofKsDtuZkZc2D11Je7fnYu9LStO8085ow+sXpt4cv+Uivyht3eE7
++XvyXLA6I3nahB1HfR2ryc7u6/avUkBu3K1uR/bUrWMdof4fm2uEk1njfm78ZO/x
+zLYnCIToxoGVe6p/2ZLpvn6yeaaj6dVt/tuXr5YmpBeF28oXvTD9bMnpg3BfQ3/6
+azPOFqaXrLz5/BcDSkZo8dEJNZfeack40tZU8Odde/Ku6pox9LnfL2/+rSqmP5m8
+bXDM9lZ4p77+zttlYtbQ48uoSWOuveW93dt+xtoqFLzYeiCno6Rgp9B8f/exhUU9
+3y3ZcLTOZomPuX2Ga/7qRQnl23tOnRh77uSB6iufpzEBF/x0YfDuZCI7s3JuRXns
+j5B1SemF+5Xzsr+UFg9V5vgiS4/3xQ9027fY+vIH+4OjcuraN+291aRPbjnkOnaj
+7+mNu/8qsefl5lS5TtT2Rzq/31EXnZHa7Pl4X62xvsvevOHsXXZBSy4zn/j6g3XZ
+STs3/nBV+4a8Z4yPn1RpfbljzeiJfwM=
+=1w8N
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/dberkom
+
+==================================================================
