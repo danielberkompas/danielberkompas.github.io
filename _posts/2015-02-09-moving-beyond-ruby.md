@@ -1,10 +1,7 @@
 ---
 layout: post
 title: Moving Beyond Ruby
-categories:
-  - ruby
-  - elixir
-  - functional
+categories: ruby elixir
 ---
 
 I've been a Ruby developer for the last 4 years of my career. It's served me

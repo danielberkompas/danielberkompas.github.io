@@ -1,9 +1,7 @@
 ---
 layout: post
 title: The Spark Notebook
-categories:
-  - recommendation
-  - gtd
+category: getting-things-done
 ---
 
 ![The Spark Notebook](/assets/img/spark-notebook.jpg)

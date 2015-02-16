@@ -1,8 +1,6 @@
 ---
 layout: post
 title: Yet Another Tech Blog
-categories:
-- blog
 ---
 
 After a long series of attempts to get my blog up and running, I've finally
