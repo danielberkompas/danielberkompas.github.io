@@ -60,7 +60,7 @@ Here are the problems I have with this:
   is to see what is going on.
   
 - **It's ugly.** These templating languages are advertised based on how pretty
-  they are, but in practice, they can look much worse that straight HTML.
+  they are, but in practice, they can look much worse than straight HTML.
 
 ## 2. They're Distracting
 
