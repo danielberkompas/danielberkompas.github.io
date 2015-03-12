@@ -7,7 +7,7 @@ categories: databases
 
 I came across this talk on Apache Samza this past week:
 
-{% youtube fU9hR3kiOK0 %}
+<https://www.youtube.com/watch?v=fU9hR3kiOK0>
 
 The author, Martin Kleppmann, also wrote up an [excellent post on the same 
 subject][samza-post], which is well worth your time. 
