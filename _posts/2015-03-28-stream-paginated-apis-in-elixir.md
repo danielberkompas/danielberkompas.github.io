@@ -104,9 +104,9 @@ state which we'll make cause the Stream to finish instantly.
 This is where things get interesting.
 
 ```elixir
-next_item = fn state = {[], nil, _} -> {:halt, state}
-               state = {[], next}   -> fetch_next_page.(state)
-               state                -> pop_item.(state)
+next_item = fn state = {[], nil}  -> {:halt, state}
+               state = {[], next} -> fetch_next_page.(state)
+               state              -> pop_item.(state)
 end
 ```
 
@@ -180,9 +180,9 @@ def stream
     end
   end
 
-  next_item = fn state = {[], nil, _} -> {:halt, state}
-                 state = {[], next}   -> fetch_next_page.(state)
-                 state                -> pop_item.(state)
+  next_item = fn state = {[], nil}  -> {:halt, state}
+                 state = {[], next} -> fetch_next_page.(state)
+                 state              -> pop_item.(state)
   end
 
   stop = fn(_state) -> end
