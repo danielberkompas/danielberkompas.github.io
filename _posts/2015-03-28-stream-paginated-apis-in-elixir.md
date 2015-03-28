@@ -123,8 +123,8 @@ They look like this:
 ```elixir
 # Use pattern matching to pop the top item off the list of items, passing the 
 # tail as the new state.
-pop_item = fn {[head|tail], next, options} ->
-  new_state = {tail, next, options}
+pop_item = fn {[head|tail], next} ->
+  new_state = {tail, next}
   {[head], new_state}
 end
 
@@ -134,7 +134,7 @@ fetch_next_page = fn state = {[], next_page} ->
   # Assumes you have a method called `fetch_page` which will take a page URL and
   # get that page of results.
   case fetch_page(next_page) do
-    {:ok, items, meta} -> pop_item.({items, meta["next_page_uri"], options})
+    {:ok, items, meta} -> pop_item.({items, meta["next_page_uri"]})
     {:error, _msg}     -> {:halt, state}
   end
 end
@@ -164,8 +164,8 @@ def stream
 
   # Use pattern matching to pop the top item off the list of items, passing the 
   # tail as the new state.
-  pop_item = fn {[head|tail], next, options} ->
-    new_state = {tail, next, options}
+  pop_item = fn {[head|tail], next} ->
+    new_state = {tail, next}
     {[head], new_state}
   end
 
@@ -175,7 +175,7 @@ def stream
     # Assumes you have a method called `fetch_page` which will take a page URL and
     # get that page of results.
     case fetch_page(next_page) do
-      {:ok, items, meta} -> pop_item.({items, meta["next_page_uri"], options})
+      {:ok, items, meta} -> pop_item.({items, meta["next_page_uri"]})
       {:error, _msg}     -> {:halt, state}
     end
   end
