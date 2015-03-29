@@ -196,7 +196,7 @@ can process all of your Twilio Calls like this:
 
 ```elixir
 Enum.each ExTwilio.Call.stream, fn(call) ->
-  puts call.sid
+  IO.puts call.sid
 end
 ```
 
