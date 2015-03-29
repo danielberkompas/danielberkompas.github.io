@@ -34,7 +34,7 @@ must wait while this is going on.
 This isn't ideal for two reasons:
 
 1. It will take an unknown amount of time. 
-2. Nothing be done with the data until it has _all_ been loaded.
+2. Nothing can be done with the data until it has _all_ been loaded.
 
 The user probably doesn't want to wait to perform any operations until the
 entire result set has been fetched.
