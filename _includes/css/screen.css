@@ -302,6 +302,12 @@ table td {
   border-right: 1px solid #ccc;
 }
 
+/* Custom elements */
+#subscribe {
+  margin-top: 40px;
+  border-top: 1px dashed #efefef;
+}
+
 /* Colors */
 .green {
   color: #2B8025;
