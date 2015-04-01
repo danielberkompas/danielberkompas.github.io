@@ -173,6 +173,11 @@ Why should you want type annotations? I can think of several reasons:
 Overall, I think the [Contracts][contracts] gem looks great, and I'm excited to
 use it in one of my next Ruby projects.
 
+## Additional Resources
+
+- [Contract Gem Tutorial](http://egonschiele.github.io/contracts.ruby/)
+- [Contracts.coffee](http://disnetdev.com/contracts.coffee/)
+
 P.S. This is _not_ an April Fool's joke.
 
 [dhh]: http://twitter.com/dhh
