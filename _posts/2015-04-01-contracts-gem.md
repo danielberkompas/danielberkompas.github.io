@@ -20,7 +20,7 @@ like this:
 
 ```elixir
 @spec add(integer, integer) :: integer
-def add(a, b)
+def add(a, b) do
   a + b
 end
 ```
@@ -104,11 +104,11 @@ table. Suppose I had a function `handle_response`, that is supposed to deal with
 a response from a web API. In Elixir, that function might look like this:
 
 ```elixir
-def handle_response(:error, body)
+def handle_response(:error, body) do
   # Handle error case
 end
 
-def handle_response(:success, body)
+def handle_response(:success, body) do
   # Handle success case
 end
 ```
