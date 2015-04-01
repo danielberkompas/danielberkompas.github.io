@@ -1,6 +1,9 @@
 # General Jekyll Config
 #highlighter: pygments
 url: http://blog.danielberkompas.com
+description: "testing"
 lsi: false
 exclude: [LICENSE, CNAME, README.md, .gitignore, Gemfile, Gemfile.lock]
 markdown: redcarpet
+redcarpet:
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
