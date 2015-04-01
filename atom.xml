@@ -21,7 +21,6 @@
    <id>{{ site.url }}{{ post.id }}</id>
    <content type="html">
      {{ post.content | split:"<!-- more -->" | first | xml_escape }}
-     <a href="{{ BASE_PATH }}{{ post.url }}">continue reading >></a>
    </content>
  </entry>
  {% endfor %}
