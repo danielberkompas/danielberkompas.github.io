@@ -271,3 +271,42 @@ sup {
   vertical-align: super;
   font-size: smaller;
 }
+
+table {
+  width: 100%;
+  margin-bottom: 20px;
+  border-color: #ccc;
+  border: 1px solid #ccc;
+  table-layout: fixed;
+}
+
+table thead {
+  font-size: 1.25em;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f4f4f4;
+}
+
+table th {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+table td {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  border-right: 1px solid #ccc;
+}
+
+/* Colors */
+.green {
+  color: #2B8025;
+}
+
+.red {
+  color: #802525;
+}
