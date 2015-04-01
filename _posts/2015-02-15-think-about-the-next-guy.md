@@ -14,6 +14,8 @@ to be carried on into the future, there must be a _succession_. Someone new must
 take up the mission, the art, or the craft, or it will die with the current
 generation.
 
+<!-- more -->
+
 Programmers should be very familiar with this. How many formerly popular
 frameworks have been left in the dust? How many popular applications have
 disappeared? How often have you rewritten old codebases, not necessarily because

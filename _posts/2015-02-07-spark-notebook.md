@@ -13,6 +13,8 @@ So far, _I love it_. You know how we all make New Year's Resolutions and then
 break them? Thanks to this notebook, this is the first year I feel like I have a
 fighting chance of actually accomplishing my goals.
 
+<!-- more -->
+
 The notebook is set up to encourage you to telescope in on your goals, starting
 from a high level, all the way down to your day-to-day routine. It's structured
 like this:

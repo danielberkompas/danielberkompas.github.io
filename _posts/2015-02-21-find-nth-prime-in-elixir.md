@@ -16,6 +16,8 @@ Elixir, and came across this one.
 This is a perfect use case for Elixir's [Stream][elixir-stream] module, because
 we want to generate a list of values and return the last one. 
 
+<!-- more -->
+
 Stream contains a function called `iterate`, which takes a starting value, and 
 then lazily generates new value based on the previous value. To create a Stream
 for primes, therefore, we can write something like this:

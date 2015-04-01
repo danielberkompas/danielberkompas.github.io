@@ -13,6 +13,8 @@ When I got started with Rails, I was just as much a fan of these technologies as
 everyone else. Over time though, they've lost their shine, and I'll explain
 why.
 
+<!-- more -->
+
 ## 1. Whitespace
 
 Nearly all these languages achieve their "simplicity" through whitespace. They

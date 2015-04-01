@@ -10,6 +10,8 @@ career for years to come. However, there are some things that Ruby (and Rails)
 don't do so well out of the box, and these things are causing me to look
 elsewhere.
 
+<!-- more -->
+
 - **Concurrency**. Ruby wasn't built for concurrency, and therefore there is no
   consensus on how to do it.
 - **Scalability**. It is genuinely hard to scale Rails applications out of the

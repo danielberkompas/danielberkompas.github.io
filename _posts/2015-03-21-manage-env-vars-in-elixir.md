@@ -14,6 +14,8 @@ I'm currently developing a [Twilio][twilio] API client for Elixir. While I
 develop and test it, I need to store an "Account SID" and "Auth token" to make
 requests. Naturally, I turned to Mix config.
 
+<!-- more -->
+
 Because I needed to have separate configuration files for each environment, so that I
 could test with different credentials, I set up `config/config.exs` like this:
 

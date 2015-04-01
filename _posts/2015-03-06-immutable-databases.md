@@ -16,6 +16,8 @@ In both, he argues that an stream of immutable facts (a log, essentially) is a
 better datastructure for databases, rather than the existing model of mutating
 state in place. 
 
+<!-- more -->
+
 No fact in this stream of facts is ever altered, the stream is only appended to.
 Database views are then built on top of this stream of facts, and these views
 automatically update when a new fact is appended to the stream. This allows for

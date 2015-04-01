@@ -26,6 +26,8 @@ collection containing everything and then operate on it.
 I find that there are two basic ways to achieve this, a _blocking_ way and a
 _non-blocking_ way.
 
+<!-- more -->
+
 ## The Blocking Approach
 In this first approach, we fetch all the pages, merge their results together, 
 and _only then_ return a collection to the caller. The caller is blocked and
