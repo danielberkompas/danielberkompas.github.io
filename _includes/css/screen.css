@@ -127,10 +127,14 @@ nav h1, nav h2 {
 }
 
 #post pre {
-  border: 1px solid #ddd;
-  background-color: #eef;
+  border-top: 1px dashed #ddd;
+  border-bottom: 1px dashed #ddd;
+  /*border: 1px solid #ddd;*/
+  /*background-color: #eef;*/
   padding: 0 .4em;
-  margin-bottom: 20px !important;
+  padding-bottom: 15px;
+  padding-top: 15px;
+  margin-bottom: 15px !important;
 }
 
 #post ul,
@@ -140,7 +144,7 @@ nav h1, nav h2 {
 
 #post code {
   border: 1px solid #ddd;
-  background-color: #eef;
+  /*background-color: #eef;*/
   font-size: 85%;
   padding: 0 .2em;
 }
@@ -300,6 +304,10 @@ table td {
   padding-right: 10px;
   padding-left: 10px;
   border-right: 1px solid #ccc;
+}
+
+code {
+  font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
 }
 
 /* Custom elements */
