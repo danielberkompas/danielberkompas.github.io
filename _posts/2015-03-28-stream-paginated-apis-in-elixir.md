@@ -238,7 +238,7 @@ paged API. For those masochistic users who still want a blocking method, I've
 given them an `all` method as well. Internally, it just delegates to `stream`:
 
 ```elixir
-def all
+def all do
   Enum.into stream, []
 end
 ```
