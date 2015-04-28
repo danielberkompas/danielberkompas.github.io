@@ -5,7 +5,7 @@ title: "Why a Static Blog is a Good Idea&#0153"
 
 Rather than use a popular blogging solution like [Wordpress][wordpress],
 [Blogger][blogger], or even the new kid on the block, [Ghost][ghost], I chose
-an old school method to write my blog: plain text.
+to use an old school method to write my blog: plain text.
 
 This blog is a static site. My posts are written in plain text in a text editor 
 on my computer, and are converted into simple HTML pages when I deploy. There is
