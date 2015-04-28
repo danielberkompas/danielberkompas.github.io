@@ -72,7 +72,7 @@ blog posts is tracked. This revision history can be publicly available,
 Personally, I think the world might be a better place if more bloggers opened
 themselves up to this kind of accountability.
 
-## 6. Few Compromises
+## 7. Few Cohpromises
 
 I get all of the above with few compromises. I can still do all of the
 following quite easily:
