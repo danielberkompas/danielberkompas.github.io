@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Why a Static Blog is a Good Idea&#0153"
+title: "Why a Static Blog is a Good Idea"
 ---
 
 Rather than use a popular blogging solution like [Wordpress][wordpress],
