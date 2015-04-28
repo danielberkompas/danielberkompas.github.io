@@ -91,7 +91,7 @@ So, that's why I think it's a good idea to have a static blog rather than use
 Wordpress or some other tool. If you need pointers on how to get one set up, hit
 me up [on Twitter][twitter], or check out [Jekyll][jekyll].
 
-[ghost]: http://tryghost.io
+[ghost]: https://ghost.org
 [blogger]: http://blogger.com
 [wordpress]: http://wordpress.com
 [markdown]: http://daringfireball.net/projects/markdown/
