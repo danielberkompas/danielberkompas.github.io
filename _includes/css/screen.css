@@ -324,3 +324,8 @@ code {
 .red {
   color: #802525;
 }
+
+/* Syntax highlighting overrides */
+.highlight .ss {
+  color: #00AA88 !important;
+}
