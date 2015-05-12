@@ -109,7 +109,7 @@ a dime a dozen, I'd really like to have as much permanent knowledge as possible.
 [p-elixir-img]: https://imagery.pragprog.com/products/361/elixir_xlargecover.jpg?1368724397
 [m-elixir]: https://pragprog.com/book/cmelixir/metaprogramming-elixir
 [m-elixir-img]: https://imagery.pragprog.com/products/430/cmelixir_xlargecover.jpg?1415371472
-[embercli]: http://ember-cli.org
+[embercli]: http://ember-cli.com
 [emberjs]: http://emberjs.com
 [elixir]: http://elixir-lang.org
 [phoenix]: http://phoenixframework.org
