@@ -51,6 +51,12 @@ a dime a dozen, I'd really like to have as much permanent knowledge as possible.
 
 [![Mastering Regular Expressions][mastering-regex-img]][mastering-regex]
 
+**SQL**  
+Similar to regular expressions, SQL can also be used to solve a vast array of
+data analysis problems in a language-agnostic way. This skill is portable
+between languages and database systems, and is often a more elegant way to solve
+problems. My knowledge here isn't as broad or as deep as I would like.
+
 ## Tools
 
 - [Elixir][elixir]: A relatively new functional programming language written on
