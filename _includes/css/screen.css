@@ -310,6 +310,10 @@ code {
   font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
 }
 
+small {
+  font-size: 0.5em;
+}
+
 /* Custom elements */
 #subscribe {
   margin-top: 40px;

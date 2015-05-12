@@ -3,7 +3,7 @@ layout: "post"
 title: "Personal Development Plan"
 author: "Daniel Berkompas"
 ---
-# 2015
+# 2015 <small class="float-right">[View Changelog](https://github.com/danielberkompas/danielberkompas.github.io/commits/master/personal-development-plan/index.md)</small>
 <hr />
 
 ## Vision
