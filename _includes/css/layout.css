@@ -72,3 +72,11 @@
 		line-height: 24px;
 	}
 }
+
+.float-left {
+  float: left;
+}
+
+.clear {
+  clear: both;
+}

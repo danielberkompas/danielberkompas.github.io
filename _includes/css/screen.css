@@ -325,6 +325,10 @@ code {
   color: #802525;
 }
 
+.orange {
+  color: #c15700;
+}
+
 /* Syntax highlighting overrides */
 .highlight .ss {
   color: #00AA88 !important;
