@@ -11,9 +11,8 @@ frustrated by the lack of number conversion helpers in Elixir/Erlang. I didn't
 want to have to rewrite `number_to_currency` every time I want to use it.
 
 So, I created [Number](https://github.com/danielberkompas/number). It's
-basically a shallow clone of NumberHelper from ActionView in Rails.
-
-Now, Elixir users can have `number_to_currency` too!
+basically a shallow clone of NumberHelper from ActionView in Rails.  Now, Elixir
+users can have `number_to_currency` too!
 
 ```elixir
 import Number.Currency
