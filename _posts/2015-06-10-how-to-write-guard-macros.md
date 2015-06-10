@@ -6,7 +6,7 @@ categories:
   - elixir
 ---
 
-I recently discovered that it is possible to write custom guard statements for
+I recently discovered that it is possible to write custom guard macros for
 Elixir, provided that the macro expands to expressions that are supported in
 guards natively.
 
