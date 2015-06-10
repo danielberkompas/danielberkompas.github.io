@@ -1,7 +1,7 @@
 ---
 layout: "post"
 author: "Daniel Berkompas"
-title: "Number helpers for Elixir"
+title: "Number Helpers For Elixir"
 categories:
   - elixir
 ---
