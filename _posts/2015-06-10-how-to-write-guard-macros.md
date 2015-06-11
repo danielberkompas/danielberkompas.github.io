@@ -52,7 +52,7 @@ outside of guards.
 
 ## Gotchas
 
-- Macros used in guards must be defined in a _different_ module than the one
+- Macros used in guards must be defined in a **different module** than the one
   where they are being used. This is due to the way Elixir compiles macros.
 
 - You must `require` or `import` this other module in order to be able to use
