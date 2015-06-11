@@ -55,6 +55,6 @@ outside of guards.
 - Macros used in guards must be defined in a **different module** than the one
   where they are being used. This is due to the way Elixir compiles macros.
 
-- You must `require` or `import` this other module in order to be able to use
+- You must `require` or `import` your other module in order to be able to use
   the Macro. If you `require`, you'll have to use the macro like this:
   `OtherModule.macro`. If you use `import`, you can just use `macro`.
