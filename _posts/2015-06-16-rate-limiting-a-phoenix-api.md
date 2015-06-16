@@ -31,7 +31,7 @@ If you're familiar with Ruby, plugs work very similarly to Rack middleware.
 However, instead of being a rare form of voodoo like Rack sometimes is to Ruby
 developers, plugs are very accessible in Elixir/Phoenix, and are used often.
 
-In it's simplest form, a plug looks like this:
+In its simplest form, a plug looks like this:
 
 ```elixir
 def my_custom_plug(conn, options \\ []) do
