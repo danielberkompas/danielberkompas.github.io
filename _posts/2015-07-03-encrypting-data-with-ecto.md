@@ -156,7 +156,7 @@ end
 ```
 
 We're almost done! Now, to encrypt a string field, all we have to do is change
-it's type in the database. Suppose we have an `Ecto.Model` with a name attribute
+its type in the database. Suppose we have an `Ecto.Model` with a name attribute
 like this:
 
 ```elixir
