@@ -33,6 +33,11 @@ which will serve as our base.
 For this use case, I've chosen to use AES encryption in CTR mode, but you could
 just as easily use any other type of encryption supported by [crypto][crypto].
 
+**EDIT: A friend pointed out that using the same IV is terribly insecure. I'm
+updating the this post with a more secure implementation. However, the specific
+crypto implementation doesn't really matter for our purposes here, we just need
+an encryptor with `encrypt/1` and `decrypt/1` functions.**
+
 ```elixir
 defmodule MyApp.AES do
   # Since this module will hold configuration state and perform operations,
