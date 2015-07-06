@@ -7,6 +7,10 @@ categories:
   - security
 ---
 
+**Editor's Note: This post has been substantially updated since [it was first 
+posted][original-post]. A much stronger crypto implementation has been used and
+the code has been reworked to be cleaner and more efficient.**
+
 In the future, as privacy becomes more and more of an issue, we're going to be
 encrypting a lot more of the data we store on the web.  With that in mind, I
 thought it would be a good idea to figure out a good way to integrate data
@@ -33,64 +37,31 @@ which will serve as our base.
 For this use case, I've chosen to use AES encryption in CTR mode, but you could
 just as easily use any other type of encryption supported by [crypto][crypto].
 
-**EDIT: A friend pointed out that using the same IV is terribly insecure. I'm
-updating the this post with a more secure implementation. However, the specific
-crypto implementation doesn't really matter for our purposes here, we just need
-an encryptor with `encrypt/1` and `decrypt/1` functions.**
-
 ```elixir
 defmodule MyApp.AES do
-  # Since this module will hold configuration state and perform operations,
-  # it should be a GenServer, and run as its own process.
-  use GenServer
+  # Encrypts each plaintext with a different, random IV. This is much more
+  # secure than reusing the same IV, and is highly recommended.
+  def encrypt(plaintext) do
+    iv    = :crypto.strong_rand_bytes(16) # Random IVs for each encryption
+    state = :crypto.stream_init(:aes_ctr, key, iv)
 
-  # Start the server process as a named process, so that we don't have to
-  # worry about pids.
-  def start_link(options) do
-    GenServer.start_link(__MODULE__, options, name: __MODULE__)
+    {_state, ciphertext} = :crypto.stream_encrypt(state, to_string(plaintext))
+    iv <> ciphertext # Prepend IV to ciphertext, for easier decryption
   end
 
-  # This is called by GenServer after `start_link`, and configures what state
-  # the server will start out with.
-  def init(options) do
-    # AES in CTR mode is a stream cipher, and requires state to be set up before
-    # it can perform any operations. Here, we set up the state by specifying the
-    # mode, the AES key, and an initialization vector.
-    state = :crypto.stream_init(:aes_ctr, options[:key], options[:iv])
+  def decrypt(ciphertext) do
+    # Split the IV that was used off the front of the binary. It's the first
+    # 16 bytes.
+    <<iv::binary-16, ciphertext::binary>> = ciphertext
+    state = :crypto.stream_init(:aes_ctr, key, iv)
 
-    # We then return the crypto configuration as the initial GenServer state.
-    {:ok, state}
+    {_state, plaintext} = :crypto.stream_decrypt(state, ciphertext)
+    plaintext
   end
 
-  # Public wrapper function for encryption. Ensures that the value is a string 
-  # before trying to encrypt it.
-  def encrypt(string) do
-    string = to_string(string)
-    GenServer.call(__MODULE__, {:encrypt, string})
-  end
-
-  # Public wrapper function for decryption.
-  def decrypt(string) do
-    GenServer.call(__MODULE__, {:decrypt, string})
-  end
-
-  # Server callback for encryption. Uses `crypto:stream_encrypt/2`, using the
-  # crypto state saved in the GenServer process.
-  def handle_call({:encrypt, string}, _from, state) do
-    {_state, cipher} = :crypto.stream_encrypt(state, string)
-
-    # The ciphertext is returned in base64 encoding to make it easier to store
-    # in a regular database string field.
-    {:reply, :base64.encode(cipher), state}
-  end
-
-  # Server callback for decryption. Uses `crypto:stream_decrypt/2`, using the
-  # crypto state saved in the GenServer process.
-  def handle_call({:decrypt, string}, _from, state) do
-    # Assume input string is in base64
-    string = :base64.decode(string)
-    {_state, plaintext} = :crypto.stream_decrypt(state, string)
-    {:reply, plaintext, state}
+  # Convenience function to get the application's configuration key.
+  defp key do
+    Application.get_env(:encryption, MyApp.AES)[:key]
   end
 end
 ```
@@ -98,26 +69,16 @@ end
 The module can then be used pretty simply:
 
 ```elixir
-{:ok, _pid} = MyApp.AES.start_link(key: "...", iv: "...")
-
 MyApp.AES.encrypt("hello world!")
 |> MyApp.AES.decrypt
 # => "hello world!"
 ```
 
-You can set up your app's supervisor to automatically start and maintain the 
-`MyApp.AES` process:
-
-```elixir
-worker(OnSale.AES, [Application.get_env(:my_app, MyApp.AES)])
-```
-
-And configure the `:key` and `:iv` in your `config.exs`:
+You can configure the key to use in the `config.exs` for your app:
 
 ```elixir
 config :my_app, MyApp.AES,
-       key: :base64.decode("..."),
-       iv: "..."
+       key: :base64.decode("..."), # assuming your key is in base64
 ```
 
 Now that we have an encryptor, we can look at integrating it with Ecto.
@@ -135,12 +96,14 @@ custom `EncryptedField` type:
 
 ```elixir
 defmodule MyApp.EncryptedField do
+  import MyApp.AES
+
   # Assert that this module behaves like an Ecto.Type so that the compiler can
   # warn us if we forget to implement the 4 callback functions below.
   @behaviour Ecto.Type
 
   # This defines the base type of this kind of field in the database.
-  def type, do: :string
+  def type, do: :binary
 
   # This is called on a value in queries if it is not a string.
   def cast(value) do
@@ -149,33 +112,33 @@ defmodule MyApp.EncryptedField do
 
   # This is called when the field value is about to be written to the database
   def dump(value) do
-    value = to_string(value)
-    {:ok, OnSale.AES.encrypt(value)}
+    ciphertext = value |> to_string |> encrypt
+    {:ok, ciphertext}
   end
 
   # This is called when the field is loaded from the database
   def load(value) do
-    {:ok, OnSale.AES.decrypt(value)}
+    {:ok, decrypt(value)}
   end
 end
 ```
 
-We're almost done! Now, to encrypt a string field, all we have to do is change
-its type in the database. Suppose we have an `Ecto.Model` with a name attribute
-like this:
+We're almost done! Now, since the encryptor we wrote operates directly on
+binary, the fields we encrypt should be `:binary` fields in the database. 
+Suppose we have an `Ecto.Model` with a binary name attribute like this:
 
 ```elixir
 defmodule MyApp.User do
   use Ecto.Model
 
   schema "users" do
-    field :name, :string
+    field :name, :binary
   end
 end
 ```
 
 To encrypt the name field, you just need to specify the `MyApp.EncryptedField`
-type instead of `:string`:
+type instead of `:binary`:
 
 ```elixir
 defmodule MyApp.User do
@@ -192,42 +155,136 @@ struct is saved to or loaded from the database.
 
 ## Querying
 
-In order to query on an encrypted field, you need to encrypt the search term
-before executing your SQL query. So, to find a user with the `:name` "Daniel",
-you'd need to encrypt "Daniel" first, and then look for users where the `:name`
-matches the encrypted value. For example:
+Querying encrypted fields is difficult, because our encryptor is designed 
+specifically _not_ to produce the same ciphertext twice for security reasons. 
+To understand the difficulty, consider the following example.
 
-```sql
-SELECT * FROM users WHERE name = "ATQd64as";
-```
+- Suppose you have a user with the email address `test@example.com`. This value is
+  encrypted in a binary field in the database.
 
-The cool thing is, you _don't have to do anything more_ to get this
-functionality in most cases! `Ecto.Repo` queries will automatically do this for
-you:
+- Now, someone comes along and tries to log in as `test@example.com`, and you want
+  to query the database for a user with that email address. 
+
+- You can't search for `test@example.com`, because that value doesn't exist in 
+  the database. Neither can you run the email address through the encryptor, 
+  because that will produce a different value than what is in the database.
+
+So, how can you query for the email address? The answer is to **add another
+field** to the database called `:email_hash`, which will contain a _hash_ of the
+`:email` field's contents. This is both secure and convenient: secure because
+the contents can't be reconstructed from a good hash; convenient, because hash
+algorithms produce the same result for the same plaintext every time.
+
+Let's implement another `Ecto.Type`, which will automatically hash the value of
+a field using the recommended SHA256 algorithm:
 
 ```elixir
-MyApp.Repo.get_by(MyApp.User, name: "Daniel")
-# => SELECT u0."id", u0."name", 
-#    FROM "users" AS u0 
-#    WHERE (u0."name" = $1) ["ATQd64as"] (2.0ms)
+defmodule Encryption.HashField do
+  @behaviour Ecto.Type
 
-MyApp.Repo.all(from u in MyApp.User, where u.name == "Daniel")
+  def type, do: :binary
+
+  def cast(value) do
+    {:ok, to_string(value)}
+  end
+
+  def dump(value) do
+    {:ok, hash(value)}
+  end
+
+  def load(value) do
+    {:ok, value}
+  end
+
+  def hash(value) do
+    :crypto.hash(:sha256, value)
+  end
+end
 ```
+
+Then, we add this field to the schema:
+
+```elixir
+defmodule MyApp.User do
+  use Ecto.Model
+
+  schema "users" do
+    field :name, MyApp.EncryptedField
+    field :email, MyApp.EncryptedField
+    field :email_hash, MyApp.HashField
+  end
+
+  # We must ensure that the email_hash field is always a hash of the same value
+  # held in the email field, or queries will be inaccurate.
+  before_insert :set_hashed_fields
+  before_update :set_hashed_fields
+
+  defp set_hashed_fields(changeset) do
+    changeset
+    |> put_change(:email_hash, changeset.changes[:email] || changeset.model.email)
+  end
+end
+```
+
+And now, we can easily query on the `:email_hash` field, because Ecto will
+automatically use our `HashField` module to convert our search term to a hash:
+
+```elixir
+email = "test@example.com"
+
+MyApp.Repo.get_by(MyApp.User, email_hash: email)
+MyApp.Repo.one(from u in MyApp.User, where: u.email_hash == ^email)
+
+# Both produce this query:
+#
+# SELECT u0."id", u0."name", u0."email", u0."email_hash", u0."inserted_at",
+# u0."updated_at" FROM "users" AS u0 WHERE (u0."email_hash" = $1) [<<151, 61,
+# 254, 70, 62, 200, 87, 133, 245, 249, 90, 245, 186, 57, 6, 238, 219, 45, 147, 
+# 28, 36, 230, 152, 36, 168, 158, 166, 93, 186, 78, 129, 59>>]
+```
+
+And, we're done!
+
+## Get the Code
+
+All this code and more is over on a Phoenix sample project I put up on Github.
+Here's [the relevant commit][commit]. It includes tests and more examples,
+including how to validate the uniqueness of an encrypted field.
 
 ## Conclusion
 
-We implemented the main features of [attr_encrypted][attr_encrypted], a large
-Ruby gem, in about 55 lines of code, without any monkey patching! This speaks to
-how well Elixir and Ecto are designed.
+We implemented the main features of [attr_encrypted][attr_encrypted], a somewhat
+complicated Ruby gem, in about 60 lines of code, without any monkey 
+patching! This implementation is also substantially more secure than
+[attr_encrypted][attr_encrypted]'s default settings, which seem to rely on 
+reusing IVs and using AES in CBC mode.
 
-This solution is very easy to understand and is very extensible. For example, if
-you wanted to use a physical Hardware Security Module to do the encryption and
-decryption, you could just write a custom encryptor and use it instead in your
-`EncryptedField` module.
+Even better, this solution is very easy to understand and is very extensible. 
+For example, if you wanted to use a physical Hardware Security Module to do the
+encryption and decryption, you could just write a custom encryptor and use it 
+instead in your `EncryptedField` module.
 
 I wasn't sure how easy this would be to implement, and I'm very happy with the
 result. My confidence in Elixir as a tool continues to rise.
 
+<hr />
+
+**Credits**
+
+Credit to [@victorluft](http://twitter.com/victorluft) for suggesting much
+better crypto, and [@josevalim](http://twitter.com/josevalim) for suggesting
+that I not make the encryptor a GenServer, since this could be a performance
+bottleneck.
+
+**Security Note**
+
+Adding a hashed version of a field is a slight security risk, because it reveals
+rows which have the same value in that field. Their hashes will match. Depending
+on your threat model, this may mean you'll need a different solution for
+querying on encrypted fields.
+
+[original-post]: https://github.com/danielberkompas/danielberkompas.github.io/blob/c6eb249e5019e782e891bfeb591bc75f084fd97c/_posts/2015-07-03-encrypting-data-with-ecto.md
+[commit]: https://github.com/danielberkompas/phoenix_ecto_encryption_sample/commit/80c9b75a39f89a203f80617e2c00c062e9904217
 [crypto]: http://www.erlang.org/doc/man/crypto.html
 [elixir]: https://github.com/elixir-lang/elixir
 [ecto]: https://github.com/elixir-lang/ecto
