@@ -221,7 +221,7 @@ defmodule MyApp.User do
 
   defp set_hashed_fields(changeset) do
     changeset
-    |> put_change(:email_hash, changeset.changes[:email] || changeset.model.email)
+    |> put_change(:email_hash, get_field(changeset, :email))
   end
 end
 ```
