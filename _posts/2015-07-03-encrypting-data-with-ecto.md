@@ -179,7 +179,7 @@ Let's implement another `Ecto.Type`, which will automatically hash the value of
 a field using the recommended SHA256 algorithm:
 
 ```elixir
-defmodule Encryption.HashField do
+defmodule MyApp.HashField do
   @behaviour Ecto.Type
 
   def type, do: :binary
