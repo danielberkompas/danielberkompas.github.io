@@ -210,13 +210,8 @@ MyApp.Repo.get_by(MyApp.User, name: "Daniel")
 # => SELECT u0."id", u0."name", 
 #    FROM "users" AS u0 
 #    WHERE (u0."name" = $1) ["ATQd64as"] (2.0ms)
-```
 
-However, you'll still need to encrypt values in your custom Ecto queries:
-
-```elixir
-name = MyApp.AES.encrypt(name)
-from u in MyApp.User, where: u.name == ^name
+MyApp.Repo.all(from u in MyApp.User, where u.name == "Daniel")
 ```
 
 ## Conclusion
