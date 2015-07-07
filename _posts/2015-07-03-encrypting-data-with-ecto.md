@@ -16,6 +16,8 @@ encrypting a lot more of the data we store on the web.  With that in mind, I
 thought it would be a good idea to figure out a good way to integrate data
 encryption with [Elixir's][elixir] database library, [Ecto][ecto].
 
+<!-- more -->
+
 ## Requirements
 
 In Rails, we have a gem called [attr_encrypted][attr_encrypted] which makes it
