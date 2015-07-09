@@ -54,7 +54,7 @@ are ready to make the switch.
 
 ## Change Encryptor
 
-Now, we need to upgrade the `encrypt/1` function to append the key ID of the
+Now, we need to upgrade the `encrypt/1` function to prepend the key ID of the
 key that was used for the encryption:
 
 ```elixir
@@ -69,7 +69,7 @@ def encrypt(ciphertext, key_id \\ @default) do
   iv    = :crypto.strong_rand_bytes(16)
   state = :crypto.stream_init(:aes_ctr, @keys[key_id], iv) # use specified key
   {_state, ciphertext} = :crypto.stream_encrypt(state, to_string(plaintext))
-  key_id <> iv <> ciphertext # append key byte to iv and ciphertext
+  key_id <> iv <> ciphertext # prepend key byte to iv and ciphertext
 end
 ```
 
