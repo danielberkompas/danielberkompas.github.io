@@ -269,7 +269,7 @@ instead in your `EncryptedField` module.
 I wasn't sure how easy this would be to implement, and I'm very happy with the
 result. My confidence in Elixir as a tool continues to rise.
 
-READ THIS NEXT: [Changing Your Ecto Encryption Key][change-key]
+**READ THIS NEXT: [Changing Your Ecto Encryption Key][change-key]**
 
 <hr />
 
