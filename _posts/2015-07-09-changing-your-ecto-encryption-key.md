@@ -118,7 +118,7 @@ lot of encrypted data that takes a long time to migrate.
 
 #### Gradual Upgrading Not Enough
 
-In the likely event that you want to reencrypt your data with the new key more
+In the likely event that you want to re-encrypt your data with the new key more
 quickly, you'll need to make some changes to your `User` model.
 
 First off, you want to track which rows have been migrated and which have not.
