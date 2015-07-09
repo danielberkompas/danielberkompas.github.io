@@ -269,6 +269,8 @@ instead in your `EncryptedField` module.
 I wasn't sure how easy this would be to implement, and I'm very happy with the
 result. My confidence in Elixir as a tool continues to rise.
 
+READ THIS NEXT: [Changing Your Ecto Encryption Key][change-key]
+
 <hr />
 
 **Credits**
@@ -285,6 +287,7 @@ rows which have the same value in that field. Their hashes will match. Depending
 on your threat model, this may mean you'll need a different solution for
 querying on encrypted fields.
 
+[change-key]: /elixir/security/2015/07/09/changing-your-ecto-encryption-key.html
 [original-post]: https://github.com/danielberkompas/danielberkompas.github.io/blob/c6eb249e5019e782e891bfeb591bc75f084fd97c/_posts/2015-07-03-encrypting-data-with-ecto.md
 [commit]: https://github.com/danielberkompas/phoenix_ecto_encryption_sample/commit/80c9b75a39f89a203f80617e2c00c062e9904217
 [crypto]: http://www.erlang.org/doc/man/crypto.html
