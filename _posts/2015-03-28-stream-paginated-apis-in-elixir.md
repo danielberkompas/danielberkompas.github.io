@@ -5,6 +5,12 @@ categories:
 - elixir
 - twilio
 ---
+_This article was recently featured in [Elixir Radar](http://plataformatec.com.br/elixir-radar).
+Since it was written, I've found a simpler way to implement this kind of Stream.
+I'll be writing an updated tutorial in the future, but if you're interested, you
+should also check out the current state of [ExTwilio.ResultStream](https://github.com/danielberkompas/ex_twilio/blob/371f2b263d763d1459b467d1fbe8783fce825c0e/lib/ex_twilio/result_stream.ex)._
+
+---
 
 This past week, as I worked on my new [ExTwilio][ExTwilio] API library for
 [Twilio][twilio], I ran into a snag dealing with [Twilio's API pagination][twilio-page-api].
@@ -253,6 +259,7 @@ following:
 If you want to keep up with my progress building full-featured Elixir libraries
 for Twilio, stay tuned to this blog, or check out [ExTwilio][ExTwilio] and
 [ExTwiml][ExTwiml].
+
 
 [ExTwilio]: https://github.com/danielberkompas/ex_twilio
 [ExTwiml]: https://github.com/danielberkompas/ex_twiml
