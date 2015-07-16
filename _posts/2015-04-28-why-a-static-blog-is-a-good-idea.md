@@ -11,6 +11,8 @@ This blog is a static site. My posts are written in plain text in a text editor
 on my computer, and are converted into simple HTML pages when I deploy. There is
 no admin panel. There is no pretty online editor. Just text.
 
+<!-- more -->
+
 Why do I do this? Wouldn't it be better to use something less _manual_? There
 are several reasons, and I think they're worth considering for anyone who wants
 to write a blog.

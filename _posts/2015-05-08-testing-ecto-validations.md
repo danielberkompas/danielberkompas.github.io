@@ -12,6 +12,8 @@ Ruby.  However, when José Valim saw it, he
 [suggested a much better approach][better] which I think illustrates what makes 
 Elixir great.
 
+<!-- more -->
+
 ## Validating Ecto Models
 
 In Ecto, a model looks like this:

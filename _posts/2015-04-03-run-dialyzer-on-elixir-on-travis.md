@@ -9,6 +9,8 @@ In [my last post][contracts-gem], I talked about Elixir's typespec annotations
 and Erlang's static analysis tool, [Dialyzer][dialyzer]. All that talk was great
 and all, but how do you actually _use_ Dialyzer on Elixir projects?
 
+<!-- more -->
+
 In particular, how do you run Dialyzer on an Elixir project on Travis CI? In
 today's blog post, I'll show you how.
 

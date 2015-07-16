@@ -9,6 +9,8 @@ development, where it sometimes feels like progress moves at light speed.
 As is obvious from my posts on this blog, I've been learning a lot of new stuff
 lately, mostly [Elixir][elixir]-related. 
 
+<!-- more -->
+
 But no matter how much I learn, there's always more and more possible 
 technologies out there _to learn_. In fact, a few new ones were probably 
 invented while I wrote this post. The more I know, the more I know I don't know.

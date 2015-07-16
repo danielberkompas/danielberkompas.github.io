@@ -9,6 +9,8 @@ In a [previous post][previous], I wrote about how to easily get a prebuilt PLT
 for your Elixir builds on Travis. But what if that doesn't work for you? What if
 you have special requirements that my [prebuilt PLTs][prebuilt] don't meet?
 
+<!-- more -->
+
 ## TL,DR;
 You can fork my [Travis PLT generator][generator]. You'll just need an Amazon S3
 bucket to store the resulting PLT files.

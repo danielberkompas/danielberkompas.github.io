@@ -9,6 +9,8 @@ After a couple months of work, I've finally got the library I've been working
 toward for Twilio, and I'm calling it "[Telephonist][telephonist]". You can read
 all about it [over on Github][telephonist], but here's a taste:
 
+<!-- more -->
+
 ```elixir
 defmodule CustomCallFlow do
   use Telephonist.StateMachine, initial_state: :choose_language

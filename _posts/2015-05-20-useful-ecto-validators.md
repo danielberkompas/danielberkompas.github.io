@@ -10,6 +10,8 @@ Over the past week, I've created a couple custom validators for my Elixir
 projects which use [Ecto][ecto]. Since validators are just functions that take a
 changeset and return a changeset, they're very easy to write.
 
+<!-- more -->
+
 I'll update this post in the future if I find or write any more useful
 validators, or refactor ones I've already written.
 

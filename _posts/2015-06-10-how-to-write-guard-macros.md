@@ -15,6 +15,8 @@ function like Ruby does, so you have to do it manually. Blank values are `" "`,
 `""`, and `nil`. To check `blank?` in Elixir, you can check if a given value is
 `in` this array of blank values.
 
+<!-- more -->
+
 ```elixir
 value in [" ", "", nil] # => true / false
 ```

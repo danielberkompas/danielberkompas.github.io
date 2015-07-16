@@ -17,6 +17,8 @@ prevented had Apple implemented rate limiting on one of their authentication
 APIs. This would have prevented the brute-force attack that the hackers used to
 guess the celebrities' passwords.
 
+<!-- more -->
+
 My little API isn't likely to hold any sensitive information, but I decided to
 rate limit my authentication API anyway. Here's how I did it.
 

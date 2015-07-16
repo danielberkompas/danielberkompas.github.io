@@ -14,6 +14,8 @@ So, I created [Number](https://github.com/danielberkompas/number). It's
 basically a shallow clone of NumberHelper from ActionView in Rails.  Now, Elixir
 users can have `number_to_currency` too!
 
+<!-- more -->
+
 ```elixir
 import Number.Currency
 

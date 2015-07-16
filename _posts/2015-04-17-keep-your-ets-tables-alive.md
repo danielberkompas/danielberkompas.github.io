@@ -13,6 +13,8 @@ In Rails, this table would probably be a Postgres table or a list key in Redis.
 But before jumping to one of these familiar solutions, I thought, "What does 
 Elixir/Erlang already have that would meet this need?"
 
+<!-- more -->
+
 ## Erlang Term Storage (ETS)
 
 I was not disappointed. It turns out that Erlang has an in-memory store called
