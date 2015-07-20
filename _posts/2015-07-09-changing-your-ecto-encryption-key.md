@@ -19,7 +19,7 @@ I want to show how do that in this post.
 ## Tag Your Ciphertext
 
 In order to migrate to a new key, you're going to need to be able to distinguish
-which key was used in encrypting any given text. This can be done very simply by
+which key was used to encrypt any given text. This can be done very simply by
 prepending a single byte to every encrypted binary:
 
 ```elixir
