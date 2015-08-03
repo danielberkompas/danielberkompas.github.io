@@ -230,7 +230,7 @@ I should look more into Rack in Ruby-land. It's probably under-utilized for
 problems like this. Perhaps that will be the subject of a future post. For now
 though, so long!
 
-[ex_rated]: http://hex.pm/ex_rated
+[ex_rated]: http://hex.pm/packages/ex_rated
 [icloud]: http://icloud.com
 [plug]: https://github.com/elixir-lang/plug
 [phoenix]: http://phoenixframework.org
