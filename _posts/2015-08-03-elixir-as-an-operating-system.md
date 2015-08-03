@@ -16,7 +16,7 @@ Even more impressively, Diskstations can update themselves and their apps with
 one click, and sometimes, with no clicks at all. It's a remarkable achievement,
 and it makes their products great.
 
-However I suspect all is not well. Perhaps its just cynicism on my part, but I 
+However, I suspect all is not well. Perhaps its just cynicism on my part, but I 
 think the code underlying all of this is probably a mess. I don't know if it's 
 PHP or not, but given the vast number of features that Synology offers and the 
 fact that most mass-market software is a mess underneath the surface, I doubt 
