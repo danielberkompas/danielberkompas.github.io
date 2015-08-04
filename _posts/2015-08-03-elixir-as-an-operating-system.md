@@ -88,4 +88,10 @@ for a few evenings and see what happens, and I'll definitely post about it.
 If anyone else out there is inspired by this post and decides to steal the idea,
 go ahead! Just let me know where you're hosting the project so I can contribute.
 
+**UPDATED**: When I tweeted this article, a fellow twitterer pointed me to
+[Zotonic][zotonic], an Erlang CMS that seems to be doing exactly what I'm
+talking about it. Since Elixir is built on Erlang, it should be possible to
+write Elixir plugins for it.
+
+[zotonic]: http://zotonic.org
 [synology]: https://www.synology.com/
