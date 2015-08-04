@@ -12,6 +12,8 @@ desktop operating system, complete with downloadable programs, file browsing,
 and more. You can manage the whole system from the browser in a way that feels
 very much like Windows 7.
 
+<!-- more -->
+
 Even more impressively, Diskstations can update themselves and their apps with
 one click, and sometimes, with no clicks at all. It's a remarkable achievement,
 and it makes their products great.
