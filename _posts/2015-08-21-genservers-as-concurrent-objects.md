@@ -1,7 +1,7 @@
 ---
 layout: "post"
 author: "Daniel Berkompas"
-title: "GenServers As Concurrent Objects"
+title: "GenServers as Concurrent Objects"
 categories:
   - elixir
 ---
