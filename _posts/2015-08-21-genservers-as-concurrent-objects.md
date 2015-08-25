@@ -151,6 +151,11 @@ state. However, they are different from objects in Ruby in a few important ways:
 - Named `GenServer` processes can be called from other computers in the cluster,
   as shown above.
 
+- `GenServer` processes shouldn't really be used as often as objects or in the
+  same ways. They are designed for concurrency, not managing data structures
+  like objects are. I compare them to objects just to relate them to something
+  familiar.
+
 ## Conclusion
 
 I know that it was a real "lightbulb" moment for me when I realized that
