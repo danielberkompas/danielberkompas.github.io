@@ -4,6 +4,7 @@ author: "Daniel Berkompas"
 title: "Elixir as an Operating System"
 categories:
   - elixir
+date: 2015-08-03 07:00:00 -0800
 ---
 
 I recently was using a [Synology Diskstation][synology], and I was very

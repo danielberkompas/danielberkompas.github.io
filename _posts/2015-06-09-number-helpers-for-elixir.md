@@ -4,6 +4,7 @@ author: "Daniel Berkompas"
 title: "Number Helpers For Elixir"
 categories:
   - elixir
+date: 2015-06-09 07:00:00 -0800
 ---
 
 Since I started working on a [Phoenix](http://phoenixframework.org) app, I was

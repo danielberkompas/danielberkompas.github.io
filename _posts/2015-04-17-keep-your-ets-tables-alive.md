@@ -3,6 +3,7 @@ layout: post
 title: "On Keeping Your ETS Tables Alive"
 categories:
   - elixir
+date: 2015-04-17 07:00:00 -0800
 ---
 
 In my ongoing quest to make Elixir libraries that integrate with 

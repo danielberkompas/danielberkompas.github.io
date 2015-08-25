@@ -3,6 +3,7 @@ layout: post
 title: Thoughts on Immutable Databases
 author: Daniel Berkompas
 categories: databases
+date: 2015-03-06 07:00:00 -0800
 ---
 
 I came across this talk on Apache Samza this past week:

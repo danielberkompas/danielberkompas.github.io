@@ -2,6 +2,7 @@
 layout: post
 title: The Spark Notebook
 category: getting-things-done
+date: 2015-02-07 07:00:00 -0800
 ---
 
 ![The Spark Notebook](/assets/img/spark-notebook.jpg)

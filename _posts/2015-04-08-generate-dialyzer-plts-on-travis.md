@@ -3,6 +3,7 @@ layout: post
 title: "Build Dialyzer PLTs on Travis CI"
 categories:
   - elixir
+date: 2015-04-08 07:00:00 -0800
 ---
 
 In a [previous post][previous], I wrote about how to easily get a prebuilt PLT

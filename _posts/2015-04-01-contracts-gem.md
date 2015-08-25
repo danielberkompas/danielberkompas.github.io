@@ -4,6 +4,7 @@ title: "Contracts: Type Checking for Ruby"
 categories:
   - elixir
   - ruby
+date: 2015-04-01 07:00:00 -0800
 ---
 
 Like many Rubyists who read popular coding news, I recently came across the

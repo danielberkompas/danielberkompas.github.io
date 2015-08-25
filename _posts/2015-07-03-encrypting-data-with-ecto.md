@@ -5,6 +5,7 @@ author: "Daniel Berkompas"
 categories:
   - elixir
   - security
+date: 2015-07-03 07:00:00 -0800
 ---
 
 **Editor's Note: This post has been substantially updated since [it was first 

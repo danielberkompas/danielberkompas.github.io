@@ -4,6 +4,7 @@ author: "Daniel Berkompas"
 title: "Avoid Long-Lived Feature Branches"
 categories:
   - scm
+date: 2015-07-28 07:00:00 -0800
 ---
 
 Today, I intend to rail against the evils of long-lived feature branches. Having

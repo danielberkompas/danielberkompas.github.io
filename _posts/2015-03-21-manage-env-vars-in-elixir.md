@@ -4,6 +4,7 @@ title: Manage Environment Variables in Elixir
 author: Daniel Berkompas
 categories: 
   - elixir
+date: 2015-03-21 07:00:00 -0800
 ---
 
 I love how the Elixir build tool, `Mix`, has built-in support for configuration

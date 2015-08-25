@@ -5,6 +5,7 @@ title: "Changing Your Ecto Encryption Key"
 categories:
   - elixir
   - security
+date: 2015-07-09 07:00:00 -0800
 ---
 
 READ THIS FIRST: [Encrypting Data with Ecto][ecto-encryption]

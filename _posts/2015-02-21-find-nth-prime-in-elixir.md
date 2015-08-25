@@ -3,6 +3,7 @@ layout: post
 title: Find the Nth Prime in Elixir
 categories:
   - elixir
+date: 2015-02-21 07:00:00 -0800
 ---
 
 I've been working through [Exercism's][exercism] set of code challenges for 

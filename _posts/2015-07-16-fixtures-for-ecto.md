@@ -4,6 +4,7 @@ author: "Daniel Berkompas"
 title: "Fixtures for Ecto"
 categories:
   - elixir
+date: 2015-07-16 07:00:00 -0800
 ---
 
 When you test an [Elixir][elixir] app that uses [Ecto][ecto], you will find

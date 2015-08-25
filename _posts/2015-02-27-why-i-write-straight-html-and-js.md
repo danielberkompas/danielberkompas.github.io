@@ -2,6 +2,9 @@
 layout: post
 title: Why I Write Straight HTML and JS
 categories: 
+  - html
+  - js
+date: 2015-02-27 07:00:00 -0800
 ---
 
 It's very popular in the Rails community to use templating languages that

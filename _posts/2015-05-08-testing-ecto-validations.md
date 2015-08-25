@@ -3,6 +3,7 @@ layout: "post"
 title: "Testing Ecto Validations"
 categories:
   - elixir
+date: 2015-05-08 07:00:00 -0800
 ---
 
 I recently was playing around with [Phoenix][phoenix] and [Ecto][ecto], Elixir's

@@ -2,6 +2,7 @@
 layout: post
 title: Undo a Commit in Git
 category: git
+date: 2015-02-19 07:00:00 -0800
 ---
 
 I keep forgetting how to do this, so I thought I'd post this for my own future

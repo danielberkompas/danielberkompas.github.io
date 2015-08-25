@@ -2,6 +2,7 @@
 layout: "post"
 title: "A Personal Development Plan"
 author: "Daniel Berkompas"
+date: 2015-05-12 07:00:00 -0800
 ---
 
 It's important to keep your skills sharp. Nowhere is this more true than in web

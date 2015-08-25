@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Why a Static Blog is a Good Idea"
+date: 2015-04-28 07:00:00 -0800
 ---
 
 Rather than use a popular blogging solution like [Wordpress][wordpress],

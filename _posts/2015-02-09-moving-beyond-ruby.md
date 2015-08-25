@@ -2,6 +2,7 @@
 layout: post
 title: Moving Beyond Ruby
 categories: ruby elixir
+date: 2015-02-09 07:00:00 -0800
 ---
 
 I've been a Ruby developer for the last 4 years of my career. It's served me

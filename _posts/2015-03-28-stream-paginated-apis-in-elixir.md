@@ -2,8 +2,9 @@
 layout: post
 title: Stream Paginated APIs in Elixir
 categories: 
-- elixir
-- twilio
+  - elixir
+  - twilio
+date: 2015-03-28 07:00:00 -0800
 ---
 _This article was recently featured in [Elixir Radar](http://plataformatec.com.br/elixir-radar).
 Since it was written, I've found a simpler way to implement this kind of Stream.

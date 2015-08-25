@@ -2,6 +2,7 @@
 layout: post
 title: Think About the Next Guy
 category: best-practices
+date: 2015-02-15 07:00:00 -0800
 ---
 
 > I hated all my toil in which I toil under the sun, seeing that I must leave it

@@ -4,11 +4,14 @@ author: "Daniel Berkompas"
 title: "GenServers as Concurrent Objects"
 categories:
   - elixir
+date: 2015-08-21 07:00:00 -0800
 ---
 
 This is a post for fellow object-oriented developers trying to get their heads
 around how Elixir/Erlang use processes as a basic abstraction, rather than
 classes and objects.
+
+<!-- more -->
 
 ## A Sample Object
 

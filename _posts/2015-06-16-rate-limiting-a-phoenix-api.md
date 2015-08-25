@@ -4,6 +4,7 @@ title: "Rate Limiting a Phoenix API"
 author: "Daniel Berkompas"
 categories:
   - elixir
+date: 2015-06-16 07:00:00 -0800
 ---
 
 In my spare time, I've been working on a little [Phoenix][phoenix] project that

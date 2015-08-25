@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Yet Another Tech Blog
+date: 2015-02-07 07:00:00 -0800
 ---
 
 After a long series of attempts to get my blog up and running, I've finally

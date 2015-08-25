@@ -3,6 +3,7 @@ layout: post
 title: "Run Dialyzer on Elixir on Travis CI"
 categories:
   - elixir
+date: 2015-04-03 07:00:00 -0800
 ---
 
 In [my last post][contracts-gem], I talked about Elixir's typespec annotations

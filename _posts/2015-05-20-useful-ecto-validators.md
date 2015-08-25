@@ -4,6 +4,7 @@ author: "Daniel Berkompas"
 title: "Useful Ecto Validators"
 categories:
   - elixir
+date: 2015-05-20 07:00:00 -0800
 ---
 
 Over the past week, I've created a couple custom validators for my Elixir

@@ -4,6 +4,7 @@ author: "Daniel Berkompas"
 title: "How to Write Guard Macros"
 categories:
   - elixir
+date: 2015-06-10 07:00:00 -0800
 ---
 
 I recently discovered that it is possible to write custom guard macros for
