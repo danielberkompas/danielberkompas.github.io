@@ -5,7 +5,7 @@ categories:
   - elixir
 ---
 
-[Cloud9 IDE](http://c9.io) is a great web-based development platform. If you
+[Cloud9](http://c9.io) is a great web-based development platform. If you
 don't have access to a dedicated machine you can set up for development, or if
 you just prefer to keep all your coding in neat, tiny VMs, Cloud9 could be just
 what you're looking for. It's particularly good for students learning to code.
