@@ -16,8 +16,8 @@ configure one yourself. Here's how to do that:
 1. Create a Cloud9 account. If you already have a Github account, just log in
    with that.
 2. Click "Create a new workspace".
-3. Give it a name
-4. Select the "Custom" template
+3. Give it a name, say, "Elixir".
+4. Select the "Custom" template.
 5. When the workspace loads, run the following commands in the console:
 
 ```bash
