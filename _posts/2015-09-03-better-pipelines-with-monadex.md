@@ -159,7 +159,7 @@ def assert_not_purchased_yet(user) do
   end
 end
 
-def create_stripe_customer(%{stripe_customer_id: id}) when id != nil do
+def create_stripe_customer(%{stripe_customer_id: id} = user) when id != nil do
   success(user) # The user already has a stripe customer id, so do nothing
 end
 def create_stripe_customer(user, stripe_token) do
