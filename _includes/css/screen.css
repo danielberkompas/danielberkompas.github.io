@@ -337,3 +337,7 @@ small {
 .highlight .ss {
   color: #00AA88 !important;
 }
+
+.language-elixir .err {
+  background-color: transparent !important;
+}
