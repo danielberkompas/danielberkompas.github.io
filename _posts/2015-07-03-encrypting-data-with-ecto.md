@@ -8,9 +8,12 @@ categories:
 date: 2015-07-03 07:00:00 -0800
 ---
 
-**Editor's Note: This post has been substantially updated since [it was first 
+**Author's Note: This post has been substantially updated since [it was first 
 posted][original-post]. A much stronger crypto implementation has been used and
 the code has been reworked to be cleaner and more efficient.**
+
+**I've also released an open-source Hex package that implements the approach to 
+encryption I describe in this post. [Read the announcement post here](/2015/09/22/cloak-your-ecto-data.html)**.
 
 In the future, as privacy becomes more and more of an issue, we're going to be
 encrypting a lot more of the data we store on the web.  With that in mind, I

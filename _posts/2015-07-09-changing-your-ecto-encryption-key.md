@@ -8,6 +8,10 @@ categories:
 date: 2015-07-09 07:00:00 -0800
 ---
 
+**Author's Note: I've released an open-source Hex package that implements the
+approach to encryption I describe in this post. [Read the announcement post
+here](/2015/09/22/cloak-your-ecto-data.html)**.
+
 READ THIS FIRST: [Encrypting Data with Ecto][ecto-encryption]
 
 In [an earlier post][ecto-encryption], I wrote about how to encrypt data with
