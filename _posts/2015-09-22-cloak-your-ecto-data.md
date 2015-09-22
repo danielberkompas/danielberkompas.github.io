@@ -71,7 +71,7 @@ When you call `Cloak.decrypt/1`, `Cloak` will use the cipher tag to determine
 which module created the ciphertext, and will then pass _the rest_ of the 
 binary to that module's `decrypt/1` function for decryption.
 
-This allows `Cloak` to continue to decrypt old values flawlessly, even if you've
+This allows `Cloak` to continue to decrypt old values seamlessly, even if you've
 set up a new `:default` encryption module or key.
 
 ## Ecto Integration
