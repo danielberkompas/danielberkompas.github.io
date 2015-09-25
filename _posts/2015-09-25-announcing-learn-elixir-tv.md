@@ -60,59 +60,7 @@ comment on the relevant video using Disqus.
 
 ### Can I see your topic list?
 
-Certainly!
-
-```
-## Language Basics
-- [x] Introduction
-- [x] Data Types
-- [x] Operators (esp. =) (IEx)
-- [x] Modules and functions
-    - How to write modules in .exs files
-    - public/private functions
-    - Compiling, starting iex with module loaded
-    - Function documentation
-    - Calling functions in Erlang libraries
-- [x] Control Flow (if, unless, case, cond, patterns, guards)
-- [x] Recursion
-- [ ] Enums & Streams
-    - Capture operator &
-- [ ] Comprehensions (for)
-
-## Project Organization
-- [ ] Mix build tool
-- [ ] Hex dependency management
-    - Show how to generate documentation from module docs
-    - Mention awesome elixir list of projects
-- [ ] ExUnit
-    - Running tests async
-    - Make sure to mention doctests!
-
-## Concurrency
-
-- [ ] Processes (spawning, linking, monitoring, messaging)
-- [ ] Nodes
-- [ ] OTP: GenServer
-- [ ] OTP: Supervisor Trees
-- [ ] OTP: Applications
-- [ ] Abstractions: Task & Agent
-
-## Advanced Elixir
-
-- [ ] Protocols (Including notable stdlib protocols)
-- [ ] Behaviours (differences between behaviours and protocols)
-- [ ] Exceptions
-- [ ] Macros (long episode)
-- [ ] Binary Pattern Matching
-
-## Appendixes
-
-- [ ] Sigils (short episode)
-- [ ] GenEvent
-- [ ] Typespecs & Dialyzer
-- [ ] Deployment
-- [ ] `:observer` - debugging
-```
+Certainly! [See it here](http://www.learnelixir.com/upcoming).
 
 [learn_elixir]: http://www.learnelixir.tv
 [elixirsips]: http://elixirsips.com
