@@ -39,6 +39,8 @@ features and the most important parts of its standard library. When it is
 finished, a beginner should be able to get up and running from the screencast 
 alone.
 
+[Read the topic list](http://www.learnelixir.tv/upcoming)
+
 ### How many episodes will there be?
 
 At least 20, but beyond that, as many as it takes to cover the subject matter 
@@ -57,10 +59,6 @@ episode or require a subscription.
 
 Email me at `admin at learnelixir dot tv`. Or, if you've bought the series, just
 comment on the relevant video using Disqus.
-
-### Can I see your topic list?
-
-Certainly! [See it here](http://www.learnelixir.com/upcoming).
 
 [learn_elixir]: http://www.learnelixir.tv
 [elixirsips]: http://elixirsips.com
