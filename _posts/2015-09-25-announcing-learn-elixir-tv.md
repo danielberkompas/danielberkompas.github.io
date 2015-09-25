@@ -24,7 +24,7 @@ announce to the public: [LearnElixir.tv][learn_elixir]. Please check it out!
 
 ### How is this different from [ElixirSips][elixirsips]?
 
-I'm a happy subscriber to Josh Adam's [ElixirSips][elixirsips] screencast. If 
+I'm a happy subscriber to Josh Adams' [ElixirSips][elixirsips] screencast. If 
 you're not already a subscriber, go sign up for it now! It's great.
 
 However, I felt like there was room for a screencast oriented more toward 
