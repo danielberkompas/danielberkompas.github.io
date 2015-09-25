@@ -75,7 +75,7 @@ Certainly!
     - Calling functions in Erlang libraries
 - [x] Control Flow (if, unless, case, cond, patterns, guards)
 - [x] Recursion
-- [ ] Enums & Streams (think of a different title)
+- [ ] Enums & Streams
     - Capture operator &
 - [ ] Comprehensions (for)
 
