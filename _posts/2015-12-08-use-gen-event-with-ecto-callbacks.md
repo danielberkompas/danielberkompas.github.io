@@ -41,7 +41,7 @@ First, set up an Event broadcaster, like so:
 ```elixir
 defmodule MyApp.Event do
   @handlers [
-    Footprint.Handlers.ModelHandler
+    # Insert names of handler modules here
   ]
 
   def start_link do
