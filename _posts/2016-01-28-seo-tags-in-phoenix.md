@@ -44,7 +44,7 @@ In Phoenix, your layout is rendered _before_ your page template is rendered. Tak
 
 Because Phoenix renders templates as functions, by the time your `@view_template` is rendered, the `<head>` is already rendered. So, there's nothing that your view template can do to inject content back up into `<head>`. The `content_for` approach won't work.
 
-I think there are at least three approaches to dealing with this: two of which I've seen in the wild, and one which I came up with today.
+I think there are at least four approaches to dealing with this: two of which I've seen in the wild, one which I came up with today, and one I used to use.
 
 ## 1. Assigns in Each Controller Action
 
@@ -223,6 +223,56 @@ And my layout looks like this:
 ```
 
 While I'm not completely happy with it, (it would be nice to get all that text out of the controller), I think this is pretty clear. The controller actions are also uncluttered, which is a plus.
+
+## 4. `render_existing/2`
+
+Both Chris McCord and José Valim mentioned `render_existing/2` when they saw this post. I knew about it, (I believe it was one of my questions on IRC that prompted its creation, actually) but I don't really prefer it for this use case.
+
+To use `render_existing` for this, you'd change your layout to look like this:
+
+```erb
+<html>
+  <head>
+    <%= render_existing @view_module, "meta." <> @view_template, assigns %>
+  </head>
+  <body>
+    <%= render @view_module, @view_template, assigns %>
+  </body>
+</html>
+```
+
+You could then create a `meta.index.html.eex` file that contains whatever content you want:
+
+```
+<title>My Awesome App</title>
+<meta name="description" content="..." />
+```
+
+This feels a bit more like Rails, but you end up with an extra file for each action in your controller, which feels a little odd.
+
+```
+meta.edit.html.eex
+meta.index.html.eex
+meta.new.html.eex
+edit.html.eex
+index.html.eex
+new.html.eex
+```
+
+You can avoid this by defining these templates as functions in your view rather than template files:
+
+```elixir
+def render("meta.index.html", _assigns) do
+  ~E{
+    <title>My Awesome App</title>
+    <meta type="description" content="..." />
+  }
+end
+```
+
+The `~E` sigil allows you to write EEX code inline in your view. This is fine, but it still can get a little messy looking with long meta descriptions, and you end up with a lot of function definitions.
+
+I personally think this is likely to confuse the other devs on the projects I work on, so I've chosen not to establish it as the "standard" way at [Infinite Red](http://infinite.red). It is definitely a valid option though.
 
 ## Other Approaches
 
