@@ -24,9 +24,9 @@ Inside any of your views, you could then use `content_for` to populate this sect
 <!-- More view content here... --->
 ```
 
-This is nice, in that it keeps the HTML all together in more or less the same place. In [Phoenix][phoenix], this is actually a bit more difficult to do elegantly.
+This is nice, in that it keeps the HTML all together in more or less the same place. In [Phoenix][phoenix], this has to be done differently.
 
-## Why It's Hard
+## How Phoenix is Different
 
 In Phoenix, your layout is rendered _before_ your page template is rendered. Take this layout, for example:
 
@@ -44,11 +44,64 @@ In Phoenix, your layout is rendered _before_ your page template is rendered. Tak
 
 Because Phoenix renders templates as functions, by the time your `@view_template` is rendered, the `<head>` is already rendered. So, there's nothing that your view template can do to inject content back up into `<head>`. The `content_for` approach won't work.
 
-I think there are at least four approaches to dealing with this: two of which I've seen in the wild, one which I came up with today, and one I used to use.
+I think there are at least four approaches to dealing with this.
 
-## 1. Assigns in Each Controller Action
+## 1. `render_existing/2`
 
-The first approach modifies the layout to look like this:
+Both Chris McCord and José Valim mentioned `render_existing/2` when they saw this post. I knew about it, (I believe it was one of my questions on IRC that prompted its creation, actually) and while I don't necessarily prefer it, it really should be mentioned here.
+
+To use `render_existing` for your meta tags, you'd change your layout to look like this:
+
+```erb
+<html>
+  <head>
+    <%= render_existing(@view_module, "meta." <> @view_template, assigns) ||
+        render(MyApp.LayoutView, "meta.html", assigns) %>
+  </head>
+  <body>
+    <%= render @view_module, @view_template, assigns %>
+  </body>
+</html>
+```
+
+The `render_existing` function will silently render nothing if the given template doesn't exist. The alternate `render` call will take over if you don't specify a meta file for your view/action, and will render the defaults. 
+
+Anyway, after modifying your layout, you could then create a `meta.index.html.eex` file in your view's template folder that contains whatever content you want:
+
+```
+<title>My Awesome App</title>
+<meta name="description" content="..." />
+```
+
+This feels a bit more like Rails, but you end up with an extra file for each action in your controller, which feels a little odd.
+
+```
+meta.edit.html.eex
+meta.index.html.eex
+meta.new.html.eex
+edit.html.eex
+index.html.eex
+new.html.eex
+```
+
+You can avoid this by defining these templates as functions in your view rather than template files:
+
+```elixir
+def render("meta.index.html", _assigns) do
+  ~E{
+    <title>My Awesome App</title>
+    <meta type="description" content="..." />
+  }
+end
+```
+
+The `~E` sigil allows you to write EEX code inline in your view. This is fine, but it still can get a little messy looking with long meta descriptions, and you end up with a lot of function definitions.
+
+I personally think this is likely to confuse the other devs on the projects I work on, so I've chosen not to establish it as the "standard" way at [Infinite Red](http://infinite.red). It is definitely a valid option though, and seems to be the "official" way.
+
+## 2. Assigns in Each Controller Action
+
+The second approach modifies the layout to look like this:
 
 ```erb
 <html>
@@ -90,7 +143,7 @@ end
 
 I think we can do better.
 
-## 2. Delegated Functions
+## 3. Delegated Functions
 
 Another alternative I've seen is to delegate to functions on your view module, like this:
 
@@ -120,6 +173,8 @@ defmodule MyApp.PageView do
 end
 ```
 
+This is pretty similar to the first approach outlined above.
+
 If you didn't want to have to define these functions on every view, you could create a mixin that would define default implementations of these `title` and `meta` functions.
 
 ```elixir
@@ -146,9 +201,9 @@ def view do
 end
 ```
 
-This approach has the advantage of cleaning up the controller, but I think it's a bit less clear where the titles and meta descriptions are being generated.
+This approach has the advantage of cleaning up the controller, but I think it's a bit less clear where the titles and meta descriptions are being generated, and it's not clearly better than the `render_existing` approach.
 
-## 3. Use a Plug
+## 4. Use a Plug
 
 A huge number of problems can be solved with Plug, so today, I thought I would try to use it to solve this problem. It's pretty simple to create a custom plug for this:
 
@@ -224,61 +279,11 @@ And my layout looks like this:
 
 While I'm not completely happy with it, (it would be nice to get all that text out of the controller), I think this is pretty clear. The controller actions are also uncluttered, which is a plus.
 
-## 4. `render_existing/2`
-
-Both Chris McCord and José Valim mentioned `render_existing/2` when they saw this post. I knew about it, (I believe it was one of my questions on IRC that prompted its creation, actually) but I don't really prefer it for this use case.
-
-To use `render_existing` for this, you'd change your layout to look like this:
-
-```erb
-<html>
-  <head>
-    <%= render_existing @view_module, "meta." <> @view_template, assigns %>
-  </head>
-  <body>
-    <%= render @view_module, @view_template, assigns %>
-  </body>
-</html>
-```
-
-The `render_existing` function will silently render nothing if the given template doesn't exist. You could then create a `meta.index.html.eex` file that contains whatever content you want:
-
-```
-<title>My Awesome App</title>
-<meta name="description" content="..." />
-```
-
-This feels a bit more like Rails, but you end up with an extra file for each action in your controller, which feels a little odd.
-
-```
-meta.edit.html.eex
-meta.index.html.eex
-meta.new.html.eex
-edit.html.eex
-index.html.eex
-new.html.eex
-```
-
-You can avoid this by defining these templates as functions in your view rather than template files:
-
-```elixir
-def render("meta.index.html", _assigns) do
-  ~E{
-    <title>My Awesome App</title>
-    <meta type="description" content="..." />
-  }
-end
-```
-
-The `~E` sigil allows you to write EEX code inline in your view. This is fine, but it still can get a little messy looking with long meta descriptions, and you end up with a lot of function definitions.
-
-I personally think this is likely to confuse the other devs on the projects I work on, so I've chosen not to establish it as the "standard" way at [Infinite Red](http://infinite.red). It is definitely a valid option though.
-
 ## Other Approaches
 
 I'm pretty sure you could create a plug that used the [Gettext][gettext] API to extract all the strings out to .po files. I'm just not sure that's worth the added complexity and explaining to new developers.
 
-It would be nice if Phoenix had an "official" recommendation on how to populate these SEO tags, but in the meantime, I hope these suggestions helped!
+I hope you found this helpful!
 
 [phoenix]: https://phoenixframework.org
 [gettext]: http://hexdocs.pm/gettext/Gettext.html
