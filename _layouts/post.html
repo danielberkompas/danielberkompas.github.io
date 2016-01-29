@@ -3,7 +3,7 @@ layout: default
 ---
 
 <p class="meta">
-  {{ page.date | date: "%B %d, %Y" }} 
+  {{ page.date | date: "%B %d, %Y" }}
   <a href="/">
     <i class="home fa fa-home"></i>
   </a>
@@ -19,6 +19,22 @@ layout: default
   <h3>Did You Enjoy This Post?</h3>
   {% include subscribe.html %}
 </div>
+
+{% if page.comments %}
+<div id="comments">
+  <h3>Comments</h3>
+  <div id="disqus_thread"></div>
+  <script>
+  (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = '//dberkomcodeblog.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+{% endif %}
 
 <div id="related">
   <h3>Related Posts</h3>
