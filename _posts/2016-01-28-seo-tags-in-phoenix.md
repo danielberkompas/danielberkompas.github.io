@@ -42,7 +42,7 @@ In Phoenix, your layout is rendered _before_ your page template is rendered. Tak
 </html>
 ```
 
-Because Phoenix treats templates as functions, by the time your `@view_template` is rendered, the `<head>` is already rendered. So, there's nothing that your view template can do to inject content back up into `<head>`. The `content_for` approach won't work.
+Because Phoenix renders templates as functions, by the time your `@view_template` is rendered, the `<head>` is already rendered. So, there's nothing that your view template can do to inject content back up into `<head>`. The `content_for` approach won't work.
 
 I think there are at least three approaches to dealing with this: two of which I've seen in the wild, and one which I came up with today.
 
