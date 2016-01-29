@@ -241,7 +241,7 @@ To use `render_existing` for this, you'd change your layout to look like this:
 </html>
 ```
 
-The `render_existing/2` function will silently render nothing if the given template doesn't exist. You could then create a `meta.index.html.eex` file that contains whatever content you want:
+The `render_existing` function will silently render nothing if the given template doesn't exist. You could then create a `meta.index.html.eex` file that contains whatever content you want:
 
 ```
 <title>My Awesome App</title>
