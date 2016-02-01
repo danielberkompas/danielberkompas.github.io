@@ -7,11 +7,11 @@ url: http://blog.danielberkompas.com
 author:
   name: Daniel Berkompas
   url: http://danielberkompas.com
-lsi: false
-exclude: [LICENSE, CNAME, README.md, .gitignore, Gemfile, Gemfile.lock]
 markdown: redcarpet
 redcarpet:
   extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
+lsi: false
+exclude: [LICENSE, CNAME, README.md, .gitignore, Gemfile, Gemfile.lock]
 gems:
   - jekyll-feed
 feed:
