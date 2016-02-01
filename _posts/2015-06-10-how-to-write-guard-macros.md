@@ -12,7 +12,7 @@ Elixir, provided that the macro expands to expressions that are supported in
 guards natively.
 
 I used this to create an `is_blank` guard. Elixir doesn't come with a `blank?`
-function like Ruby does, so you have to do it manually. Blank values are `" "`,
+function, so you have to do it manually. Blank values are `" "`,
 `""`, and `nil`. To check `blank?` in Elixir, you can check if a given value is
 `in` this array of blank values.
 
