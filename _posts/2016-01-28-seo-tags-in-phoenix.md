@@ -7,7 +7,7 @@ comments: true
 
 Public facing websites need to have some basic search engine optimization (SEO) tags, such as `<title>` and `<meta name="description">`. In Rails, you could achieve this pretty simply by putting a `yield :head` tag in the appropriate layout:
 
-```erb
+``` erb
 <head>
   <%= yield :head %>
 </head>
