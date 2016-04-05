@@ -7,13 +7,9 @@ categories:
 date: 2015-06-09 07:00:00 -0800
 ---
 
-Since I started working on a [Phoenix](http://phoenixframework.org) app, I was
-frustrated by the lack of number conversion helpers in Elixir/Erlang. I didn't
-want to have to rewrite `number_to_currency` every time I want to use it.
+Since I started working on a [Phoenix](http://phoenixframework.org) app, I was frustrated by the lack of number conversion helpers in Elixir/Erlang. I didn't want to have to rewrite `number_to_currency` every time I want to use it.
 
-So, I created [Number](https://github.com/danielberkompas/number). It's
-basically a shallow clone of NumberHelper from ActionView in Rails.  Now, Elixir
-users can have `number_to_currency` too!
+So, I created [Number](https://github.com/danielberkompas/number). It's basically a shallow clone of NumberHelper from ActionView in Rails.  Now, Elixir users can have `number_to_currency` too!
 
 <!-- more -->
 
@@ -54,5 +50,4 @@ number_to_currency(1234567890.50, unit: "R$", separator: ",", delimiter: "", for
 "1234567890,50 R$"
 ```
 
-As my free time permits, I expect to add more features to it, implementing those
-parts of Rails's NumberHelper that I consider useful to a broader audience.
+As my free time permits, I expect to add more features to it, implementing those parts of Rails's NumberHelper that I consider useful to a broader audience.

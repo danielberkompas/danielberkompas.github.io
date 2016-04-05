@@ -6,31 +6,22 @@ categories:
 date: 2015-04-03 07:00:00 -0800
 ---
 
-In [my last post][contracts-gem], I talked about Elixir's typespec annotations
-and Erlang's static analysis tool, [Dialyzer][dialyzer]. All that talk was great
-and all, but how do you actually _use_ Dialyzer on Elixir projects?
+In [my last post][contracts-gem], I talked about Elixir's typespec annotations and Erlang's static analysis tool, [Dialyzer][dialyzer]. All that talk was great and all, but how do you actually _use_ Dialyzer on Elixir projects?
 
 <!-- more -->
 
-In particular, how do you run Dialyzer on an Elixir project on Travis CI? In
-today's blog post, I'll show you how.
+In particular, how do you run Dialyzer on an Elixir project on Travis CI? In today's blog post, I'll show you how.
 
 ## Persistent Lookup Table
 
-Dialyzer requires a "persistent lookup table", or PLT, in order to perform its 
-analysis.  This PLT holds references to all the system Erlang libraries, and 
-Elixir's source code itself. In order to run Dialyzer on an Elixir project, 
-you've got to first generate a PLT for your system.
+Dialyzer requires a "persistent lookup table", or PLT, in order to perform its analysis.  This PLT holds references to all the system Erlang libraries, and Elixir's source code itself. In order to run Dialyzer on an Elixir project, you've got to first generate a PLT for your system.
 
 Yes, the PLT has to be generated _for the system that you're going to run
-Dialyzer on_, because the paths in the PLT are _hard coded_ when it is generated.
-A PLT generated on your Mac won't work on Travis.
+Dialyzer on_, because the paths in the PLT are _hard coded_ when it is generated. A PLT generated on your Mac won't work on Travis.
 
-What's more, the PLT takes quite a while to generate. If you generated it every
-time you ran your build on Travis, you'd slow down your builds by minutes.
+What's more, the PLT takes quite a while to generate. If you generated it every time you ran your build on Travis, you'd slow down your builds by minutes.
 
-Luckily for you, I've built a bunch of PLTs for Elixir on Travis already. You 
-can find them here: [danielberkompas/travis_elixir_plts][plts]. You're welcome.
+Luckily for you, I've built a bunch of PLTs for Elixir on Travis already. You can find them here: [danielberkompas/travis_elixir_plts][plts]. You're welcome.
 
 ## .travis.yml
 
@@ -55,22 +46,15 @@ script:
 A few notes on the options passed to Dialyzer here:
 
 - `--no_check_plt`: Increases speed. Dialyzer assumes PLT is up to date.
-- `--no_native`: Also increases speed. Because it is used to analyze large
-  projects, Dialyzer likes to compile parts into native code before doing
-  analysis. This takes time.
-- `_build/test/lib/$YOUR_PROJECT_NAME/ebin`: The directory in which the compiled
-  BEAM files created by Mix are. Replace `$YOUR_PROJECT_NAME` with whatever your
-  folder name happens to be.
+- `--no_native`: Also increases speed. Because it is used to analyze large projects, Dialyzer likes to compile parts into native code before doing analysis. This takes time.
+- `_build/test/lib/$YOUR_PROJECT_NAME/ebin`: The directory in which the compiled BEAM files created by Mix are. Replace `$YOUR_PROJECT_NAME` with whatever your folder name happens to be.
 
-Obviously, you could pass any options supported by Dialyzer here. Run `dialyzer
---help` to see them all. And that's that! You can now ensure that both you and
-all your collaborators pay attention to Dialyzer.
+Obviously, you could pass any options supported by Dialyzer here. Run `dialyzer --help` to see them all. And that's that! You can now ensure that both you and all your collaborators pay attention to Dialyzer.
 
 ## Additional Resources
 
 - [Dialyxir][dialyxir]: Adds a `mix dialyzer` task. Also adds a `mix
-  dialyzer.plt` task which can be very helpful when generating local PLTs on
-  your dev machine.
+  dialyzer.plt` task which can be very helpful when generating local PLTs on your dev machine.
 
 - [Dialyzer docs][dialyzer]
 

@@ -5,8 +5,7 @@ category: git
 date: 2015-02-19 07:00:00 -0800
 ---
 
-I keep forgetting how to do this, so I thought I'd post this for my own future
-benefit:
+I keep forgetting how to do this, so I thought I'd post this for my own future benefit:
 
 ```bash
 // Completely deletes the most recent commit

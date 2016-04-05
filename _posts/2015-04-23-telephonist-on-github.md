@@ -6,9 +6,7 @@ categories:
 date: 2015-04-23 07:00:00 -0800
 ---
 
-After a couple months of work, I've finally got the library I've been working
-toward for Twilio, and I'm calling it "[Telephonist][telephonist]". You can read
-all about it [over on Github][telephonist], but here's a taste:
+After a couple months of work, I've finally got the library I've been working toward for Twilio, and I'm calling it "[Telephonist][telephonist]". You can read all about it [over on Github][telephonist], but here's a taste:
 
 <!-- more -->
 
@@ -74,12 +72,9 @@ Which will render some nice TwiML:
 </Response>
 ```
 
-Unlike my [previous attempt at this][twiliomenu], Telephonist has _no 
-dependency_ on any ORM layer, is very concurrent, and produces code that
-is easy to maintain.
+Unlike my [previous attempt at this][twiliomenu], Telephonist has _no dependency_ on any ORM layer, is very concurrent, and produces code that is easy to maintain.
 
-Telephonist will be released on [Hex][hex] soon, (once I get the documentation
-finished) and in the future, I may create a Ruby version.
+Telephonist will be released on [Hex][hex] soon, (once I get the documentation finished) and in the future, I may create a Ruby version.
 
 [telephonist]: https://github.com/danielberkompas/telephonist
 [twiliomenu]: https://github.com/danielberkompas/twiliomenu
