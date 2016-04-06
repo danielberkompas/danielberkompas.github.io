@@ -2,6 +2,7 @@
 layout: "post"
 author: "Daniel Berkompas"
 title: "Background Jobs in Phoenix"
+comments: true
 ---
 
 In Ruby on Rails, it's very common to use background worker libraries like [Sidekiq][sidekiq] to speed up requests and do work asynchronously. Rather than doing all the work that needs to be done inline (and blocking other requests), a background job can speed things up significantly. Sidekiq is great, and you should definitely use it in your Ruby projects.
