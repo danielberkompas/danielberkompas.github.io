@@ -5,7 +5,7 @@ title: "Multi-dimensional Arrays in Elixir"
 comments: true
 ---
 
-I recently picked up a copy of [Game Programming Patterns][game-patterns], and started messing around with implementing some of them in Elixir. I very quickly ran into some trouble dealing with multidimensional arrays.
+I recently picked up a copy of [Game Programming Patterns][game-patterns], and started messing around with implementing some of them in Elixir. I very quickly ran into some trouble dealing with multi-dimensional arrays.
 
 <!-- more -->
 
