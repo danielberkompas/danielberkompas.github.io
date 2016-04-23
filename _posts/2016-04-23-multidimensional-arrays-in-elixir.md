@@ -7,6 +7,8 @@ comments: true
 
 I recently picked up a copy of [Game Programming Patterns][game-patterns], and started messing around with implementing some of them in Elixir. I very quickly ran into some trouble dealing with multidimensional arrays.
 
+<!-- more -->
+
 Take the game of Tic-tac-toe for example.
 
 ![Tic-tac-toe Game Board](/assets/img/tic_tac_toe.png)
@@ -101,7 +103,7 @@ put_in map[:user][:age], 21
 # => %{user: %{age: 21}}
 ```
 
-The problem is, the [`put_in`][put_in] macro also relies on the [Access behaviour][access], and therefore only works on maps and keyword lists, not regular lists and tuples. What to do?
+The bad news is that the [`put_in`][put_in] macro also relies on the [Access behaviour][access], and therefore only works on maps and keyword lists, not regular lists and tuples. What to do?
 
 ## Solution: Use a Map
 
