@@ -1,11 +1,11 @@
 ---
 layout: "post"
 author: "Daniel Berkompas"
-title: "Multi-dimensional Arrays in Elixir"
+title: "Multidimensional Arrays in Elixir"
 comments: true
 ---
 
-I recently picked up a copy of [Game Programming Patterns][game-patterns], and started messing around with implementing some of them in Elixir. I very quickly ran into some trouble dealing with multi-dimensional arrays.
+I recently picked up a copy of [Game Programming Patterns][game-patterns], and started messing around with implementing some of them in Elixir. I very quickly ran into some trouble dealing with multidimensional arrays.
 
 <!-- more -->
 
@@ -13,7 +13,7 @@ Take the game of Tic-tac-toe for example.
 
 ![Tic-tac-toe Game Board](/assets/img/tic_tac_toe.png)
 
-Most programming languages would represent this Tic-tac-toe board as a multi-dimensional array, like this:
+Most programming languages would represent this Tic-tac-toe board as a multidimensional array, like this:
 
 ```javascript
 var board = [
@@ -60,7 +60,7 @@ board
 # => "x"
 ```
 
-It's no easier if you decide to use a multi-dimensional tuple to represent the board; you just have to use the `elem/2` function instead of `Enum.at/2`:
+It's no easier if you decide to use a multidimensional tuple to represent the board; you just have to use the `elem/2` function instead of `Enum.at/2`:
 
 ```elixir
 board = {
@@ -136,11 +136,11 @@ We can make the experience nicer by creating a module that can generate these ma
 ```elixir
 defmodule Matrix do
   @moduledoc """
-  Helpers for working with multi-dimensional lists, also called matrices.
+  Helpers for working with multidimensional lists, also called matrices.
   """
 
   @doc """
-  Converts a multi-dimensional list into a zero-indexed map.
+  Converts a multidimensional list into a zero-indexed map.
   
   ## Example
   
@@ -161,7 +161,7 @@ defmodule Matrix do
   defp do_from_list(other, _, _), do: other
 
   @doc """
-  Converts a zero-indexed map into a multi-dimensional list.
+  Converts a zero-indexed map into a multidimensional list.
   
   ## Example
   
@@ -184,7 +184,7 @@ end
 
 ## Conclusion
 
-With the `Matrix` module in place, we can now manipulate multi-dimensional arrays just as well as other languages: [^memory]
+With the `Matrix` module in place, we can now manipulate multidimensional arrays just as well as other languages: [^memory]
 
 ```elixir
 # Create the game board
@@ -200,7 +200,7 @@ board[1][2] # => "o"
 # Update the value at coords
 board = put_in board[2][0], "x"
 
-# Get a multi-dimensional list back:
+# Get a multidimensional list back:
 Matrix.to_list(board)
 # [
 #   ["x", "o", "x"],
