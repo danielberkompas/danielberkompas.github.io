@@ -166,7 +166,7 @@ The only important convention for service modules is that they return an Ecto.Mu
 
 ## Conclusion
 
-I've been looking for a viable alternative to ActiveRecord callbacks and their associated bloat for a long time, and I finally feel like I've found it with [Ecto.Multi][ecto-multi]. Be sure to check out its documentation, and if you're interested, I've also covered its API in more detailed in [this episode of LearnPhoenix.tv][ecto-multi-episode].
+I've been looking for a viable alternative to ActiveRecord callbacks and their associated bloat for a long time, and I finally feel like I've found it with [Ecto.Multi][ecto-multi]. Be sure to check out its documentation, and if you're interested, I've also covered its API in more detail in [this episode of LearnPhoenix.tv][ecto-multi-episode].
 
 
 [^1]: This is only _one_ available option. You could also share business logic with a `Plug` or a plain module, depending on your application.
