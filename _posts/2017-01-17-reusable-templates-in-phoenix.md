@@ -57,11 +57,11 @@ So far, so good, but it's too verbose. Let's add a `ComponentHelpers` module lik
 # views/component_helpers.ex
 defmodule MyApp.Web.ComponentHelpers do
   def component(template, assigns) do
-    Producer.Web.ComponentView.render(template, assigns)
+    MyApp.Web.ComponentView.render(template, assigns)
   end
   
   def component(template, assigns, do: block) do
-    Producer.Web.ComponentView.render(template, Keyword.merge(assigns, [do: block]))
+    MyApp.Web.ComponentView.render(template, Keyword.merge(assigns, [do: block]))
   end
 end
 ```
