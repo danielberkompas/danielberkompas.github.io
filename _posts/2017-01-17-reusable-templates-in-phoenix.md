@@ -7,6 +7,8 @@ comments: true
 
 If you've spent any time with [React](https://facebook.github.io/react/) or its [look-a-likes](https://github.com/developit/preact), you've probably realized that most web apps have a lot of duplication in their templates. This is particularly true of server-rendered apps.
 
+<!-- more -->
+
 Templates should be organized as a set of reusable components, like this:
 
 ```html
