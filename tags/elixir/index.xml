@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Elixir on Random Bits</title>
+    <link>https://blog.danielberkompas.com/tags/elixir/</link>
+    <description>Recent content in Elixir on Random Bits</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 28 Aug 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://blog.danielberkompas.com/tags/elixir/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>How to Run Elixir in Cloud9&#39;s IDE</title>
+      <link>https://blog.danielberkompas.com/2015/08/28/how-to-run-elixir-cloud9-ide/</link>
+      <pubDate>Fri, 28 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/08/28/how-to-run-elixir-cloud9-ide/</guid>
+      <description>Cloud9 is a great web-based development platform. If you don&amp;rsquo;t have access to a dedicated machine you can set up for development, or if you just prefer to keep all your coding in neat, tiny VMs, Cloud9 could be just what you&amp;rsquo;re looking for. It&amp;rsquo;s particularly good for students learning to code.
+Cloud9 doesn&amp;rsquo;t provide an Elixir-specific workspace template, so you have to configure one yourself. Here&amp;rsquo;s how to do that:</description>
+    </item>
+    
+    <item>
+      <title>GenServers as Concurrent Objects</title>
+      <link>https://blog.danielberkompas.com/2015/08/21/genservers-as-concurrent-objects/</link>
+      <pubDate>Fri, 21 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/08/21/genservers-as-concurrent-objects/</guid>
+      <description>&lt;p&gt;This is a post for fellow object-oriented developers trying to get their heads around how Elixir/Erlang use processes as a basic abstraction, rather than classes and objects.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Elixir as an Operating System</title>
+      <link>https://blog.danielberkompas.com/2015/08/03/elixir-as-an-operating-system/</link>
+      <pubDate>Mon, 03 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/08/03/elixir-as-an-operating-system/</guid>
+      <description>&lt;p&gt;I recently was using a &lt;a href=&#34;https://www.synology.com/&#34;&gt;Synology Diskstation&lt;/a&gt;, and I was very impressed by their web admin interface. They have successfully emulated a desktop operating system, complete with downloadable programs, file browsing, and more. You can manage the whole system from the browser in a way that feels very much like Windows 7.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Fixtures for Ecto</title>
+      <link>https://blog.danielberkompas.com/2015/07/16/fixtures-for-ecto/</link>
+      <pubDate>Thu, 16 Jul 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/07/16/fixtures-for-ecto/</guid>
+      <description>&lt;p&gt;When you test an &lt;a href=&#34;http://elixir-lang.org&#34;&gt;Elixir&lt;/a&gt; app that uses &lt;a href=&#34;https://github.com/elixir-lang/ecto&#34;&gt;Ecto&lt;/a&gt;, you will find yourself needing a way to insert test data into the database. There are many different approaches to doing this, and I thought I&amp;rsquo;d cover a few, and then describe what I think the best approach is for Elixir.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Changing Your Ecto Encryption Key</title>
+      <link>https://blog.danielberkompas.com/2015/07/09/changing-your-ecto-encryption-key/</link>
+      <pubDate>Thu, 09 Jul 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/07/09/changing-your-ecto-encryption-key/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Author&amp;rsquo;s Note: I&amp;rsquo;ve released an open-source Hex package that implements the approach to encryption I describe in this post. &lt;a href=&#34;https://blog.danielberkompas.com/2015/09/22/cloak-your-ecto-data.html&#34;&gt;Read the announcement post here&lt;/a&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;READ THIS FIRST: &lt;a href=&#34;https://blog.danielberkompas.com/elixir/security/2015/07/03/encrypting-data-with-ecto.html&#34;&gt;Encrypting Data with Ecto&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;In &lt;a href=&#34;https://blog.danielberkompas.com/elixir/security/2015/07/03/encrypting-data-with-ecto.html&#34;&gt;an earlier post&lt;/a&gt;, I wrote about how to encrypt data with &lt;a href=&#34;https://github.com/elixir-lang/ecto&#34;&gt;Ecto&lt;/a&gt;, &lt;a href=&#34;https://github.com/elixir-lang/elixir&#34;&gt;Elixir&amp;rsquo;s&lt;/a&gt; database library. However, I didn&amp;rsquo;t cover how to change your encryption key, which you&amp;rsquo;ll definitely want to do periodically. I want to show how do that in this post.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Encrypting Data With Ecto</title>
+      <link>https://blog.danielberkompas.com/2015/07/03/encrypting-data-with-ecto/</link>
+      <pubDate>Fri, 03 Jul 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/07/03/encrypting-data-with-ecto/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Author&amp;rsquo;s Note: This post has been substantially updated since &lt;a href=&#34;https://github.com/danielberkompas/danielberkompas.github.io/blob/c6eb249e5019e782e891bfeb591bc75f084fd97c/_posts/2015-07-03-encrypting-data-with-ecto.md&#34;&gt;it was first posted&lt;/a&gt;. A much stronger crypto implementation has been used and the code has been reworked to be cleaner and more efficient.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;I&amp;rsquo;ve also released an open-source Hex package that implements the approach to encryption I describe in this post. &lt;a href=&#34;https://blog.danielberkompas.com/2015/09/22/cloak-your-ecto-data.html&#34;&gt;Read the announcement post here&lt;/a&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;In the future, as privacy becomes more and more of an issue, we&amp;rsquo;re going to be encrypting a lot more of the data we store on the web.  With that in mind, I thought it would be a good idea to figure out a good way to integrate data encryption with &lt;a href=&#34;https://github.com/elixir-lang/elixir&#34;&gt;Elixir&amp;rsquo;s&lt;/a&gt; database library, &lt;a href=&#34;https://github.com/elixir-lang/ecto&#34;&gt;Ecto&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Rate Limiting a Phoenix API</title>
+      <link>https://blog.danielberkompas.com/2015/06/16/rate-limiting-a-phoenix-api/</link>
+      <pubDate>Tue, 16 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/06/16/rate-limiting-a-phoenix-api/</guid>
+      <description>&lt;p&gt;In my spare time, I&amp;rsquo;ve been working on a little &lt;a href=&#34;http://phoenixframework.org&#34;&gt;Phoenix&lt;/a&gt; project that involves a JSON API. Developers frequently neglect rate limiting when they build an API, assuming they are even aware that it is a best practice.&lt;/p&gt;
+
+&lt;p&gt;It&amp;rsquo;s true that in many cases rate limiting isn&amp;rsquo;t worth the effort, but when it comes to authentication, it definitely is. For example, the recent high-profile &lt;a href=&#34;http://icloud.com&#34;&gt;iCloud&lt;/a&gt; security breach which released celebrity photos in to the internet could have been prevented had Apple implemented rate limiting on one of their authentication APIs. This would have prevented the brute-force attack that the hackers used to guess the celebrities&amp;rsquo; passwords.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>How to Write Guard Macros</title>
+      <link>https://blog.danielberkompas.com/2015/06/10/how-to-write-guard-macros/</link>
+      <pubDate>Wed, 10 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/06/10/how-to-write-guard-macros/</guid>
+      <description>&lt;p&gt;I recently discovered that it is possible to write custom guard macros for Elixir, provided that the macro expands to expressions that are supported in guards natively.&lt;/p&gt;
+
+&lt;p&gt;I used this to create an &lt;code&gt;is_blank&lt;/code&gt; guard. Elixir doesn&amp;rsquo;t come with a &lt;code&gt;blank?&lt;/code&gt; function, so you have to do it manually. Blank values are &lt;code&gt;&amp;quot; &amp;quot;&lt;/code&gt;, &lt;code&gt;&amp;quot;&amp;quot;&lt;/code&gt;, and &lt;code&gt;nil&lt;/code&gt;. To check &lt;code&gt;blank?&lt;/code&gt; in Elixir, you can check if a given value is &lt;code&gt;in&lt;/code&gt; this array of blank values.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Number Helpers For Elixir</title>
+      <link>https://blog.danielberkompas.com/2015/06/09/number-helpers-for-elixir/</link>
+      <pubDate>Tue, 09 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/06/09/number-helpers-for-elixir/</guid>
+      <description>&lt;p&gt;Since I started working on a &lt;a href=&#34;http://phoenixframework.org&#34;&gt;Phoenix&lt;/a&gt; app, I was frustrated by the lack of number conversion helpers in Elixir/Erlang. I didn&amp;rsquo;t want to have to rewrite &lt;code&gt;number_to_currency&lt;/code&gt; every time I want to use it.&lt;/p&gt;
+
+&lt;p&gt;So, I created &lt;a href=&#34;https://github.com/danielberkompas/number&#34;&gt;Number&lt;/a&gt;. It&amp;rsquo;s basically a shallow clone of NumberHelper from ActionView in Rails.  Now, Elixir users can have &lt;code&gt;number_to_currency&lt;/code&gt; too!&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Useful Ecto Validators</title>
+      <link>https://blog.danielberkompas.com/2015/05/20/useful-ecto-validators/</link>
+      <pubDate>Wed, 20 May 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/05/20/useful-ecto-validators/</guid>
+      <description>&lt;p&gt;Over the past week, I&amp;rsquo;ve created a couple custom validators for my Elixir projects which use &lt;a href=&#34;https://github.com/elixir-lang/ecto&#34;&gt;Ecto&lt;/a&gt;. Since validators are just functions that take a changeset and return a changeset, they&amp;rsquo;re very easy to write.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Testing Ecto Validations</title>
+      <link>https://blog.danielberkompas.com/2015/05/08/testing-ecto-validations/</link>
+      <pubDate>Fri, 08 May 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/05/08/testing-ecto-validations/</guid>
+      <description>&lt;p&gt;I recently was playing around with &lt;a href=&#34;http://phoenixframework.org&#34;&gt;Phoenix&lt;/a&gt; and &lt;a href=&#34;https://github.com/elixir-lang/ecto&#34;&gt;Ecto&lt;/a&gt;, Elixir&amp;rsquo;s database library, and I wanted to test my validations. In the process, I wrote a &lt;a href=&#34;https://github.com/danielberkompas/ecto_validation_case&#34;&gt;little library&lt;/a&gt; along the lines of &lt;a href=&#34;https://github.com/thoughtbot/shoulda&#34;&gt;Shoulda&lt;/a&gt; from Ruby.  However, when José Valim saw it, he
+&lt;a href=&#34;https://groups.google.com/forum/#!topic/elixir-lang-talk/kwLLyCiarls&#34;&gt;suggested a much better approach&lt;/a&gt; which I think illustrates what makes Elixir great.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Telephonist: State Machines for Twilio</title>
+      <link>https://blog.danielberkompas.com/2015/04/23/telephonist-on-github/</link>
+      <pubDate>Thu, 23 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/04/23/telephonist-on-github/</guid>
+      <description>&lt;p&gt;After a couple months of work, I&amp;rsquo;ve finally got the library I&amp;rsquo;ve been working toward for Twilio, and I&amp;rsquo;m calling it &amp;ldquo;&lt;a href=&#34;https://github.com/danielberkompas/telephonist&#34;&gt;Telephonist&lt;/a&gt;&amp;rdquo;. You can read all about it &lt;a href=&#34;https://github.com/danielberkompas/telephonist&#34;&gt;over on Github&lt;/a&gt;, but here&amp;rsquo;s a taste:&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>On Keeping Your ETS Tables Alive</title>
+      <link>https://blog.danielberkompas.com/2015/04/17/keep-your-ets-tables-alive/</link>
+      <pubDate>Fri, 17 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/04/17/keep-your-ets-tables-alive/</guid>
+      <description>&lt;p&gt;In my ongoing quest to make Elixir libraries that integrate with
+&lt;a href=&#34;http://twilio.com&#34;&gt;Twilio&lt;/a&gt;, I found that I needed a lookup table to store the state of ongoing calls in.&lt;/p&gt;
+
+&lt;p&gt;In Rails, this table would probably be a Postgres table or a list key in Redis. But before jumping to one of these familiar solutions, I thought, &amp;ldquo;What does Elixir/Erlang already have that would meet this need?&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Build Dialyzer PLTs on Travis CI</title>
+      <link>https://blog.danielberkompas.com/2015/04/08/generate-dialyzer-plts-on-travis/</link>
+      <pubDate>Wed, 08 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/04/08/generate-dialyzer-plts-on-travis/</guid>
+      <description>&lt;p&gt;In a &lt;a href=&#34;http://blog.danielberkompas.com/elixir/2015/04/08/generate-dialyzer-plts-on-travis.html&#34;&gt;previous post&lt;/a&gt;, I wrote about how to easily get a prebuilt PLT for your Elixir builds on Travis. But what if that doesn&amp;rsquo;t work for you? What if you have special requirements that my &lt;a href=&#34;https://github.com/danielberkompas/travis_elixir_plts&#34;&gt;prebuilt PLTs&lt;/a&gt; don&amp;rsquo;t meet?&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Run Dialyzer on Elixir on Travis CI</title>
+      <link>https://blog.danielberkompas.com/2015/04/03/run-dialyzer-on-elixir-on-travis/</link>
+      <pubDate>Fri, 03 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/04/03/run-dialyzer-on-elixir-on-travis/</guid>
+      <description>&lt;p&gt;In &lt;a href=&#34;https://blog.danielberkompas.com/elixir/ruby/2015/04/01/contracts-gem.html&#34;&gt;my last post&lt;/a&gt;, I talked about Elixir&amp;rsquo;s typespec annotations and Erlang&amp;rsquo;s static analysis tool, &lt;a href=&#34;http://www.erlang.org/doc/man/dialyzer.html&#34;&gt;Dialyzer&lt;/a&gt;. All that talk was great and all, but how do you actually &lt;em&gt;use&lt;/em&gt; Dialyzer on Elixir projects?&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Contracts: Type Checking for Ruby</title>
+      <link>https://blog.danielberkompas.com/2015/04/01/contracts-gem/</link>
+      <pubDate>Wed, 01 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/04/01/contracts-gem/</guid>
+      <description>&lt;p&gt;Like many Rubyists who read popular coding news, I recently came across the &lt;a href=&#34;https://rubygems.org/gems/contracts&#34;&gt;Contracts&lt;/a&gt; gem. It caught my eye because it implements some of the features I like in &lt;a href=&#34;http://elixir-lang.org&#34;&gt;Elixir&lt;/a&gt;, but for Ruby.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Stream Paginated APIs in Elixir</title>
+      <link>https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/</link>
+      <pubDate>Sat, 28 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/</guid>
+      <description>&lt;h2 id=&#34;this-article-was-recently-featured-in-elixir-radar-http-plataformatec-com-br-elixir-radar-since-it-was-written-i-ve-found-a-simpler-way-to-implement-this-kind-of-stream-i-ll-be-writing-an-updated-tutorial-in-the-future-but-if-you-re-interested-you-should-also-check-out-the-current-state-of-extwilio-resultstream-https-github-com-danielberkompas-ex-twilio-blob-371f2b263d763d1459b467d1fbe8783fce825c0e-lib-ex-twilio-result-stream-ex&#34;&gt;_This article was recently featured in &lt;a href=&#34;http://plataformatec.com.br/elixir-radar&#34;&gt;Elixir Radar&lt;/a&gt;. Since it was written, I&amp;rsquo;ve found a simpler way to implement this kind of Stream. I&amp;rsquo;ll be writing an updated tutorial in the future, but if you&amp;rsquo;re interested, you should also check out the current state of &lt;a href=&#34;https://github.com/danielberkompas/ex_twilio/blob/371f2b263d763d1459b467d1fbe8783fce825c0e/lib/ex_twilio/result_stream.ex&#34;&gt;ExTwilio.ResultStream&lt;/a&gt;._&lt;/h2&gt;
+
+&lt;p&gt;This past week, as I worked on my new &lt;a href=&#34;https://github.com/danielberkompas/ex_twilio&#34;&gt;ExTwilio&lt;/a&gt; API library for &lt;a href=&#34;https://www.twilio.com&#34;&gt;Twilio&lt;/a&gt;, I ran into a snag dealing with &lt;a href=&#34;https://www.twilio.com/docs/api/rest/response#response-formats-list&#34;&gt;Twilio&amp;rsquo;s API pagination&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Twilio paginates its &amp;ldquo;list&amp;rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch &lt;em&gt;all&lt;/em&gt; of a resource and perform operations on it, like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-elixir&#34; data-lang=&#34;elixir&#34;&gt;&lt;span class=&#34;n&#34;&gt;calls&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;ExTwilio.Call&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;all&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Enum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;each&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;calls&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;call&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;c1&#34;&gt;# perform some operation&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Users won&amp;rsquo;t want to mess with the details of pagination. They want to get a collection containing everything and then operate on it.&lt;/p&gt;
+
+&lt;p&gt;I find that there are two basic ways to achieve this, a &lt;em&gt;blocking&lt;/em&gt; way and a &lt;em&gt;non-blocking&lt;/em&gt; way.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Manage Environment Variables in Elixir</title>
+      <link>https://blog.danielberkompas.com/2015/03/21/manage-env-vars-in-elixir/</link>
+      <pubDate>Sat, 21 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/03/21/manage-env-vars-in-elixir/</guid>
+      <description>&lt;p&gt;I love how the Elixir build tool, &lt;code&gt;Mix&lt;/code&gt;, has built-in support for configuration settings. It makes configuring packages much simpler by providing a standard interface for config settings.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;m currently developing a &lt;a href=&#34;http://twilio.com&#34;&gt;Twilio&lt;/a&gt; API client for Elixir. While I develop and test it, I need to store an &amp;ldquo;Account SID&amp;rdquo; and &amp;ldquo;Auth token&amp;rdquo; to make requests. Naturally, I turned to Mix config.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>ExTwiml</title>
+      <link>https://blog.danielberkompas.com/2015/03/11/ex-twiml---/2015/03/11/ex-twiml.html/</link>
+      <pubDate>Wed, 11 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/03/11/ex-twiml---/2015/03/11/ex-twiml.html/</guid>
+      <description>&lt;p&gt;At &lt;a href=&#34;http://leadsimple.com&#34;&gt;LeadSimple&lt;/a&gt;, we use &lt;a href=&#34;http://twilio.com&#34;&gt;Twilio&lt;/a&gt; to handle phone call routing. Twilio interacts with regular HTTP endpoints on your server to control calls and SMS messages, through a form of XML they call &lt;code&gt;TwiML&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve been toying recently ideas on how to bring next-generation Erlang (Elixir) and next-generation telephony (Twilio) together. Toward that end, I made a little library this week to make generating TwiML from Elixir easy.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Find the Nth Prime in Elixir</title>
+      <link>https://blog.danielberkompas.com/2015/02/21/find-nth-prime-in-elixir/</link>
+      <pubDate>Sat, 21 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/02/21/find-nth-prime-in-elixir/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve been working through &lt;a href=&#34;http://exercism.io&#34;&gt;Exercism&amp;rsquo;s&lt;/a&gt; set of code challenges for Elixir, and came across this one.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Write a program that can tell you what the nth prime is.&lt;/p&gt;
+
+&lt;p&gt;By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can  see that the 6th prime is 13.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is a perfect use case for Elixir&amp;rsquo;s &lt;a href=&#34;http://elixir-lang.org/docs/stable/elixir/Stream.html&#34;&gt;Stream&lt;/a&gt; module, because we want to generate a list of values and return the last one.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Moving Beyond Ruby</title>
+      <link>https://blog.danielberkompas.com/2015/02/09/moving-beyond-ruby/</link>
+      <pubDate>Mon, 09 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/02/09/moving-beyond-ruby/</guid>
+      <description>&lt;p&gt;I&amp;rsquo;ve been a Ruby developer for the last 4 years of my career. It&amp;rsquo;s served me very well, I still like it, and I expect that I&amp;rsquo;ll still be writing it for my career for years to come. However, there are some things that Ruby (and Rails) don&amp;rsquo;t do so well out of the box, and these things are causing me to look elsewhere.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Elixir as an Operating System</title>
+  <meta property="og:title" content="Elixir as an Operating System" />
+  <meta name="twitter:title" content="Elixir as an Operating System" />
+  <meta name="description" content="I recently was using a Synology Diskstation, and I was very impressed by their web admin interface. They have successfully emulated a desktop operating system, complete with downloadable programs, file browsing, and more. You can manage the whole system from the browser in a way that feels very much like Windows 7.
+
+">
+  <meta property="og:description" content="I recently was using a Synology Diskstation, and I was very impressed by their web admin interface. They have successfully emulated a desktop operating system, complete with downloadable programs, file browsing, and more. You can manage the whole system from the browser in a way that feels very much like Windows 7.
+
+">
+  <meta name="twitter:description" content="I recently was using a Synology Diskstation, and I was very impressed by their web admin interface. They have successfully emulated a desktop operating system, complete with downloadable programs, …">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2015/08/03/elixir-as-an-operating-system/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2015/08/03/elixir-as-an-operating-system/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Elixir as an Operating System</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on August 3, 2015
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 4 minutes (718 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>I recently was using a <a href="https://www.synology.com/">Synology Diskstation</a>, and I was very impressed by their web admin interface. They have successfully emulated a desktop operating system, complete with downloadable programs, file browsing, and more. You can manage the whole system from the browser in a way that feels very much like Windows 7.</p>
+
+<p></p>
+
+<p>Even more impressively, Diskstations can update themselves and their apps with one click, and sometimes, with no clicks at all. It&rsquo;s a remarkable achievement, and it makes their products great.</p>
+
+<p>However, I suspect all is not well. Perhaps its just cynicism on my part, but I think the code underlying all of this is probably a mess. I don&rsquo;t know if it&rsquo;s PHP or not, but given the vast number of features that Synology offers and the fact that most mass-market software is a mess underneath the surface, I doubt that Synology is an exception. In other words, I doubt that I would enjoy <em>writing</em> an app for a Diskstation as much as I might enjoy <em>using</em> one.</p>
+
+<p>Wordpress is somewhat similar to Synology, in that it provides a core package which can then be extended by various plugins. It now also has automatic updates, and maybe even automatic plugin updates. (I haven&rsquo;t checked for a while) But, as every developer who has ventured into the dark heart of Wordpress knows, it isn&rsquo;t very well built at bottom. That&rsquo;s putting it <em>very</em> mildly.</p>
+
+<p>Developers hate working with it, and it costs the poor saps who use it boatloads of money whenever they want to do something remotely custom. Wordpress sites are buggy and prone to security issues, and are very difficult to administer due to its convoluted UI, made worse by still more convoluted plugin UIs. Yet, Wordpress is still the most extensible and user-friendly website creation tool.</p>
+
+<p>My experience with Diskstation got me thinking, could Elixir be used to build a Wordpress replacement? Something that mere mortals could use and customize, but which wasn&rsquo;t terrible underneath the surface? Something that wouldn&rsquo;t cause developers everywhere to cringe when its name is mentioned? I think such a thing might be possible.</p>
+
+<h2 id="elixir-s-advantages">Elixir&rsquo;s Advantages</h2>
+
+<p>Elixir has several advantages over PHP for such a project:</p>
+
+<ul>
+<li><p>It&rsquo;s a better language. It is more explicit, more consistent, and has better developer tools. Documentation (essential for plugins!) is easy to write and HTML docs can be generated easily.</p></li>
+
+<li><p>Plugins == OTP Apps. Elixir has the concept of &ldquo;apps&rdquo; (persistent processes that are supervised and automatically restarted) built right in. Plugins could easily be written as OTP apps. Elixir already &ldquo;thinks&rdquo; like an operating system.</p></li>
+
+<li><p>Hot code swapping. Elixir supports upgrading a process to new code while the process stays running. This makes the challenge of one-click installs and upgrades a little easier.</p></li>
+
+<li><p>High availability. Elixir can maintain nearly zero-downtime through supervision trees, and plugins can maintain their own supervision trees.</p></li>
+
+<li><p>High performance. Budget conscious website creators could squeeze a lot of performance out of low end servers.</p></li>
+</ul>
+
+<h2 id="elixir-s-disadvantages">Elixir&rsquo;s Disadvantages</h2>
+
+<p>Elixir also has a couple disadvantages:</p>
+
+<ul>
+<li><p>Installation could be more complicated. Erlang and Elixir are not as common as PHP, and would have to be present on the server for the system to run. Many web hosting companies offer a &ldquo;Wordpress&rdquo; button to install Wordpress on their servers, while nothing similar would exist for Elixir.</p></li>
+
+<li><p>Elixir is not a mainstream language. This would mean that for a while at least, very few plugins would be available.</p></li>
+</ul>
+
+<h2 id="worth-a-shot">Worth a Shot?</h2>
+
+<p>I&rsquo;m intrigued by the possibility of building a Wordpress replacement in Elixir. It really does seem like Elixir could be an ideal fit for this kind of thing. However, rebuilding Wordpress in any language would certainly be no easy task, even with the helps that Elixir provides. If I get the chance, I may hack on it for a few evenings and see what happens, and I&rsquo;ll definitely post about it.</p>
+
+<p>If anyone else out there is inspired by this post and decides to steal the idea, go ahead! Just let me know where you&rsquo;re hosting the project so I can contribute.</p>
+
+<p><strong>UPDATED</strong>: When I tweeted this article, a fellow twitterer pointed me to <a href="http://zotonic.org">Zotonic</a>, an Erlang CMS that seems to be doing exactly what I&rsquo;m talking about. Since Elixir is built on Erlang, it should be possible to write Elixir plugins for it.</p>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2015/07/28/long-running-branches/" data-toggle="tooltip" data-placement="top" title="Avoid Long-Lived Feature Branches">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2015/08/21/genservers-as-concurrent-objects/" data-toggle="tooltip" data-placement="top" title="GenServers as Concurrent Objects">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

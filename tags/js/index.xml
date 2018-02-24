@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Js on Random Bits</title>
+    <link>https://blog.danielberkompas.com/tags/js/</link>
+    <description>Recent content in Js on Random Bits</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 27 Feb 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://blog.danielberkompas.com/tags/js/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Why I Write Straight HTML and JS</title>
+      <link>https://blog.danielberkompas.com/2015/02/27/why-i-write-straight-html-and-js/</link>
+      <pubDate>Fri, 27 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/02/27/why-i-write-straight-html-and-js/</guid>
+      <description>&lt;p&gt;It&amp;rsquo;s very popular in the Rails community to use templating languages that compile down to HTML. The asset pipeline likewise makes it very easy to use Coffeescript and SCSS, or other languages that compile down to Javascript and CSS.&lt;/p&gt;
+
+&lt;p&gt;When I got started with Rails, I was just as much a fan of these technologies as everyone else. Over time though, they&amp;rsquo;ve lost their shine, and I&amp;rsquo;ll explain why.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

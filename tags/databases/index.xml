@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Databases on Random Bits</title>
+    <link>https://blog.danielberkompas.com/tags/databases/</link>
+    <description>Recent content in Databases on Random Bits</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 06 Mar 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://blog.danielberkompas.com/tags/databases/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Thoughts on Immutable Databases</title>
+      <link>https://blog.danielberkompas.com/2015/03/06/immutable-databases/</link>
+      <pubDate>Fri, 06 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/03/06/immutable-databases/</guid>
+      <description>&lt;p&gt;I came across this talk on Apache Samza this past week:&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=fU9hR3kiOK0&#34;&gt;https://www.youtube.com/watch?v=fU9hR3kiOK0&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The author, Martin Kleppmann, also wrote up an &lt;a href=&#34;http://blog.confluent.io/2015/03/04/turning-the-database-inside-out-with-apache-samza/&#34;&gt;excellent post on the same subject&lt;/a&gt;, which is well worth your time.&lt;/p&gt;
+
+&lt;p&gt;In both, he argues that an stream of immutable facts (a log, essentially) is a better datastructure for databases, rather than the existing model of mutating state in place.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

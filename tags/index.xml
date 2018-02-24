@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Random Bits</title>
+    <link>https://blog.danielberkompas.com/tags/</link>
+    <description>Recent content in Tags on Random Bits</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 06 Mar 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://blog.danielberkompas.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Databases</title>
+      <link>https://blog.danielberkompas.com/tags/databases/</link>
+      <pubDate>Fri, 06 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/tags/databases/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Elixir</title>
+      <link>https://blog.danielberkompas.com/tags/elixir/</link>
+      <pubDate>Fri, 28 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/tags/elixir/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Gtd</title>
+      <link>https://blog.danielberkompas.com/tags/gtd/</link>
+      <pubDate>Sat, 07 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/tags/gtd/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Html</title>
+      <link>https://blog.danielberkompas.com/tags/html/</link>
+      <pubDate>Fri, 27 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/tags/html/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Js</title>
+      <link>https://blog.danielberkompas.com/tags/js/</link>
+      <pubDate>Fri, 27 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/tags/js/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Ruby</title>
+      <link>https://blog.danielberkompas.com/tags/ruby/</link>
+      <pubDate>Wed, 01 Apr 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/tags/ruby/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Scm</title>
+      <link>https://blog.danielberkompas.com/tags/scm/</link>
+      <pubDate>Tue, 28 Jul 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/tags/scm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Twilio</title>
+      <link>https://blog.danielberkompas.com/tags/twilio/</link>
+      <pubDate>Sat, 28 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/tags/twilio/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

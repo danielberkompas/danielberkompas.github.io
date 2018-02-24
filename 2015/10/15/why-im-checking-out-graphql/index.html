@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Why I&#39;m Checking Out GraphQL</title>
+  <meta property="og:title" content="Why I&#39;m Checking Out GraphQL" />
+  <meta name="twitter:title" content="Why I&#39;m Checking Out GraphQL" />
+  <meta name="description" content="Like many other Elixir programmers, I had heard rumblings about GraphQL, but only recently decided to take a deeper look at it after Chris McCord mentioned it in his recent talk at ElixirConf 2015.
+
+">
+  <meta property="og:description" content="Like many other Elixir programmers, I had heard rumblings about GraphQL, but only recently decided to take a deeper look at it after Chris McCord mentioned it in his recent talk at ElixirConf 2015.
+
+">
+  <meta name="twitter:description" content="Like many other Elixir programmers, I had heard rumblings about GraphQL, but only recently decided to take a deeper look at it after Chris McCord mentioned it in his recent talk at ElixirConf 2015.
+
+">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2015/10/15/why-im-checking-out-graphql/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2015/10/15/why-im-checking-out-graphql/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Why I&#39;m Checking Out GraphQL</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on October 15, 2015
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 5 minutes (900 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>Like many other Elixir programmers, I had heard rumblings about <a href="http://facebook.github.io/graphql/">GraphQL</a>, but only recently decided to take a deeper look at it after Chris McCord mentioned it in his <a href="http://confreaks.tv/videos/elixirconf2015-what-s-next-for-phoenix">recent talk at ElixirConf 2015</a>.</p>
+
+<p></p>
+
+<p>I think it shows great promise and I want to help out with implementing an Elixir version, and I&rsquo;ll explain why. But first, let me outline some of the problems with the way we build REST APIs today.</p>
+
+<h2 id="the-mess-we-re-in">The Mess We&rsquo;re In</h2>
+
+<p>It&rsquo;s increasingly common to serve a Javascript front-end app from a REST API these days. The merits of Javascript apps vs. server-rendered apps have been debated ad nauseum and I&rsquo;m not going to repeat that debate here.</p>
+
+<p>Suffice to say, I believe there <em>is</em> something qualitatively different <em>and better</em> about the kind of user interfaces that client-side Javascript can create, which servers cannot match. This means that I believe it is desirable in many cases to have a client-rendered interface, which then raises the question of how we ship data between the client and the server.</p>
+
+<p>REST has been a decent solution, but when compared to GraphQL, it suffers from a number of severe problems.</p>
+
+<h3 id="rest-is-a-large-complicated-middleman">REST is a Large, Complicated Middleman</h3>
+
+<p>An API should serve three purposes:</p>
+
+<ol>
+<li>Normalize your data into a predictable schema</li>
+<li>Authorization</li>
+<li>Apply business logic to user input</li>
+</ol>
+
+<p>Everything beyond this is just bloat, and REST API servers tend to get clogged up with a lot of other concerns.</p>
+
+<p>I think we should ask ourselves this question more often: &ldquo;Do we even need a server here? Could we implement this app by just talking straight to Postgres?&rdquo; Most of the time the answer would be no, but the mental exercise would help keep the API server you do write as tiny and simple as possible. It really is a database wrapper, after all.</p>
+
+<h3 id="rest-apis-are-rigid-not-responsive">REST APIs are Rigid, Not Responsive</h3>
+
+<p>Implementing a REST API is a complicated and rigid process, because you need to specify all the URL endpoints, as well as the format of the response for each resource and endpoint, before you build anything.</p>
+
+<p>While you do this designing, you make assumptions about what data the
+client interface will need to fetch, and how. Many of these assumptions will turn out to be wrong, and you&rsquo;ll have to modify your design.</p>
+
+<p>Since REST APIs are rigid <em>by design</em>, changing your API can mean creating a whole new version of your API just to support one feature you didn&rsquo;t think of in the beginning. This gets expensive fast.</p>
+
+<p>This is also exactly the opposite of the way it should be. The server exists to serve the client, so it needs to be as responsive as it possibly can be to the needs of the client. Instead, today, we tend to implement our clients around the server, because the server is the more rigid part of the system and would be the most difficult to change.</p>
+
+<h3 id="rest-apis-are-wasteful">REST APIs are Wasteful</h3>
+
+<p>Network bandwidth is still a limited commodity, and minimizing the amount of data that travels over the wire makes your app render faster and the experience smoother. However, REST APIs dictate what data can and must be sent for each request, regardless of what the client actually needs in order to render something to the user.</p>
+
+<p>As a result, APIs serve a bunch of data that isn&rsquo;t needed, thereby wasting all the time it takes to fetch and transmit that data. Also, due to the way REST is designed, you often have to make multiple requests to get the data you need, which is also wasteful.</p>
+
+<p>We need a better way to batch requests and limit the data returned.</p>
+
+<h3 id="documenting-a-rest-api-is-hard">Documenting a REST API is Hard</h3>
+
+<p>If you write a REST API, you really should document it, even if it&rsquo;s only for internal use! If someone other than you will ever use it, you need to document it to save them the effort of having to read through your potentially complicated source code. Especially if <em>they don&rsquo;t even have access to your source code.</em></p>
+
+<p>The trouble is, documentation is hard to do right. <a href="https://stripe.com/docs/api">Stripe</a> hit it out of the park with the quality of their docs, but few others have ever done that good of a job. That&rsquo;s because it&rsquo;s hard.</p>
+
+<h2 id="how-graphql-helps">How GraphQL Helps</h2>
+
+<p>In GraphQL, the client is in charge. The client specifies what data it needs, and the server does only what is necessary to return that data. The server becomes a lightweight app dedicated to resolving GraphQL queries into data, with a minimum of other concerns. It also becomes much more agile, because it&rsquo;s much easier to expose more data on the server without breaking or slowing down existing requests. This allows you to elegantly expand your API as your knowledge of your clients&rsquo; needs grows.</p>
+
+<p>Both queries and mutations can be batched, allowing for maximum network efficiency. If you need even more efficiency, I don&rsquo;t see any reason you couldn&rsquo;t use something like <a href="http://msgpack.org/">MessagePack</a> as your data format rather than JSON.</p>
+
+<p>Further, the server is self-documenting, because it broadcasts its schema to the outside world. This also allows the client to make sure that its requests are valid before it even tries to make them.</p>
+
+<p>If all that intrigues you, GraphQL is easy to learn. I&rsquo;ve found the <a href="http://learngraphql.com">Learn GraphQL website</a> to be very helpful. Elixir support isn&rsquo;t quite there yet, but I hope to help out with that.</p>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2015/09/25/announcing-learn-elixir-tv/" data-toggle="tooltip" data-placement="top" title="Announcing LearnElixir.tv">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2015/12/08/use-gen-event-with-ecto-callbacks/" data-toggle="tooltip" data-placement="top" title="Using GenEvent With Ecto Callbacks">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

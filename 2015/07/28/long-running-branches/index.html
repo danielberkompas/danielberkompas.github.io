@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Avoid Long-Lived Feature Branches</title>
+  <meta property="og:title" content="Avoid Long-Lived Feature Branches" />
+  <meta name="twitter:title" content="Avoid Long-Lived Feature Branches" />
+  <meta name="description" content="Today, I intend to rail against the evils of long-lived feature branches. Having collaborated on a number of projects where they happened, I&rsquo;m now convinced that they are almost always the wrong way to go.
+
+">
+  <meta property="og:description" content="Today, I intend to rail against the evils of long-lived feature branches. Having collaborated on a number of projects where they happened, I&rsquo;m now convinced that they are almost always the wrong way to go.
+
+">
+  <meta name="twitter:description" content="Today, I intend to rail against the evils of long-lived feature branches. Having collaborated on a number of projects where they happened, I&rsquo;m now convinced that they are almost always the wrong …">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2015/07/28/long-running-branches/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2015/07/28/long-running-branches/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Avoid Long-Lived Feature Branches</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on July 28, 2015
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 3 minutes (470 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>Today, I intend to rail against the evils of long-lived feature branches. Having collaborated on a number of projects where they happened, I&rsquo;m now convinced that they are almost always the wrong way to go.</p>
+
+<p></p>
+
+<h2 id="why-we-do-long-lived-branches">Why We Do Long-Lived Branches</h2>
+
+<p>The reasoning behind these branches is simple. Your boss wants the program to keep running like it is, but he wants a large, complex feature to be implemented that will touch a lot of the codebase.</p>
+
+<p>Many teams respond to this by creating a feature branch in source control, in which the feature will be developed until such a time that it is &ldquo;ready&rdquo;. Normal development continues in the main branches while the feature is being developed.</p>
+
+<h2 id="what-s-wrong-with-them">What&rsquo;s Wrong With Them</h2>
+
+<p>There are many problems with this approach, but I think they can be summarized as two large problems.</p>
+
+<p>First, <strong>code review becomes messy and ineffective.</strong> When the feature branch is finally merged into the <code>master</code> branch, the diff is too large to review effectively. I&rsquo;ve been handed diffs like this to review before, and my eyes glaze over after about 300 lines of code. The sheer volume of code to review reduces the quality of my review, because I don&rsquo;t want to sit and review code all day, so I rush through it. Rushed code reviews are worse than no code review at all, because they give the illusion that code has been reviewed when in fact it has not.</p>
+
+<p>Second, <strong>merging becomes hard.</strong> The longer a branch lives, the more different the main branch becomes, and the more difficult it can be to keep the two in sync. You can mitigate this by doing frequent merges and rebases in from <code>master</code>, but many developers neglect this.</p>
+
+<p>In the end, you have a giant blob of code that isn&rsquo;t very well tested or reviewed, and which probably conflicts with your <code>master</code> branch in a number of significant ways. In the projects I worked on, this either resulted in serious bugs or significant delays getting the feature done.</p>
+
+<h2 id="a-better-way">A Better Way</h2>
+
+<p>Like many others have written, I recommend that you develop each feature as incrementally as possible, merging as often as possible into your <code>master</code> branch. Ensure the tests are all passing after each incremental change. Put the feature behind a feature flipper if possible, or, if the feature changes too many things, start a new &ldquo;main&rdquo; branch where all development will occur and use <code>master</code> only for hotfixes until the feature is done.</p>
+
+<p>This approach ensures that pull requests are small, and therefore makes code review a meaningful process. Also, there&rsquo;s no fear that <code>master</code> will get very far ahead in the two or three hours that each little feature branch lives.</p>
+
+<p>So, please, no more massive pull requests! Keep your branches small, your
+commits focused, and merge often.</p>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2015/07/16/fixtures-for-ecto/" data-toggle="tooltip" data-placement="top" title="Fixtures for Ecto">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2015/08/03/elixir-as-an-operating-system/" data-toggle="tooltip" data-placement="top" title="Elixir as an Operating System">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

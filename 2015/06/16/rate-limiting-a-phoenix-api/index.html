@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Rate Limiting a Phoenix API</title>
+  <meta property="og:title" content="Rate Limiting a Phoenix API" />
+  <meta name="twitter:title" content="Rate Limiting a Phoenix API" />
+  <meta name="description" content="In my spare time, I&rsquo;ve been working on a little Phoenix project that involves a JSON API. Developers frequently neglect rate limiting when they build an API, assuming they are even aware that it is a best practice.
+
+It&rsquo;s true that in many cases rate limiting isn&rsquo;t worth the effort, but when it comes to authentication, it definitely is. For example, the recent high-profile iCloud security breach which released celebrity photos in to the internet could have been prevented had Apple implemented rate limiting on one of their authentication APIs. This would have prevented the brute-force attack that the hackers used to guess the celebrities&rsquo; passwords.
+
+">
+  <meta property="og:description" content="In my spare time, I&rsquo;ve been working on a little Phoenix project that involves a JSON API. Developers frequently neglect rate limiting when they build an API, assuming they are even aware that it is a best practice.
+
+It&rsquo;s true that in many cases rate limiting isn&rsquo;t worth the effort, but when it comes to authentication, it definitely is. For example, the recent high-profile iCloud security breach which released celebrity photos in to the internet could have been prevented had Apple implemented rate limiting on one of their authentication APIs. This would have prevented the brute-force attack that the hackers used to guess the celebrities&rsquo; passwords.
+
+">
+  <meta name="twitter:description" content="In my spare time, I&rsquo;ve been working on a little Phoenix project that involves a JSON API. Developers frequently neglect rate limiting when they build an API, assuming they are even aware that it …">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2015/06/16/rate-limiting-a-phoenix-api/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2015/06/16/rate-limiting-a-phoenix-api/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Rate Limiting a Phoenix API</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on June 16, 2015
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 5 minutes (1000 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>In my spare time, I&rsquo;ve been working on a little <a href="http://phoenixframework.org">Phoenix</a> project that involves a JSON API. Developers frequently neglect rate limiting when they build an API, assuming they are even aware that it is a best practice.</p>
+
+<p>It&rsquo;s true that in many cases rate limiting isn&rsquo;t worth the effort, but when it comes to authentication, it definitely is. For example, the recent high-profile <a href="http://icloud.com">iCloud</a> security breach which released celebrity photos in to the internet could have been prevented had Apple implemented rate limiting on one of their authentication APIs. This would have prevented the brute-force attack that the hackers used to guess the celebrities&rsquo; passwords.</p>
+
+<p></p>
+
+<p>My little API isn&rsquo;t likely to hold any sensitive information, but I decided to rate limit my authentication API anyway. Here&rsquo;s how I did it.</p>
+
+<h2 id="introducing-plugs">Introducing Plugs</h2>
+
+<p>In <a href="http://phoenixframework.org">Phoenix</a>, the request lifecycle is handled through &ldquo;plugs&rdquo;, which are simple functions or modules that take a connection, modify it, and then return the modified connection. Plugs come from an Elixir core project, aptly named &ldquo;<a href="https://github.com/elixir-lang/plug">Plug</a>&rdquo;.</p>
+
+<p>If you&rsquo;re familiar with Ruby, plugs work very similarly to Rack middleware. However, instead of being a rare form of voodoo like Rack sometimes is to Ruby developers, plugs are very accessible in Elixir/Phoenix, and are used often.</p>
+
+<p>In its simplest form, a plug looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">my_custom_plug</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span> <span class="p">\\</span> <span class="p">[])</span> <span class="n">do</span>
+  <span class="n">conn</span>
+<span class="n">end</span></code></pre></div>
+<p>This plug does nothing. It just takes a connection and returns it, which is all a good little plug <em>has</em> to do. To use this plug in a Phoenix controller, you just have to import the function and add it to the controller&rsquo;s plug pipeline:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.Controller</span> <span class="n">do</span>
+  <span class="n">use</span> <span class="p"></span><span class="nc">MyApp.Web</span><span class="p">,</span> <span class="ss">:controller</span>
+  <span class="n">import</span> <span class="p"></span><span class="nc">MyPlug</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">my_custom_plug</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
+
+  <span class="n">plug</span> <span class="ss">:my_custom_plug</span>
+  <span class="n">plug</span> <span class="ss">:action</span>
+<span class="n">end</span></code></pre></div>
+<p>The <code>my_custom_plug</code> function will then run on the connection before the
+controller action is called.</p>
+
+<h2 id="the-ratelimit-plug">The RateLimit Plug</h2>
+
+<p>The <a href="https://github.com/elixir-lang/plug">Plug</a> interface is ideal for rate limiting because it allows us to intercept the request before any real work is done. This prevents rejected requests from producing any serious load on the server.</p>
+
+<p>For my plug, I used a library called <a href="http://hex.pm/packages/ex_rated">ExRated</a> to do the brunt of the rate limiting work. It has a simple API:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="p"></span><span class="nc">ExRated</span><span class="o">.</span><span class="n">check_rate</span><span class="p">(</span><span class="s2">&#34;bucket_name&#34;</span><span class="p">,</span> <span class="n">interval_in_milliseconds</span><span class="p">,</span> <span class="n">maximum_requests</span><span class="p">)</span>
+<span class="c1"># =&gt; {:ok, count} or {:fail, count}</span></code></pre></div>
+<p>Using this, it&rsquo;s very easy to construct a plug:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.RateLimit</span> <span class="n">do</span>
+  <span class="n">import</span> <span class="p"></span><span class="nc">Phoenix.Controller</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">json</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
+  <span class="n">import</span> <span class="p"></span><span class="nc">Plug.Conn</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">put_status</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
+
+  <span class="n">def</span> <span class="n">rate_limit</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span> <span class="p">\\</span> <span class="p">[])</span> <span class="n">do</span>
+    <span class="n">case</span> <span class="n">check_rate</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="n">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">_count</span><span class="p">}</span>   <span class="o">-&gt;</span> <span class="n">conn</span> <span class="c1"># Do nothing, allow execution to continue</span>
+      <span class="p">{</span><span class="ss">:fail</span><span class="p">,</span> <span class="n">_count</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">render_error</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+    <span class="n">end</span>
+  <span class="n">end</span>
+
+  <span class="n">defp</span> <span class="n">check_rate</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">interval_milliseconds</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:interval_seconds</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">max_requests</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:max_requests</span><span class="p">]</span>
+    <span class="p"></span><span class="nc">ExRated</span><span class="o">.</span><span class="n">check_rate</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">(</span><span class="n">conn</span><span class="p">),</span> <span class="n">interval_milliseconds</span><span class="p">,</span> <span class="n">max_requests</span><span class="p">)</span>
+  <span class="n">end</span>
+
+  <span class="c1"># Bucket name should be a combination of ip address and request path, like so:</span>
+  <span class="c1">#</span>
+  <span class="c1"># &#34;127.0.0.1:/api/v1/authorizations&#34;</span>
+  <span class="n">defp</span> <span class="n">bucket_name</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conn</span><span class="o">.</span><span class="n">path_info</span><span class="p">,</span> <span class="s2">&#34;/&#34;</span><span class="p">)</span>
+    <span class="n">ip</span>   <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">remote_ip</span> <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Tuple</span><span class="o">.</span><span class="n">to_list</span> <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&#34;.&#34;</span><span class="p">)</span>
+    <span class="s2">&#34;</span><span class="si">#{</span><span class="n">ip</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">&#34;</span>
+  <span class="n">end</span>
+
+  <span class="n">defp</span> <span class="n">render_error</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">conn</span>
+    <span class="o">|&gt;</span> <span class="n">put_status</span><span class="p">(</span><span class="ss">:forbidden</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">json</span><span class="p">(%{</span><span class="ss">error</span><span class="p">:</span> <span class="s2">&#34;Rate limit exceeded.&#34;</span><span class="p">})</span>
+    <span class="o">|&gt;</span> <span class="n">halt</span> <span class="c1"># Stop execution of further plugs, return response now</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>You can then use this plug to rate limit specific actions in your controller like so:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">import</span> <span class="p"></span><span class="nc">MyApp.RateLimit</span>
+
+<span class="n">plug</span> <span class="ss">:rate_limit</span><span class="p">,</span> <span class="ss">max_requests</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="ss">interval_seconds</span><span class="p">:</span> <span class="mi">60</span> <span class="n">when</span> <span class="n">action</span> <span class="n">in</span> <span class="p">[</span><span class="ss">:create</span><span class="p">]</span>
+<span class="n">plug</span> <span class="ss">:action</span></code></pre></div>
+<h2 id="customizing-for-authentication">Customizing for Authentication</h2>
+
+<p>The RateLimit plug as it currently exists is great for most use cases, but it still isn&rsquo;t adequate for authentication. This is because limiting based on IP address still allows an attacker to make thousands of attempts on a user account from different computers.</p>
+
+<p>To protect against this, we need to rate limit login attempts based on the <em>username</em>, not the IP address. The plug needs an optional <code>:bucket_name</code> parameter, so that this can be customized.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defp</span> <span class="n">check_rate</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">interval_milliseconds</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:interval_seconds</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>
+  <span class="n">max_requests</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:max_requests</span><span class="p">]</span>
+  <span class="n">bucket_name</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:bucket_name</span><span class="p">]</span> <span class="o">||</span> <span class="n">bucket_name</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+  <span class="p"></span><span class="nc">ExRated</span><span class="o">.</span><span class="n">check_rate</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">interval_milliseconds</span><span class="p">,</span> <span class="n">max_requests</span><span class="p">)</span>
+<span class="n">end</span></code></pre></div>
+<p>We then add a new function to our controller, setting the dynamic <code>:bucket_name</code> to &ldquo;authorization:{email}&rdquo;:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">rate_limit_authentication</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span> <span class="p">\\</span> <span class="p">[])</span> <span class="n">do</span>
+  <span class="n">options</span> <span class="o">=</span> <span class="p"></span><span class="nc">Dict</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="p">[</span><span class="ss">bucket_name</span><span class="p">:</span> <span class="s2">&#34;authorization:&#34;</span> <span class="o">&lt;&gt;</span> <span class="n">conn</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">email</span><span class="p">])</span>
+  <span class="p"></span><span class="nc">MyApp.RateLimit</span><span class="o">.</span><span class="n">rate_limit</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+<span class="n">end</span></code></pre></div>
+<p>And use this instead of the old <code>:rate_limit</code> plug:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">import</span> <span class="p"></span><span class="nc">MyApp.RateLimit</span>
+
+<span class="n">plug</span> <span class="ss">:rate_limit_authentication</span><span class="p">,</span> <span class="ss">max_requests</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="ss">interval_seconds</span><span class="p">:</span> <span class="mi">60</span>
+<span class="n">plug</span> <span class="ss">:action</span></code></pre></div>
+<p>This will then rate limit requests against the user&rsquo;s email address, not the IP address that the requests are coming from. So, no matter how many IPs the hacker has access to, he can&rsquo;t get around the rate limit.</p>
+
+<h2 id="the-finished-plug">The Finished Plug</h2>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.RateLimit</span> <span class="n">do</span>
+  <span class="n">import</span> <span class="p"></span><span class="nc">Phoenix.Controller</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">json</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
+  <span class="n">import</span> <span class="p"></span><span class="nc">Plug.Conn</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">put_status</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
+
+  <span class="n">def</span> <span class="n">rate_limit</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span> <span class="p">\\</span> <span class="p">[])</span> <span class="n">do</span>
+    <span class="n">case</span> <span class="n">check_rate</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="n">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">_count</span><span class="p">}</span>   <span class="o">-&gt;</span> <span class="n">conn</span> <span class="c1"># Do nothing, pass on to the next plug</span>
+      <span class="p">{</span><span class="ss">:fail</span><span class="p">,</span> <span class="n">_count</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">render_error</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+    <span class="n">end</span>
+  <span class="n">end</span>
+
+  <span class="n">defp</span> <span class="n">check_rate</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">interval_milliseconds</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:interval_seconds</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">max_requests</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:max_requests</span><span class="p">]</span>
+    <span class="n">bucket_name</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:bucket_name</span><span class="p">]</span> <span class="o">||</span> <span class="n">bucket_name</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+    <span class="p"></span><span class="nc">ExRated</span><span class="o">.</span><span class="n">check_rate</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">interval_milliseconds</span><span class="p">,</span> <span class="n">max_requests</span><span class="p">)</span>
+  <span class="n">end</span>
+
+  <span class="c1"># Bucket name should be a combination of ip address and request path, like so:</span>
+  <span class="c1">#</span>
+  <span class="c1"># &#34;127.0.0.1:/api/v1/authorizations&#34;</span>
+  <span class="n">defp</span> <span class="n">bucket_name</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conn</span><span class="o">.</span><span class="n">path_info</span><span class="p">,</span> <span class="s2">&#34;/&#34;</span><span class="p">)</span>
+    <span class="n">ip</span>   <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">remote_ip</span> <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Tuple</span><span class="o">.</span><span class="n">to_list</span> <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&#34;.&#34;</span><span class="p">)</span>
+    <span class="s2">&#34;</span><span class="si">#{</span><span class="n">ip</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">&#34;</span>
+  <span class="n">end</span>
+
+  <span class="n">defp</span> <span class="n">render_error</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">conn</span>
+    <span class="o">|&gt;</span> <span class="n">put_status</span><span class="p">(</span><span class="ss">:forbidden</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">json</span><span class="p">(%{</span><span class="ss">error</span><span class="p">:</span> <span class="s2">&#34;Rate limit exceeded.&#34;</span><span class="p">})</span>
+    <span class="o">|&gt;</span> <span class="n">halt</span> <span class="c1"># Stop execution of further plugs, return response now</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<h2 id="performance">Performance</h2>
+
+<p>The performance of this plug is really stunning. On my relatively modest Macbook Pro, I&rsquo;m seeing sub-millisecond response times when the rate limit kicks into effect. Rails devs, let that sink in for a second.</p>
+
+<p><em>Sub-millisecond response times&hellip;</em></p>
+
+<p>So, using this plug doesn&rsquo;t slow down valid requests in any measurable way, and with response times like that, it will be hard to overwhelm your API with bogus traffic.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I was pleasantly surprised at how easy this was to implement and how elegant the solution ended up being. Let&rsquo;s review what we implemented:</p>
+
+<ul>
+<li>A rate limiter that can be customized per action and per controller.</li>
+<li>Without any external dependencies. (I&rsquo;m looking at you, Redis)</li>
+<li>With sub-millisecond response times.</li>
+</ul>
+
+<p>Elixir and Phoenix continue to impress me! This exercise also made me think that I should look more into Rack in Ruby-land. It&rsquo;s probably under-utilized for problems like this. Perhaps that will be the subject of a future post. For now though, so long!</p>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2015/06/10/how-to-write-guard-macros/" data-toggle="tooltip" data-placement="top" title="How to Write Guard Macros">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2015/07/03/encrypting-data-with-ecto/" data-toggle="tooltip" data-placement="top" title="Encrypting Data With Ecto">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

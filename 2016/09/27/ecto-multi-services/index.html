@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Replace Callbacks with Ecto.Multi</title>
+  <meta property="og:title" content="Replace Callbacks with Ecto.Multi" />
+  <meta name="twitter:title" content="Replace Callbacks with Ecto.Multi" />
+  <meta name="description" content="We all have logic in our applications like this:
+
+
+When a user is created, send a notification to an admin
+When a post is deleted, remove it from the search cache
+When a password is reset, log out that user&rsquo;s active sessions
+
+
+These side effects need to be predictable and reliable. Often, they&rsquo;re some of the key business logic of the whole application.
+
+">
+  <meta property="og:description" content="We all have logic in our applications like this:
+
+
+When a user is created, send a notification to an admin
+When a post is deleted, remove it from the search cache
+When a password is reset, log out that user&rsquo;s active sessions
+
+
+These side effects need to be predictable and reliable. Often, they&rsquo;re some of the key business logic of the whole application.
+
+">
+  <meta name="twitter:description" content="We all have logic in our applications like this:
+
+
+When a user is created, send a notification to an admin
+When a post is deleted, remove it from the search cache
+When a password is reset, log out …">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2016/09/27/ecto-multi-services/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2016/09/27/ecto-multi-services/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Replace Callbacks with Ecto.Multi</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on September 27, 2016
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 5 minutes (866 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>We all have logic in our applications like this:</p>
+
+<ul>
+<li>When a user is created, send a notification to an admin</li>
+<li>When a post is deleted, remove it from the search cache</li>
+<li>When a password is reset, log out that user&rsquo;s active sessions</li>
+</ul>
+
+<p>These side effects need to be predictable and reliable. Often, they&rsquo;re some of the key business logic of the whole application.</p>
+
+<p></p>
+
+<p>Many Rails applications store this kind of logic in their models, using ActiveRecord callbacks. However, since <a href="https://github.com/elixir-ecto/ecto/issues/1104">Ecto 2.0 removed callbacks</a>, this is not a viable (or desirable) approach in Elixir.</p>
+
+<p>Instead, Elixir follows a simple rule:</p>
+
+<blockquote>
+<p><strong>If you have shared business logic, create a shared module.</strong></p>
+</blockquote>
+
+<p>One of the ways you can do this is by building simple &ldquo;Service&rdquo; modules around <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a>.<sup class="footnote-ref" id="fnref:1"><a rel="footnote" href="#fn:1">1</a></sup> Since business logic usually revolves around an <a href="https://hexdocs.pm/ecto/Ecto.Schema.html">Ecto.Schema</a>, I often name service modules after the schema they interact with, such as <code>UserService</code> or <code>PostService</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.UserService</span> <span class="n">do</span>
+  <span class="n">alias</span> <span class="p"></span><span class="nc">MyApp</span><span class="o">.</span><span class="p">{</span><span class="nc">Mailer</span><span class="p">,</span> <span class="p"></span><span class="nc">NotificationEmail</span><span class="p">}</span>
+  <span class="n">alias</span> <span class="p"></span><span class="nc">Ecto.Multi</span>
+
+  <span class="n">def</span> <span class="n">insert</span><span class="p">(</span><span class="n">user_changeset</span><span class="p">)</span> <span class="n">do</span>
+    <span class="p"></span><span class="nc">Multi</span><span class="o">.</span><span class="n">new</span>
+    <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Multi</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="n">user_changeset</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Multi</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="ss">:notify_admin</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">notify_admin</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">end</span>
+
+  <span class="n">defp</span> <span class="n">notify_admin</span><span class="p">(%{</span><span class="ss">user</span><span class="p">:</span> <span class="n">user</span><span class="p">})</span> <span class="n">do</span>
+    <span class="n">user</span>
+    <span class="o">|&gt;</span> <span class="p"></span><span class="nc">NotificationEmail</span><span class="o">.</span><span class="n">notify_admin</span>
+    <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Mailer</span><span class="o">.</span><span class="n">deliver</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>I often name the service module functions after the operations they enhance, such as <code>insert</code>, <code>update</code>, or <code>delete</code>. Of course, there&rsquo;s nothing preventing you from using other names for more custom functionality.</p>
+
+<p>As you can see in the example above, <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a> allows us to encapsulate our business logic into a struct which can then be passed around, appended to, and run as a database transaction.</p>
+
+<p>We can add arbitrary functions to the <code>Multi</code> operation, such as <code>notify_admin/1</code> which will cause the transaction to rollback if they return <code>{:error, ...}</code>. We can then call the whole thing with <code>Repo.transaction/1</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">result</span> <span class="o">=</span>
+  <span class="p">%</span><span class="nc">User</span><span class="p">{}</span>
+  <span class="o">|&gt;</span> <span class="p"></span><span class="nc">User</span><span class="o">.</span><span class="n">changeset</span><span class="p">(</span><span class="n">user_params</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="p"></span><span class="nc">UserService</span><span class="o">.</span><span class="n">insert</span>
+  <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Repo</span><span class="o">.</span><span class="n">transaction</span>
+
+<span class="n">case</span> <span class="n">result</span> <span class="n">do</span>
+  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">user</span><span class="p">:</span> <span class="n">user</span><span class="p">}}</span> <span class="o">-&gt;</span>
+    <span class="c1"># handle success</span>
+  <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="ss">:notify_admin</span><span class="p">,</span> <span class="n">_failed_value</span><span class="p">,</span> <span class="n">_changes_so_far</span><span class="p">}</span> <span class="o">-&gt;</span>
+    <span class="c1"># handle the case that the email didn&#39;t send</span>
+  <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_failed_operation</span><span class="p">,</span> <span class="n">_failed_value</span><span class="p">,</span> <span class="n">_changes_so_far</span><span class="p">}</span> <span class="o">-&gt;</span>
+    <span class="c1"># handle the generic error case</span>
+<span class="n">end</span></code></pre></div>
+<p>The error states are very detailed and allow you to be as specific or general as you want to be with your error handling.</p>
+
+<p>Since each service function returns an <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a>, services can be chained together to execute as a single database transaction: <sup class="footnote-ref" id="fnref:2"><a rel="footnote" href="#fn:2">2</a></sup></p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">user_operation</span> <span class="o">=</span> <span class="p"></span><span class="nc">UserService</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+<span class="n">log_operation</span> <span class="o">=</span> <span class="p"></span><span class="nc">LogService</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+
+<span class="n">user_operation</span>
+<span class="o">|&gt;</span> <span class="p"></span><span class="nc">Multi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_operation</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="p"></span><span class="nc">Repo</span><span class="o">.</span><span class="n">transaction</span></code></pre></div>
+<p><a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a> structs are also inspectable using <code>Ecto.Multi.to_list/1</code>. This makes them pretty easy to unit test.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">user</span>
+<span class="o">|&gt;</span> <span class="p"></span><span class="nc">UserService</span><span class="o">.</span><span class="n">insert</span>
+<span class="o">|&gt;</span> <span class="p"></span><span class="nc">Multi</span><span class="o">.</span><span class="n">to_list</span>
+<span class="c1"># =&gt; [</span>
+<span class="c1">#   {:user, {:insert, user, []}}</span>
+<span class="c1">#   {:notify_admin, {:run, fun, []}}</span>
+<span class="c1"># ]</span></code></pre></div>
+<p>There are at least several other advantages to having a service layer built around <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a>:</p>
+
+<ul>
+<li>Schemas can contain only pure functions, with no ActiveRecord bloat. All your external side effects can be kept in your service layer.</li>
+<li>Side-effects are opt-in, making testing <strong>much easier</strong>. Don&rsquo;t want all the side effects? Just <code>Repo.insert!</code> your data instead.</li>
+<li>Transactions can be automatically rolled back on failure, leaving no inconsistent mess behind. <sup class="footnote-ref" id="fnref:3"><a rel="footnote" href="#fn:3">3</a></sup></li>
+</ul>
+
+<p>Those are some pretty nice features for such a simple abstraction. Even so, you don&rsquo;t have to use <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a> for everything, as we&rsquo;ll see in the next section.</p>
+
+<h2 id="a-guide-for-rails-developers">A Guide for Rails Developers</h2>
+
+<p>For <code>before_create</code> or <code>before_update</code> logic, update your schema&rsquo;s changeset function(s) rather than using a service. Usually, this type of business logic only affects data, so it&rsquo;s a natural fit for your changeset function.</p>
+
+<p>For example, if we want to automatically promote or demote articles to our home page based on a <code>like_count</code> field, we could do that with changeset functions like so:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">changeset</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">schema</span>
+  <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">promote_popular</span>
+<span class="n">end</span>
+
+<span class="n">defp</span> <span class="n">promote_popular</span><span class="p">(</span><span class="n">changeset</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">if</span> <span class="n">get_field</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:like_count</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1000</span> <span class="n">do</span>
+    <span class="n">put_change</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:promoted</span><span class="p">,</span> <span class="n">true</span><span class="p">)</span>
+  <span class="n">else</span>
+    <span class="n">put_change</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:promoted</span><span class="p">,</span> <span class="n">false</span><span class="p">)</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>Or if we wanted to automatically encrypt a user&rsquo;s password:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">changeset</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">schema</span>
+  <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">validate_required</span><span class="p">([</span><span class="ss">:password</span><span class="p">])</span>
+  <span class="o">|&gt;</span> <span class="n">validate_confirmation</span><span class="p">(</span><span class="ss">:password</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">encrypt_password</span>
+<span class="n">end</span>
+
+<span class="n">defp</span> <span class="n">encrypt_password</span><span class="p">(</span><span class="n">changeset</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">password</span> <span class="o">=</span> <span class="n">get_change</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:password</span><span class="p">)</span>
+
+  <span class="n">if</span> <span class="n">password</span> <span class="n">do</span>
+    <span class="n">encrypted</span> <span class="o">=</span> <span class="p"></span><span class="nc">Comeonin.Bcrypt</span><span class="o">.</span><span class="n">hashpwsalt</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+    <span class="n">changeset</span>
+    <span class="o">|&gt;</span> <span class="n">put_change</span><span class="p">(</span><span class="ss">:encrypted_password</span><span class="p">,</span> <span class="n">encrypted</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">delete_change</span><span class="p">(</span><span class="ss">:password</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">delete_change</span><span class="p">(</span><span class="ss">:password_confirmation</span><span class="p">)</span>
+  <span class="n">else</span>
+    <span class="n">changeset</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>For <code>after_create</code> or <code>after_update</code> logic, use an <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a> service. This logic usually has to do with other database tables or external side effects, and therefore is a good fit for a service module. The documentation provides a good example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">UserService</span> <span class="n">do</span>
+  <span class="n">alias</span> <span class="p"></span><span class="nc">Ecto.Multi</span>
+  <span class="n">import</span> <span class="p"></span><span class="nc">Ecto</span>
+
+  <span class="n">def</span> <span class="n">password_reset</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="n">do</span>
+    <span class="p"></span><span class="nc">Multi</span><span class="o">.</span><span class="n">new</span>
+    <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Multi</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="ss">:account</span><span class="p">,</span> <span class="p"></span><span class="nc">Account</span><span class="o">.</span><span class="n">password_reset_changeset</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+    <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Multi</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="ss">:log</span><span class="p">,</span> <span class="p"></span><span class="nc">Log</span><span class="o">.</span><span class="n">password_reset_changeset</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+    <span class="o">|&gt;</span> <span class="p"></span><span class="nc">Multi</span><span class="o">.</span><span class="n">delete_all</span><span class="p">(</span><span class="ss">:sessions</span><span class="p">,</span> <span class="n">assoc</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="ss">:sessions</span><span class="p">))</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>The only important convention for service modules is that they return an Ecto.Multi structs: what you name the modules and functions themselves is much less important. Do what makes sense for your application.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I&rsquo;ve been looking for a viable alternative to ActiveRecord callbacks and their associated bloat for a long time, and I finally feel like I&rsquo;ve found it with <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a>. Be sure to check out its documentation, and if you&rsquo;re interested, I&rsquo;ve also covered its API in more detail in <a href="https://www.learnphoenix.tv/episodes/ecto-multi">this episode of LearnPhoenix.tv</a>.</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1">This is only <em>one</em> available option. You could also share business logic with a <code>Plug</code> or a plain module, depending on your application.
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2">As long as every operation has a unique name.
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3">This automatic rollback behavior is also opt-in. If you don&rsquo;t want one of your operations to ever cause a rollback, just ensure it always returns <code>{:ok, ...}</code>.
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+</ol>
+</div>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2016/04/23/multidimensional-arrays-in-elixir/" data-toggle="tooltip" data-placement="top" title="Multidimensional Arrays in Elixir">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2017/01/17/reusable-templates-in-phoenix/" data-toggle="tooltip" data-placement="top" title="Reusable Templates in Phoenix">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

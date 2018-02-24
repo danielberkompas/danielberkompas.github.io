@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Testing Ecto Validations</title>
+  <meta property="og:title" content="Testing Ecto Validations" />
+  <meta name="twitter:title" content="Testing Ecto Validations" />
+  <meta name="description" content="I recently was playing around with Phoenix and Ecto, Elixir&rsquo;s database library, and I wanted to test my validations. In the process, I wrote a little library along the lines of Shoulda from Ruby.  However, when José Valim saw it, he
+suggested a much better approach which I think illustrates what makes Elixir great.
+
+">
+  <meta property="og:description" content="I recently was playing around with Phoenix and Ecto, Elixir&rsquo;s database library, and I wanted to test my validations. In the process, I wrote a little library along the lines of Shoulda from Ruby.  However, when José Valim saw it, he
+suggested a much better approach which I think illustrates what makes Elixir great.
+
+">
+  <meta name="twitter:description" content="I recently was playing around with Phoenix and Ecto, Elixir&rsquo;s database library, and I wanted to test my validations. In the process, I wrote a little library along the lines of Shoulda from …">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2015/05/08/testing-ecto-validations/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2015/05/08/testing-ecto-validations/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Testing Ecto Validations</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on May 8, 2015
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 4 minutes (721 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>I recently was playing around with <a href="http://phoenixframework.org">Phoenix</a> and <a href="https://github.com/elixir-lang/ecto">Ecto</a>, Elixir&rsquo;s database library, and I wanted to test my validations. In the process, I wrote a <a href="https://github.com/danielberkompas/ecto_validation_case">little library</a> along the lines of <a href="https://github.com/thoughtbot/shoulda">Shoulda</a> from Ruby.  However, when José Valim saw it, he
+<a href="https://groups.google.com/forum/#!topic/elixir-lang-talk/kwLLyCiarls">suggested a much better approach</a> which I think illustrates what makes Elixir great.</p>
+
+<p></p>
+
+<h2 id="validating-ecto-models">Validating Ecto Models</h2>
+
+<p>In Ecto, a model looks like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.User</span> <span class="n">do</span>
+  <span class="n">use</span> <span class="p"></span><span class="nc">Ecto.Model</span>
+
+  <span class="n">schema</span> <span class="s2">&#34;users&#34;</span> <span class="n">do</span>
+    <span class="n">field</span> <span class="ss">:username</span><span class="p">,</span> <span class="ss">:string</span>
+    <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:string</span>
+    <span class="n">field</span> <span class="ss">:encrypted_password</span><span class="p">,</span> <span class="ss">:string</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>If you want to validate that a new user has a username and email address before inserting it into the database, you can define a <code>changeset/2</code> function:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="na">@required_params</span> <span class="sx">~w(username, email)</span>
+<span class="na">@optional_params</span> <span class="sx">~w()</span>
+
+<span class="n">def</span> <span class="n">changeset</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">model</span>
+  <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="na">@required_params</span><span class="p">,</span> <span class="na">@optional_params</span><span class="p">)</span>
+<span class="n">end</span></code></pre></div>
+<p><code>cast/4</code> will return a <code>Changeset</code> struct which has <code>valid?</code> attribute, which can be true or false. It can perform basic presence validation, using a list of required and optional fields. Everything not in those fields will be ignored.</p>
+
+<p>If you want to perform more advanced validation, Ecto has helpers for that as well, such as <code>validate_unique</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">changeset</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">model</span>
+  <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="na">@required_params</span><span class="p">,</span> <span class="na">@optional_params</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">validate_unique</span><span class="p">(</span><span class="ss">:email</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">validate_format</span><span class="p">(</span><span class="ss">:email</span><span class="p">,</span> <span class="sx">~r/@/</span><span class="p">)</span>
+<span class="n">end</span></code></pre></div>
+<p>Since all the validators take a changeset as their first argument, they can be made into pipelines quite easily, like the above.</p>
+
+<p>With a <code>changeset/2</code> function in place, you can then design your controller action like so:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">create</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">user</span> <span class="o">=</span> <span class="p"></span><span class="nc">MyApp.User</span><span class="o">.</span><span class="n">changeset</span><span class="p">(%</span><span class="nc">MyApp.User</span><span class="p">{},</span> <span class="n">params</span><span class="p">)</span>
+
+  <span class="n">if</span> <span class="n">user</span><span class="o">.</span><span class="n">valid?</span>
+    <span class="p"></span><span class="nc">MyApp.Repo</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="c1"># return success</span>
+  <span class="n">else</span>
+    <span class="c1"># render error</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>There are several reasons this is great.</p>
+
+<ol>
+<li>There are no global validations gumming things up in places they shouldn&rsquo;t. If you do Rails long enough, you&rsquo;ll have a time when its global validations cause you pain.</li>
+<li>Testing models is easy, because you don&rsquo;t <em>have</em> to insert valid models in every test. Changesets are an opt-in behavior.</li>
+<li>If you need different validations depending on context, just define multiple <code>changesets</code>, like this:</li>
+</ol>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="c1"># :create is an action name, or whatever else you want</span>
+<span class="n">def</span> <span class="n">changeset</span><span class="p">(</span><span class="ss">:create</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">model</span>
+  <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="p">[</span><span class="s2">&#34;username&#34;</span><span class="p">],</span> <span class="p">[])</span>
+<span class="n">end</span>
+
+<span class="n">def</span> <span class="n">changeset</span><span class="p">(</span><span class="ss">:update</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">model</span>
+  <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="p">[</span><span class="s2">&#34;email&#34;</span><span class="p">],</span> <span class="p">[])</span>
+<span class="n">end</span></code></pre></div>
+<h2 id="testing-validations">Testing Validations</h2>
+
+<p>Testing an Ecto validation is a simple process:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="c1"># Generate a changeset for a given field/value pair</span>
+<span class="n">changeset</span> <span class="o">=</span> <span class="p"></span><span class="nc">MyApp.User</span><span class="o">.</span><span class="n">changeset</span><span class="p">(%</span><span class="nc">MyApp.User</span><span class="p">{},</span> <span class="p">%{</span><span class="ss">username</span><span class="p">:</span> <span class="n">nil</span><span class="p">})</span>
+
+<span class="c1"># Assert that an error is present</span>
+<span class="n">assert</span> <span class="p">{</span><span class="ss">:username</span><span class="p">,</span> <span class="s2">&#34;can&#39;t be blank&#34;</span><span class="p">}</span> <span class="n">in</span> <span class="n">changeset</span><span class="o">.</span><span class="n">errors</span>
+
+<span class="c1"># Or, assert that the validation passed</span>
+<span class="n">refute</span> <span class="p">{</span><span class="ss">:username</span><span class="p">,</span> <span class="s2">&#34;can&#39;t be blank&#34;</span><span class="p">}</span> <span class="n">in</span> <span class="n">changeset</span><span class="o">.</span><span class="n">errors</span></code></pre></div>
+<p>As José suggested, this can be cleaned up more by adding a simple private function to your test case module:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defp</span> <span class="n">errors_on</span><span class="p">(</span><span class="n">model</span> <span class="p">\\</span> <span class="p">%</span><span class="nc">MyApp.User</span><span class="p">{},</span> <span class="n">params</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">model</span><span class="o">.</span><span class="n">__struct__</span><span class="o">.</span><span class="n">changeset</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">errors</span>
+<span class="n">end</span></code></pre></div>
+<p>You can then write the above like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">assert</span> <span class="p">{</span><span class="ss">:username</span><span class="p">,</span> <span class="s2">&#34;can&#39;t be blank&#34;</span><span class="p">}</span> <span class="n">in</span> <span class="n">errors_on</span><span class="p">(%{</span><span class="ss">username</span><span class="p">:</span> <span class="n">nil</span><span class="p">})</span>
+<span class="n">refute</span> <span class="p">{</span><span class="ss">:email</span><span class="p">,</span> <span class="s2">&#34;can&#39;t be blank&#34;</span><span class="p">}</span> <span class="n">in</span> <span class="n">errors_on</span><span class="p">(%{</span><span class="ss">email</span><span class="p">:</span> <span class="n">nil</span><span class="p">})</span></code></pre></div>
+<p>The code is explicit, and there is no magic. What&rsquo;s more, there&rsquo;s no need for a gem like <code>shoulda</code> to clean things up here, because it&rsquo;s simple enough!</p>
+
+<p>This <code>errors_on/2</code> function can easily be extracted to a module and reused, just like any other Elixir code. New developers looking at your code will easily be able to figure out what is going on, unlike <code>shoulda</code>, where they must accept what it&rsquo;s doing on faith.</p>
+
+<h2 id="a-simpler-way-to-code">A Simpler Way to Code</h2>
+
+<p>I love how Elixir encourages this simpler way of coding. There are more moving parts than there are in Ruby land, perhaps, but they&rsquo;re conceptually simpler. Everything is made up of state and functions when you get down to it.  It&rsquo;s certainly possible to do complex things, but more often than not, you <em>don&rsquo;t have to.</em></p>
+
+<p>It all comes down to the difference between <em>explicitness</em> and <em>implicitness</em>. Elixir code is meant to be mostly <em>explicit</em>, whereas Ruby code often is <em>implicit</em>. Explicit code doesn&rsquo;t hide what it&rsquo;s doing. Implicit code hides its implementation and thus has a steeper learning curve should you need to dig into its innards.</p>
+
+<p>If you write code explicitly, it may be a little longer than the implicit version, but it will be easier to change, making for a more maintainable system.</p>
+
+<p>I&rsquo;m still a recovering Ruby developer, (where we DSL all the things!) but learning this explicit style has been an enlightening experience so far, and one I&rsquo;d recommend to any Rubyist.</p>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+<li><a href="http://hexdocs.pm/ecto/0.11.2/Ecto.Changeset.html">Ecto.Changeset Documentation</a></li>
+<li><a href="https://groups.google.com/forum/#!topic/elixir-lang-talk/kwLLyCiarls">José Valim Taking Me to the Woodshed</a> (It was good, though)</li>
+</ul>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2015/04/28/why-a-static-blog-is-a-good-idea/" data-toggle="tooltip" data-placement="top" title="Why a Static Blog is a Good Idea">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2015/05/20/useful-ecto-validators/" data-toggle="tooltip" data-placement="top" title="Useful Ecto Validators">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

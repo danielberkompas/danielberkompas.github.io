@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Fixtures for Ecto</title>
+  <meta property="og:title" content="Fixtures for Ecto" />
+  <meta name="twitter:title" content="Fixtures for Ecto" />
+  <meta name="description" content="When you test an Elixir app that uses Ecto, you will find yourself needing a way to insert test data into the database. There are many different approaches to doing this, and I thought I&rsquo;d cover a few, and then describe what I think the best approach is for Elixir.
+
+">
+  <meta property="og:description" content="When you test an Elixir app that uses Ecto, you will find yourself needing a way to insert test data into the database. There are many different approaches to doing this, and I thought I&rsquo;d cover a few, and then describe what I think the best approach is for Elixir.
+
+">
+  <meta name="twitter:description" content="When you test an Elixir app that uses Ecto, you will find yourself needing a way to insert test data into the database. There are many different approaches to doing this, and I thought I&rsquo;d cover …">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2015/07/16/fixtures-for-ecto/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2015/07/16/fixtures-for-ecto/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Fixtures for Ecto</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on July 16, 2015
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 5 minutes (862 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>When you test an <a href="http://elixir-lang.org">Elixir</a> app that uses <a href="https://github.com/elixir-lang/ecto">Ecto</a>, you will find yourself needing a way to insert test data into the database. There are many different approaches to doing this, and I thought I&rsquo;d cover a few, and then describe what I think the best approach is for Elixir.</p>
+
+<p></p>
+
+<h2 id="global-fixtures">Global Fixtures</h2>
+
+<p>By default, Rails solves this problem by automatically inserting a set of rows into the database before every test case is executed. These rows are configured by YAML files in the <code>test/fixtures</code> directory.</p>
+
+<p>While you could probably hook into <code>mix test</code> to insert your data before every test, I don&rsquo;t think the Rails approach should be imitated here, for the following reasons.</p>
+
+<p><strong>First, global fixtures are <em>implicit</em> behavior.</strong> There&rsquo;s nothing in your test file that tells you where the data is coming from. It&rsquo;s all happening behind the scenes, and you have to know to go look in the <code>fixtures/</code> directory to figure out what&rsquo;s going on.</p>
+
+<p>In contrast, Elixir emphasizes <em>explicit</em> behavior. It should be obvious where the fixtures are coming from, or at least there should be a breadcrumb trail <em>in my test file</em> that I can follow to figure that out.</p>
+
+<p><strong>Second, global fixtures can be brittle.</strong> It assumes that your app can be adequately tested with one or only a few versions of data. This is often a bad assumption.</p>
+
+<p><strong>Third, global fixtures are unecessary performance overhead.</strong> Inserting the data that you need for <em>all</em> your tests before <em>every</em> test is unecessary. It may not slow down your tests by much, but why slow them down at all?</p>
+
+<p><strong>Fourth, YAML is a bad DSL.</strong> Why write data for your ActiveRecord models in YAML? Why not just explicitly call <code>Model.create</code>? Rails itself acknowledges that YAML is a bad DSL by making the <code>db/seeds.rb</code> file a plain Ruby file where you use <code>Model.create</code> to create data. (The dichotomy between the fixtures YAML and the seeds.rb file confuses every Rails newbie I&rsquo;ve taught!)</p>
+
+<p>How exactly is this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml">daniel<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span><span class="s2">&#34;Daniel Berkompas&#34;</span><span class="w">
+</span><span class="w">  </span>email<span class="p">:</span><span class="w"> </span><span class="s2">&#34;test@example.com&#34;</span></code></pre></div>
+<p>Better than this?</p>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="no">User</span><span class="o">.</span><span class="n">create</span> <span class="nb">name</span><span class="p">:</span> <span class="s2">&#34;Daniel Berkompas&#34;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s2">&#34;test@example.com&#34;</span></code></pre></div>
+<p>Of course, the reason Rails does this is because inserting a row through ActiveRecord is <em>slow</em>, and since all the data has to be inserted before <em>every</em> test, fixtures would slow down your test suite a lot if it went through ActiveRecord.</p>
+
+<h2 id="factory-girl">Factory Girl</h2>
+
+<p>Many Rails developers use <a href="https://github.com/thoughtbot/factory_girl">FactoryGirl</a> instead of Rails&rsquo; built in fixtures. Using FactoryGirl, you define your fixtures using a DSL in Ruby files under <code>factories/model_name.rb</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="no">FactoryGirl</span><span class="o">.</span><span class="n">define</span> <span class="k">do</span>
+  <span class="n">factory</span> <span class="ss">:user</span> <span class="k">do</span>
+    <span class="nb">name</span> <span class="s2">&#34;Daniel Berkompas&#34;</span>
+    <span class="n">email</span> <span class="s2">&#34;test@example.com&#34;</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+<p>Then, to create the data:</p>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">user</span> <span class="o">=</span> <span class="no">FactoryGirl</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span></code></pre></div>
+<p>This is better than Rails&rsquo; default in several respects. The fixtures are not loaded globally, and the code is more explicit. A user knows that they need to look for &ldquo;factory&rdquo; related stuff to figure out what values <code>:user</code> has.</p>
+
+<p>However, it still has two faults which annoy me in the projects where I use it. First, since it runs through ActiveRecord, it can be very slow to insert data. Second, the DSL seems unnecessary. How is the above better than this?</p>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="no">User</span><span class="o">.</span><span class="n">create</span> <span class="nb">name</span><span class="p">:</span> <span class="s2">&#34;Daniel Berkompas&#34;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s2">&#34;test@example.com&#34;</span></code></pre></div>
+<p>I would prefer to see the code be still more explicit, fast, and without any DSLs, so that new developers don&rsquo;t have to learn a new DSL to write tests.</p>
+
+<h2 id="fixtures-for-elixir">Fixtures for Elixir</h2>
+
+<p>I suggest that you add a simple <code>MyApp.Fixtures</code> module to your <code>test/support</code> directory in your mix project. It could look something like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.Fixtures</span> <span class="n">do</span>
+  <span class="n">alias</span> <span class="p"></span><span class="nc">MyApp.User</span>
+
+  <span class="n">def</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="n">do</span>
+    <span class="p">%</span><span class="nc">User</span><span class="p">{</span><span class="ss">name</span><span class="p">:</span> <span class="s2">&#34;Daniel Berkompas&#34;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s2">&#34;test@example.com&#34;</span><span class="p">}</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>If you wanted, the <code>fixture/1</code> function could also automatically insert the <code>User</code> record by calling <code>Repo.insert!/1</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.Fixtures</span> <span class="n">do</span>
+  <span class="n">alias</span> <span class="p"></span><span class="nc">MyApp.Repo</span>
+  <span class="n">alias</span> <span class="p"></span><span class="nc">MyApp.User</span>
+
+  <span class="n">def</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="n">do</span>
+    <span class="p"></span><span class="nc">Repo</span><span class="o">.</span><span class="n">insert!</span> <span class="p">%</span><span class="nc">User</span><span class="p">{</span><span class="ss">name</span><span class="p">:</span> <span class="s2">&#34;Daniel Berkompas&#34;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s2">&#34;test@example.com&#34;</span><span class="p">}</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>It&rsquo;s trivial to add support for other models, and even associations:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.Fixtures</span> <span class="n">do</span>
+  <span class="n">alias</span> <span class="p"></span><span class="nc">MyApp.Repo</span>
+  <span class="n">alias</span> <span class="p"></span><span class="nc">MyApp.User</span>
+  <span class="n">alias</span> <span class="p"></span><span class="nc">MyApp.Post</span>
+
+  <span class="n">def</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="n">do</span>
+    <span class="p"></span><span class="nc">Repo</span><span class="o">.</span><span class="n">insert!</span> <span class="p">%</span><span class="nc">User</span><span class="p">{</span><span class="ss">name</span><span class="p">:</span> <span class="s2">&#34;Daniel Berkompas&#34;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s2">&#34;test@example.com&#34;</span><span class="p">}</span>
+  <span class="n">end</span>
+
+  <span class="n">def</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:post</span><span class="p">,</span> <span class="n">assoc</span> <span class="p">\\</span> <span class="p">[])</span> <span class="n">do</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">assoc</span><span class="p">[</span><span class="ss">:user</span><span class="p">]</span> <span class="o">||</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span>
+    <span class="p"></span><span class="nc">Repo</span><span class="o">.</span><span class="n">insert!</span> <span class="p">%</span><span class="nc">Post</span><span class="p">{</span>
+      <span class="ss">title</span><span class="p">:</span> <span class="s2">&#34;Fixtures for Ecto&#34;</span>
+      <span class="ss">user_id</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span>
+    <span class="p">}</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>You can then use this <code>Fixtures</code> module in your test like so:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.MyTest</span> <span class="n">do</span>
+  <span class="n">use</span> <span class="p"></span><span class="nc">ExUnit.Case</span>
+  <span class="n">import</span> <span class="p"></span><span class="nc">MyApp.Fixtures</span>
+
+  <span class="n">test</span> <span class="s2">&#34;some behavior&#34;</span> <span class="n">do</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span>
+    <span class="n">post</span> <span class="o">=</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:post</span><span class="p">,</span> <span class="ss">user</span><span class="p">:</span> <span class="n">user</span><span class="p">)</span>
+
+    <span class="c1"># test logic here</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<h2 id="benefits">Benefits</h2>
+
+<p>I think this approach provides several benefits:</p>
+
+<ul>
+<li><p><strong>Simplicity</strong>. There are no DSLs to learn. This means that new developers will be able to get up to speed with it very fast.</p></li>
+
+<li><p><strong>Explicitness</strong>. There&rsquo;s no mystery here. I can look at the test file and know exactly how the data is getting created.</p></li>
+
+<li><p><strong>Speed</strong>. Each test inserts only the data it needs. <code>Repo.insert!/1</code> is also much more performant than <code>ActiveRecord::Base#create</code>, since it&rsquo;s not worrying about validations. Ecto model structs are pretty lightweight compared to ActiveRecord objects, so that helps too.</p></li>
+
+<li><p><strong>Customization</strong>. Since we&rsquo;re only dealing with modules and functions here, you can compose your fixtures however you like. Nothing&rsquo;s off limits because the DSL doesn&rsquo;t support it, because there is no DSL!</p></li>
+</ul>
+
+<p>On the whole, I think this simpler approach is much better than either Rails fixtures or FactoryGirl, and you don&rsquo;t need to add a dependency to get it!</p>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2015/07/09/changing-your-ecto-encryption-key/" data-toggle="tooltip" data-placement="top" title="Changing Your Ecto Encryption Key">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2015/07/28/long-running-branches/" data-toggle="tooltip" data-placement="top" title="Avoid Long-Lived Feature Branches">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

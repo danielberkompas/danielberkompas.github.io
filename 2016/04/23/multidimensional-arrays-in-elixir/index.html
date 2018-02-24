@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Multidimensional Arrays in Elixir</title>
+  <meta property="og:title" content="Multidimensional Arrays in Elixir" />
+  <meta name="twitter:title" content="Multidimensional Arrays in Elixir" />
+  <meta name="description" content="I recently picked up a copy of Game Programming Patterns, and started messing around with implementing some of them in Elixir. I very quickly ran into some trouble dealing with multidimensional arrays.
+
+">
+  <meta property="og:description" content="I recently picked up a copy of Game Programming Patterns, and started messing around with implementing some of them in Elixir. I very quickly ran into some trouble dealing with multidimensional arrays.
+
+">
+  <meta name="twitter:description" content="I recently picked up a copy of Game Programming Patterns, and started messing around with implementing some of them in Elixir. I very quickly ran into some trouble dealing with multidimensional …">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2016/04/23/multidimensional-arrays-in-elixir/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2016/04/23/multidimensional-arrays-in-elixir/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Multidimensional Arrays in Elixir</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on April 23, 2016
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 5 minutes (940 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>I recently picked up a copy of <a href="http://www.amazon.com/Game-Programming-Patterns-Robert-Nystrom/dp/0990582906/ref=sr_1_1?ie=UTF8&amp;qid=1461424993&amp;sr=8-1&amp;keywords=game+programming+patterns">Game Programming Patterns</a>, and started messing around with implementing some of them in Elixir. I very quickly ran into some trouble dealing with multidimensional arrays.</p>
+
+<p></p>
+
+<p>Take the game of Tic-tac-toe for example.</p>
+
+<p><img src="/img/tic_tac_toe.png" alt="Tic-tac-toe Game Board" /></p>
+
+<p>Most programming languages would represent this Tic-tac-toe board as a multidimensional array, like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">board</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">[</span><span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;x&#34;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">]</span>
+<span class="p">]</span></code></pre></div>
+<p>You could then access and change squares on the board with the <code>board[x][y]</code> syntax.</p>
+<div class="highlight"><pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1">// &#34;x&#34;
+</span><span class="c1"></span><span class="nx">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;o&#34;</span></code></pre></div>
+<p>However, if you try this in Elixir, it won&rsquo;t work.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">board</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">[</span><span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;x&#34;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">]</span>
+<span class="p">]</span>
+
+<span class="n">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="o">**</span> <span class="p">(</span><span class="nc">ArgumentError</span><span class="p">)</span> <span class="n">the</span> <span class="p"></span><span class="nc">Access</span> <span class="n">calls</span> <span class="n">for</span> <span class="n">keywords</span> <span class="n">expect</span> <span class="n">the</span> <span class="n">key</span> <span class="n">to</span> <span class="n">be</span> <span class="n">an</span> <span class="n">atom</span><span class="p">,</span> <span class="ss">got</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">(</span><span class="n">elixir</span><span class="p">)</span> <span class="n">lib</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">ex</span><span class="p">:</span><span class="mi">136</span><span class="p">:</span> <span class="p"></span><span class="nc">Access</span><span class="o">.</span><span class="n">fetch</span><span class="o">/</span><span class="mi">2</span>
+    <span class="p">(</span><span class="n">elixir</span><span class="p">)</span> <span class="n">lib</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">ex</span><span class="p">:</span><span class="mi">149</span><span class="p">:</span> <span class="p"></span><span class="nc">Access</span><span class="o">.</span><span class="n">get</span><span class="o">/</span><span class="mi">3</span>
+<span class="n">i</span>
+
+<span class="n">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;y&#34;</span>
+<span class="o">**</span> <span class="p">(</span><span class="nc">CompileError</span><span class="p">)</span> <span class="n">iex</span><span class="p">:</span><span class="mi">3</span><span class="p">:</span> <span class="n">cannot</span> <span class="n">invoke</span> <span class="n">remote</span> <span class="n">function</span> <span class="p"></span><span class="nc">Access</span><span class="o">.</span><span class="n">get</span><span class="o">/</span><span class="mi">2</span> <span class="n">inside</span> <span class="n">match</span>
+    <span class="p">(</span><span class="n">stdlib</span><span class="p">)</span> <span class="n">lists</span><span class="o">.</span><span class="n">erl</span><span class="p">:</span><span class="mi">1353</span><span class="p">:</span> <span class="ss">:lists</span><span class="o">.</span><span class="n">mapfoldl</span><span class="o">/</span><span class="mi">3</span></code></pre></div>
+<p>This is for several reasons. First of all, Elixir&rsquo;s <code>[]</code> syntax is powered by the <a href="http://elixir-lang.org/docs/stable/elixir/Access.html">Access behaviour</a>, which is only implemented for maps and keyword lists. So, if you wanted to get the value of the game board at coords <code>[0,0]</code>, while representing the board as an ordinary list, you&rsquo;d need to do this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">board</span>
+<span class="o">|&gt;</span> <span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># =&gt; &#34;x&#34;</span></code></pre></div>
+<p>It&rsquo;s no easier if you decide to use a multidimensional tuple to represent the board; you just have to use the <code>elem/2</code> function instead of <code>Enum.at/2</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">board</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">{</span><span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;x&#34;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">board</span>
+<span class="o">|&gt;</span> <span class="n">elem</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="n">elem</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># =&gt; &#34;x&#34;</span></code></pre></div>
+<p>While this is a little weird, it&rsquo;s manageable for <em>reading</em> from the board. But what about <em>writing</em> to the board? That&rsquo;s where the second difficulty comes in.</p>
+
+<p>Elixir variables are <em>immutable</em>. This means that we can&rsquo;t just mutate the game board variable at the <code>[0,0]</code> coords, we have to make a modified <em>copy</em> of the entire board.</p>
+
+<p>This is easy to do in a one-dimensonal list or tuple:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="c1"># Use List.replace_at/3 for lists</span>
+<span class="n">modified</span> <span class="o">=</span> <span class="p"></span><span class="nc">List</span><span class="o">.</span><span class="n">replace_at</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&#34;y&#34;</span><span class="p">)</span>
+
+<span class="c1"># And put_elem/3 for tuples</span>
+<span class="n">modified</span> <span class="o">=</span> <span class="n">put_elem</span><span class="p">(</span><span class="n">tuple</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&#34;y&#34;</span><span class="p">)</span></code></pre></div>
+<p>However, it becomes pretty complicated when you need to write to a position in a nested list. In that case, you would need to:</p>
+
+<ol>
+<li>Get the nested list you need to modify out of the container list.</li>
+<li>Make a modified copy of the nested list.</li>
+<li>Recursively rebuild the entire data structure.</li>
+</ol>
+
+<p>Every nested Elixir data structure has this problem, and the good news is that Elixir has macros that do all of this for you. See the <a href="http://elixir-lang.org/docs/stable/elixir/Kernel.html#put_in/2"><code>put_in</code></a> macro, for example:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">map</span> <span class="o">=</span> <span class="p">%{</span><span class="ss">user</span><span class="p">:</span> <span class="p">%{</span><span class="ss">age</span><span class="p">:</span> <span class="mi">20</span><span class="p">}}</span>
+<span class="n">put_in</span> <span class="n">map</span><span class="p">[</span><span class="ss">:user</span><span class="p">][</span><span class="ss">:age</span><span class="p">],</span> <span class="mi">21</span>
+<span class="c1"># =&gt; %{user: %{age: 21}}</span></code></pre></div>
+<p>The bad news is that the <a href="http://elixir-lang.org/docs/stable/elixir/Kernel.html#put_in/2"><code>put_in</code></a> macro also relies on the <a href="http://elixir-lang.org/docs/stable/elixir/Access.html">Access behaviour</a>, and therefore only works on maps and keyword lists, not regular lists and tuples. What to do?</p>
+
+<h2 id="solution-use-a-map">Solution: Use a Map</h2>
+
+<p>We can eliminate all of these difficulties if we represent the game board as a map rather than a list or tuple.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">board</span> <span class="o">=</span> <span class="p">%{</span>
+  <span class="mi">0</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="mi">0</span> <span class="o">=&gt;</span> <span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s2">&#34;x&#34;</span><span class="p">},</span>
+  <span class="mi">1</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="mi">0</span> <span class="o">=&gt;</span> <span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s2">&#34;o&#34;</span><span class="p">},</span>
+  <span class="mi">2</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="mi">0</span> <span class="o">=&gt;</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s2">&#34;o&#34;</span><span class="p">}</span>
+<span class="p">}</span></code></pre></div>
+<p>The keys of each nested map are zero-indexed, just like arrays in other languages. This allows you to use the <a href="http://elixir-lang.org/docs/stable/elixir/Access.html">Access behaviour</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># =&gt; &#34;x&#34;</span></code></pre></div>
+<p>It also allows you to use the <a href="http://elixir-lang.org/docs/stable/elixir/Kernel.html#put_in/2"><code>put_in</code></a> macro.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">board</span> <span class="o">=</span> <span class="n">put_in</span> <span class="n">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&#34;y&#34;</span></code></pre></div>
+<p>This is just about as user-friendly as other languages, but it is still harder to manually write this map structure than it would be to write a nested list.</p>
+
+<p>We can make the experience nicer by creating a module that can generate these maps from lists and vice versa.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">Matrix</span> <span class="n">do</span>
+  <span class="na">@moduledoc</span> <span class="sh">&#34;&#34;&#34;
+</span><span class="sh">  Helpers for working with multidimensional lists, also called matrices.
+</span><span class="sh">  &#34;&#34;&#34;</span>
+
+  <span class="na">@doc</span> <span class="sh">&#34;&#34;&#34;
+</span><span class="sh">  Converts a multidimensional list into a zero-indexed map.
+</span><span class="sh">  
+</span><span class="sh">  </span><span class="err">##</span><span class="sh"> Example
+</span><span class="sh">  
+</span><span class="sh">      iex&gt; list = [[&#34;x&#34;, &#34;o&#34;, &#34;x&#34;]]
+</span><span class="sh">      ...&gt; Matrix.from_list(list)
+</span><span class="sh">      %{0 =&gt; %{0 =&gt; &#34;x&#34;, 1 =&gt; &#34;o&#34;, 2 =&gt; &#34;x&#34;}}
+</span><span class="sh">  &#34;&#34;&#34;</span>
+  <span class="n">def</span> <span class="n">from_list</span><span class="p">(</span><span class="n">list</span><span class="p">)</span> <span class="n">when</span> <span class="n">is_list</span><span class="p">(</span><span class="n">list</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">do_from_list</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
+  <span class="n">end</span>
+
+  <span class="n">defp</span> <span class="n">do_from_list</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="n">map</span> <span class="p">\\</span> <span class="p">%{},</span> <span class="n">index</span> <span class="p">\\</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="n">defp</span> <span class="n">do_from_list</span><span class="p">([],</span> <span class="n">map</span><span class="p">,</span> <span class="n">_index</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="n">map</span>
+  <span class="n">defp</span> <span class="n">do_from_list</span><span class="p">([</span><span class="n">h</span><span class="o">|</span><span class="n">t</span><span class="p">],</span> <span class="n">map</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">map</span> <span class="o">=</span> <span class="p"></span><span class="nc">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">map</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">do_from_list</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+    <span class="n">do_from_list</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">map</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="n">end</span>
+  <span class="n">defp</span> <span class="n">do_from_list</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="n">other</span>
+
+  <span class="na">@doc</span> <span class="sh">&#34;&#34;&#34;
+</span><span class="sh">  Converts a zero-indexed map into a multidimensional list.
+</span><span class="sh">  
+</span><span class="sh">  </span><span class="err">##</span><span class="sh"> Example
+</span><span class="sh">  
+</span><span class="sh">      iex&gt; matrix = %{0 =&gt; %{0 =&gt; &#34;x&#34;, 1 =&gt; &#34;o&#34;, 2 =&gt; &#34;x&#34;}}
+</span><span class="sh">      ...&gt; Matrix.to_list(matrix)
+</span><span class="sh">      [[&#34;x&#34;, &#34;o&#34;, &#34;x&#34;]]
+</span><span class="sh">  &#34;&#34;&#34;</span>
+  <span class="n">def</span> <span class="n">to_list</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="n">when</span> <span class="n">is_map</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">do_to_list</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+  <span class="n">end</span>
+
+  <span class="n">defp</span> <span class="n">do_to_list</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="n">when</span> <span class="n">is_map</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">for</span> <span class="p">{</span><span class="n">_index</span><span class="p">,</span> <span class="n">value</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">matrix</span><span class="p">,</span>
+        <span class="ss">into</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="ss">do</span><span class="p">:</span> <span class="n">do_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+  <span class="n">end</span>
+  <span class="n">defp</span> <span class="n">do_to_list</span><span class="p">(</span><span class="n">other</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="n">other</span>
+<span class="n">end</span></code></pre></div>
+<h2 id="conclusion">Conclusion</h2>
+
+<p>With the <code>Matrix</code> module in place, we can now manipulate multidimensional arrays just as well as other languages: <sup class="footnote-ref" id="fnref:memory"><a rel="footnote" href="#fn:memory">1</a></sup></p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="c1"># Create the game board</span>
+<span class="n">board</span> <span class="o">=</span> <span class="p"></span><span class="nc">Matrix</span><span class="o">.</span><span class="n">from_list</span><span class="p">([</span>
+  <span class="p">[</span><span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;x&#34;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&#34;o&#34;</span><span class="p">,</span> <span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="s2">&#34;o&#34;</span><span class="p">]</span>
+<span class="p">])</span>
+
+<span class="c1"># Access a value with coords</span>
+<span class="n">board</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># =&gt; &#34;o&#34;</span>
+
+<span class="c1"># Update the value at coords</span>
+<span class="n">board</span> <span class="o">=</span> <span class="n">put_in</span> <span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&#34;x&#34;</span>
+
+<span class="c1"># Get a multidimensional list back:</span>
+<span class="p"></span><span class="nc">Matrix</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+<span class="c1"># [</span>
+<span class="c1">#   [&#34;x&#34;, &#34;o&#34;, &#34;x&#34;],</span>
+<span class="c1">#   [&#34;x&#34;, &#34;o&#34;, &#34;o&#34;],</span>
+<span class="c1">#   [&#34;x&#34;, &#34;x&#34;, &#34;o&#34;]</span>
+<span class="c1"># ]</span></code></pre></div>
+<p>It would be nice if something like this was included in the standard library, but perhaps it isn&rsquo;t a common enough problem. Anyway, I hope it was helpful!</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:memory">This approach will still consume more memory to update the game board than other languages would because we copy the board for each mutation, rather than mutate the board in place. You can fix this by representing each square on the board with an <a href="http://elixir-lang.org/docs/stable/elixir/Agent.html">Agent</a>, but this slows down reading the state of the board. It&rsquo;s a tradeoff.
+ <a class="footnote-return" href="#fnref:memory"><sup>[return]</sup></a></li>
+</ol>
+</div>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix/" data-toggle="tooltip" data-placement="top" title="Background Jobs in Phoenix">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2016/09/27/ecto-multi-services/" data-toggle="tooltip" data-placement="top" title="Replace Callbacks with Ecto.Multi">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

@@ -1,0 +1,33 @@
+.navbar-custom {
+  background-color: #333;
+}
+
+.navbar-custom.top-nav-short {
+  background-color: #F5F5F5;
+}
+
+.navbar-custom .nav li a {
+  color: #888888;
+}
+
+.navbar-custom .navbar-brand {
+  color: #888888;
+}
+
+.navbar-custom .navbar-brand:hover, 
+.navbar-custom .navbar-brand:focus, 
+.navbar-custom .nav li a:hover, 
+.navbar-custom .nav li a:focus,
+.post-preview a:hover,
+a:hover {
+  color: #008AFF;
+}
+
+.pager li a:hover, .pager li a:focus {
+  background-color: #008AFF;
+  border: 1px solid #3382ea;
+}
+
+pre {
+  font-size: 14px;
+}

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Encrypting Data With Ecto</title>
+  <meta property="og:title" content="Encrypting Data With Ecto" />
+  <meta name="twitter:title" content="Encrypting Data With Ecto" />
+  <meta name="description" content="Author&rsquo;s Note: This post has been substantially updated since it was first posted. A much stronger crypto implementation has been used and the code has been reworked to be cleaner and more efficient.
+
+I&rsquo;ve also released an open-source Hex package that implements the approach to encryption I describe in this post. Read the announcement post here.
+
+In the future, as privacy becomes more and more of an issue, we&rsquo;re going to be encrypting a lot more of the data we store on the web.  With that in mind, I thought it would be a good idea to figure out a good way to integrate data encryption with Elixir&rsquo;s database library, Ecto.
+
+">
+  <meta property="og:description" content="Author&rsquo;s Note: This post has been substantially updated since it was first posted. A much stronger crypto implementation has been used and the code has been reworked to be cleaner and more efficient.
+
+I&rsquo;ve also released an open-source Hex package that implements the approach to encryption I describe in this post. Read the announcement post here.
+
+In the future, as privacy becomes more and more of an issue, we&rsquo;re going to be encrypting a lot more of the data we store on the web.  With that in mind, I thought it would be a good idea to figure out a good way to integrate data encryption with Elixir&rsquo;s database library, Ecto.
+
+">
+  <meta name="twitter:description" content="Author&rsquo;s Note: This post has been substantially updated since it was first posted. A much stronger crypto implementation has been used and the code has been reworked to be cleaner and more …">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2015/07/03/encrypting-data-with-ecto/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2015/07/03/encrypting-data-with-ecto/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Encrypting Data With Ecto</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on July 3, 2015
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 7 minutes (1331 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p><strong>Author&rsquo;s Note: This post has been substantially updated since <a href="https://github.com/danielberkompas/danielberkompas.github.io/blob/c6eb249e5019e782e891bfeb591bc75f084fd97c/_posts/2015-07-03-encrypting-data-with-ecto.md">it was first posted</a>. A much stronger crypto implementation has been used and the code has been reworked to be cleaner and more efficient.</strong></p>
+
+<p><strong>I&rsquo;ve also released an open-source Hex package that implements the approach to encryption I describe in this post. <a href="/2015/09/22/cloak-your-ecto-data.html">Read the announcement post here</a></strong>.</p>
+
+<p>In the future, as privacy becomes more and more of an issue, we&rsquo;re going to be encrypting a lot more of the data we store on the web.  With that in mind, I thought it would be a good idea to figure out a good way to integrate data encryption with <a href="https://github.com/elixir-lang/elixir">Elixir&rsquo;s</a> database library, <a href="https://github.com/elixir-lang/ecto">Ecto</a>.</p>
+
+<p></p>
+
+<h2 id="requirements">Requirements</h2>
+
+<p>In Rails, we have a gem called <a href="https://github.com/attr-encrypted/attr_encrypted">attr_encrypted</a> which makes it easy to have encrypted attributes on ActiveRecord models. The important features are:</p>
+
+<ul>
+<li>Transparent encryption/decryption of fields</li>
+<li>Custom encryptors, allowing for customizable security</li>
+<li>Automatic query support for encrypted fields</li>
+</ul>
+
+<p>Let&rsquo;s take a look at how to replicate this in <a href="https://github.com/elixir-lang/ecto">Ecto</a>.</p>
+
+<h2 id="building-our-encryptor">Building Our Encryptor</h2>
+
+<p>Before we can encrypt anything, we&rsquo;re going to need to create a module to handle encryption and decryption. Erlang comes with a good <a href="http://www.erlang.org/doc/man/crypto.html">crypto</a> module, which will serve as our base.</p>
+
+<p>For this use case, I&rsquo;ve chosen to use AES encryption in CTR mode, but you could just as easily use any other type of encryption supported by <a href="http://www.erlang.org/doc/man/crypto.html">crypto</a>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.AES</span> <span class="n">do</span>
+  <span class="c1"># Encrypts each plaintext with a different, random IV. This is much more</span>
+  <span class="c1"># secure than reusing the same IV, and is highly recommended.</span>
+  <span class="n">def</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">plaintext</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">iv</span>    <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">strong_rand_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="c1"># Random IVs for each encryption</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_init</span><span class="p">(</span><span class="ss">:aes_ctr</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+
+    <span class="p">{</span><span class="n">_state</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_encrypt</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">to_string</span><span class="p">(</span><span class="n">plaintext</span><span class="p">))</span>
+    <span class="n">iv</span> <span class="o">&lt;&gt;</span> <span class="n">ciphertext</span> <span class="c1"># Prepend IV to ciphertext, for easier decryption</span>
+  <span class="n">end</span>
+
+  <span class="n">def</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span> <span class="n">do</span>
+    <span class="c1"># Split the IV that was used off the front of the binary. It&#39;s the first</span>
+    <span class="c1"># 16 bytes.</span>
+    <span class="p">&lt;&lt;</span><span class="n">iv</span><span class="o">::</span><span class="n">binary</span><span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="n">ciphertext</span><span class="o">::</span><span class="n">binary</span><span class="p">&gt;&gt;</span> <span class="o">=</span> <span class="n">ciphertext</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_init</span><span class="p">(</span><span class="ss">:aes_ctr</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
+
+    <span class="p">{</span><span class="n">_state</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_decrypt</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">)</span>
+    <span class="n">plaintext</span>
+  <span class="n">end</span>
+
+  <span class="c1"># Convenience function to get the application&#39;s configuration key.</span>
+  <span class="n">defp</span> <span class="n">key</span> <span class="n">do</span>
+    <span class="p"></span><span class="nc">Application</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="ss">:encryption</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.AES</span><span class="p">)[</span><span class="ss">:key</span><span class="p">]</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>The module can then be used pretty simply:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="p"></span><span class="nc">MyApp.AES</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="s2">&#34;hello world!&#34;</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="p"></span><span class="nc">MyApp.AES</span><span class="o">.</span><span class="n">decrypt</span>
+<span class="c1"># =&gt; &#34;hello world!&#34;</span></code></pre></div>
+<p>You can configure the key to use in the <code>config.exs</code> for your app:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">config</span> <span class="ss">:my_app</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.AES</span><span class="p">,</span>
+       <span class="ss">key</span><span class="p">:</span> <span class="ss">:base64</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&#34;...&#34;</span><span class="p">),</span> <span class="c1"># assuming your key is in base64</span></code></pre></div>
+<p>Now that we have an encryptor, we can look at integrating it with Ecto.</p>
+
+<h2 id="ecto-type">Ecto.Type</h2>
+
+<p>To implement transparent encryption and decryption of fields, we need to add a layer of code in Ecto&rsquo;s row insertion and loading logic, so that we can encrypt the fields on save, and decrypt them when they are read. Fortunately, Ecto has exactly what we need in <a href="http://hexdocs.pm/ecto/Ecto.Type.html">Ecto.Type</a>.</p>
+
+<p><a href="http://hexdocs.pm/ecto/Ecto.Type.html">Ecto.Type</a> lets you define custom field types for Ecto&rsquo;s <code>schema</code>, allowing you to modify the value of a field when it is loaded or saved. Here&rsquo;s a custom <code>EncryptedField</code> type:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.EncryptedField</span> <span class="n">do</span>
+  <span class="n">import</span> <span class="p"></span><span class="nc">MyApp.AES</span>
+
+  <span class="c1"># Assert that this module behaves like an Ecto.Type so that the compiler can</span>
+  <span class="c1"># warn us if we forget to implement the 4 callback functions below.</span>
+  <span class="na">@behaviour</span> <span class="p"></span><span class="nc">Ecto.Type</span>
+
+  <span class="c1"># This defines the base type of this kind of field in the database.</span>
+  <span class="n">def</span> <span class="n">type</span><span class="p">,</span> <span class="ss">do</span><span class="p">:</span> <span class="ss">:binary</span>
+
+  <span class="c1"># This is called on a value in queries if it is not a string.</span>
+  <span class="n">def</span> <span class="n">cast</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="n">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+  <span class="n">end</span>
+
+  <span class="c1"># This is called when the field value is about to be written to the database</span>
+  <span class="n">def</span> <span class="n">dump</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">value</span> <span class="o">|&gt;</span> <span class="n">to_string</span> <span class="o">|&gt;</span> <span class="n">encrypt</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">}</span>
+  <span class="n">end</span>
+
+  <span class="c1"># This is called when the field is loaded from the database</span>
+  <span class="n">def</span> <span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="n">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>We&rsquo;re almost done! Now, since the encryptor we wrote operates directly on binary, the fields we encrypt should be <code>:binary</code> fields in the database. Suppose we have an <code>Ecto.Model</code> with a binary name attribute like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.User</span> <span class="n">do</span>
+  <span class="n">use</span> <span class="p"></span><span class="nc">Ecto.Model</span>
+
+  <span class="n">schema</span> <span class="s2">&#34;users&#34;</span> <span class="n">do</span>
+    <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:binary</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>To encrypt the name field, you just need to specify the <code>MyApp.EncryptedField</code> type instead of <code>:binary</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.User</span> <span class="n">do</span>
+  <span class="n">use</span> <span class="p"></span><span class="nc">Ecto.Model</span>
+
+  <span class="n">schema</span> <span class="s2">&#34;users&#34;</span> <span class="n">do</span>
+    <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.EncryptedField</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>That&rsquo;s it! The field will be transparently encrypted and decrypted as the model struct is saved to or loaded from the database.</p>
+
+<h2 id="querying">Querying</h2>
+
+<p>Querying encrypted fields is difficult, because our encryptor is designed
+specifically <em>not</em> to produce the same ciphertext twice for security reasons. To understand the difficulty, consider the following example.</p>
+
+<ul>
+<li><p>Suppose you have a user with the email address <code>test@example.com</code>. This value is encrypted in a binary field in the database.</p></li>
+
+<li><p>Now, someone comes along and tries to log in as <code>test@example.com</code>, and you want to query the database for a user with that email address.</p></li>
+
+<li><p>You can&rsquo;t search for <code>test@example.com</code>, because that value doesn&rsquo;t exist in the database. Neither can you run the email address through the encryptor, because that will produce a different value than what is in the database.</p></li>
+</ul>
+
+<p>So, how can you query for the email address? The answer is to <strong>add another field</strong> to the database called <code>:email_hash</code>, which will contain a <em>hash</em> of the <code>:email</code> field&rsquo;s contents. This is both secure and convenient: secure because the contents can&rsquo;t be reconstructed from a good hash; convenient, because hash algorithms produce the same result for the same plaintext every time.</p>
+
+<p>Let&rsquo;s implement another <code>Ecto.Type</code>, which will automatically hash the value of a field using the recommended SHA256 algorithm:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.HashField</span> <span class="n">do</span>
+  <span class="na">@behaviour</span> <span class="p"></span><span class="nc">Ecto.Type</span>
+
+  <span class="n">def</span> <span class="n">type</span><span class="p">,</span> <span class="ss">do</span><span class="p">:</span> <span class="ss">:binary</span>
+
+  <span class="n">def</span> <span class="n">cast</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="n">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+  <span class="n">end</span>
+
+  <span class="n">def</span> <span class="n">dump</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="n">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">hash</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+  <span class="n">end</span>
+
+  <span class="n">def</span> <span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="n">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">value</span><span class="p">}</span>
+  <span class="n">end</span>
+
+  <span class="n">def</span> <span class="n">hash</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="n">do</span>
+    <span class="ss">:crypto</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="ss">:sha256</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>Then, we add this field to the schema:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.User</span> <span class="n">do</span>
+  <span class="n">use</span> <span class="p"></span><span class="nc">Ecto.Model</span>
+
+  <span class="n">schema</span> <span class="s2">&#34;users&#34;</span> <span class="n">do</span>
+    <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.EncryptedField</span>
+    <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.EncryptedField</span>
+    <span class="n">field</span> <span class="ss">:email_hash</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.HashField</span>
+  <span class="n">end</span>
+
+  <span class="c1"># We must ensure that the email_hash field is always a hash of the same value</span>
+  <span class="c1"># held in the email field, or queries will be inaccurate.</span>
+  <span class="n">before_insert</span> <span class="ss">:set_hashed_fields</span>
+  <span class="n">before_update</span> <span class="ss">:set_hashed_fields</span>
+
+  <span class="n">defp</span> <span class="n">set_hashed_fields</span><span class="p">(</span><span class="n">changeset</span><span class="p">)</span> <span class="n">do</span>
+    <span class="n">changeset</span>
+    <span class="o">|&gt;</span> <span class="n">put_change</span><span class="p">(</span><span class="ss">:email_hash</span><span class="p">,</span> <span class="n">get_field</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:email</span><span class="p">))</span>
+  <span class="n">end</span>
+<span class="n">end</span></code></pre></div>
+<p>And now, we can easily query on the <code>:email_hash</code> field, because Ecto will automatically use our <code>HashField</code> module to convert our search term to a hash:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">email</span> <span class="o">=</span> <span class="s2">&#34;test@example.com&#34;</span>
+
+<span class="p"></span><span class="nc">MyApp.Repo</span><span class="o">.</span><span class="n">get_by</span><span class="p">(</span><span class="nc">MyApp.User</span><span class="p">,</span> <span class="ss">email_hash</span><span class="p">:</span> <span class="n">email</span><span class="p">)</span>
+<span class="p"></span><span class="nc">MyApp.Repo</span><span class="o">.</span><span class="n">one</span><span class="p">(</span><span class="n">from</span> <span class="n">u</span> <span class="n">in</span> <span class="p"></span><span class="nc">MyApp.User</span><span class="p">,</span> <span class="ss">where</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">email_hash</span> <span class="o">==</span> <span class="o">^</span><span class="n">email</span><span class="p">)</span>
+
+<span class="c1"># Both produce this query:</span>
+<span class="c1">#</span>
+<span class="c1"># SELECT u0.&#34;id&#34;, u0.&#34;name&#34;, u0.&#34;email&#34;, u0.&#34;email_hash&#34;, u0.&#34;inserted_at&#34;,</span>
+<span class="c1"># u0.&#34;updated_at&#34; FROM &#34;users&#34; AS u0 WHERE (u0.&#34;email_hash&#34; = $1) [&lt;&lt;151, 61,</span>
+<span class="c1"># 254, 70, 62, 200, 87, 133, 245, 249, 90, 245, 186, 57, 6, 238, 219, 45, 147,</span>
+<span class="c1"># 28, 36, 230, 152, 36, 168, 158, 166, 93, 186, 78, 129, 59&gt;&gt;]</span></code></pre></div>
+<p>And, we&rsquo;re done!</p>
+
+<h2 id="get-the-code">Get the Code</h2>
+
+<p>All this code and more is over on a Phoenix sample project I put up on Github. Here&rsquo;s <a href="https://github.com/danielberkompas/phoenix_ecto_encryption_sample/commit/80c9b75a39f89a203f80617e2c00c062e9904217">the relevant commit</a>. It includes tests and more examples, including how to validate the uniqueness of an encrypted field.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>We implemented the main features of <a href="https://github.com/attr-encrypted/attr_encrypted">attr_encrypted</a>, a somewhat complicated Ruby gem, in about 60 lines of code, without any monkey patching! This implementation is also substantially more secure than <a href="https://github.com/attr-encrypted/attr_encrypted">attr_encrypted</a>&rsquo;s default settings, which seem to rely on reusing IVs and using AES in CBC mode.</p>
+
+<p>Even better, this solution is very easy to understand and is very extensible. For example, if you wanted to use a physical Hardware Security Module to do the encryption and decryption, you could just write a custom encryptor and use it instead in your <code>EncryptedField</code> module.</p>
+
+<p>I wasn&rsquo;t sure how easy this would be to implement, and I&rsquo;m very happy with the result. My confidence in Elixir as a tool continues to rise.</p>
+
+<p><strong>READ THIS NEXT: <a href="/elixir/security/2015/07/09/changing-your-ecto-encryption-key.html">Changing Your Ecto Encryption Key</a></strong></p>
+
+<hr />
+
+<p><strong>Credits</strong></p>
+
+<p>Credit to <a href="http://twitter.com/victorluft">@victorluft</a> for suggesting much better crypto, and <a href="http://twitter.com/josevalim">@josevalim</a> for suggesting that I not make the encryptor a GenServer, since this could be a performance bottleneck.</p>
+
+<p><strong>Security Note</strong></p>
+
+<p>Adding a hashed version of a field is a slight security risk, because it reveals rows which have the same value in that field. Their hashes will match. Depending on your threat model, this may mean you&rsquo;ll need a different solution for querying on encrypted fields.</p>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2015/06/16/rate-limiting-a-phoenix-api/" data-toggle="tooltip" data-placement="top" title="Rate Limiting a Phoenix API">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2015/07/09/changing-your-ecto-encryption-key/" data-toggle="tooltip" data-placement="top" title="Changing Your Ecto Encryption Key">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Background Jobs in Phoenix</title>
+  <meta property="og:title" content="Background Jobs in Phoenix" />
+  <meta name="twitter:title" content="Background Jobs in Phoenix" />
+  <meta name="description" content="In Ruby on Rails, it&rsquo;s very common to use background worker libraries like Sidekiq to speed up requests and do work asynchronously. Rather than doing all the work that needs to be done inline (and blocking other requests), a background job can speed things up significantly. Sidekiq is great, and you should definitely use it in your Ruby projects.
+
+">
+  <meta property="og:description" content="In Ruby on Rails, it&rsquo;s very common to use background worker libraries like Sidekiq to speed up requests and do work asynchronously. Rather than doing all the work that needs to be done inline (and blocking other requests), a background job can speed things up significantly. Sidekiq is great, and you should definitely use it in your Ruby projects.
+
+">
+  <meta name="twitter:description" content="In Ruby on Rails, it&rsquo;s very common to use background worker libraries like Sidekiq to speed up requests and do work asynchronously. Rather than doing all the work that needs to be done inline …">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Background Jobs in Phoenix</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on April 5, 2016
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 3 minutes (513 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>In Ruby on Rails, it&rsquo;s very common to use background worker libraries like <a href="http://sidekiq.org/">Sidekiq</a> to speed up requests and do work asynchronously. Rather than doing all the work that needs to be done inline (and blocking other requests), a background job can speed things up significantly. Sidekiq is great, and you should definitely use it in your Ruby projects.</p>
+
+<p></p>
+
+<p>However, because Phoenix is built with Elixir, we can get pretty far with just the built-in concurrency primitives and OTP, without any outside libraries.</p>
+
+<h2 id="task-start-link-http-elixir-lang-org-docs-stable-elixir-task-html"><a href="http://elixir-lang.org/docs/stable/elixir/Task.html">Task.start_link</a></h2>
+
+<p>If you don&rsquo;t care about whether the background job succeeds or not, and you don&rsquo;t need to get the result back, you can use <code>Task.start_link/1</code>. Simply pass an anonymous function to the <code>start_link/1</code> function, and it will be run in a background process.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="p"></span><span class="nc">Task</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="n">fn</span> <span class="o">-&gt;</span> <span class="p"></span><span class="nc">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">&#34;Hello, World&#34;</span> <span class="n">end</span><span class="p">)</span></code></pre></div>
+<h2 id="task-async-https-elixir-lang-org-docs-stable-elixir-task-html"><a href="https://elixir-lang.org/docs/stable/elixir/Task.html">Task.async</a></h2>
+
+<p>If you care about the result, then you should use the <code>Task</code> module&rsquo;s <code>async/1</code> function. Here too, you can pass an anonymous function to <code>async</code>, and it will be run in a new, separate process.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="p"></span><span class="nc">Task</span><span class="o">.</span><span class="n">async</span> <span class="n">fn</span> <span class="o">-&gt;</span>
+  <span class="n">do_something_in_the_background</span>
+<span class="n">end</span></code></pre></div>
+<p>Alternatively, you can give a module name, function name, and the function&rsquo;s arguments, instead of an anonymous function. To retrieve the result of the function once it finishes running, you wait for it using <code>Task.await/1</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="c1"># The `task` that is returned here is a struct, containing a reference</span>
+<span class="c1"># to the process that was started</span>
+<span class="n">task</span> <span class="o">=</span> <span class="p"></span><span class="nc">Task</span><span class="o">.</span><span class="n">async</span><span class="p">(</span><span class="nc">ModuleName</span><span class="p">,</span> <span class="ss">:function</span><span class="p">,</span> <span class="p">[</span><span class="n">args</span><span class="p">])</span>
+
+<span class="c1"># `Task.await/1` will wait for a limited time for the background process</span>
+<span class="c1"># to complete and return the result. If the background job doesn&#39;t</span>
+<span class="c1"># complete within the time, an exception will be thrown.</span>
+<span class="n">result</span> <span class="o">=</span> <span class="p"></span><span class="nc">Task</span><span class="o">.</span><span class="n">await</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+<span class="c1"># `result` is now bound to whatever value ModuleName.function(args) returns</span></code></pre></div>
+<p>This alone gets you a pretty long way, but there are situations where more is required.</p>
+
+<h2 id="task-supervisor-http-elixir-lang-org-docs-stable-elixir-genserver-html"><a href="http://elixir-lang.org/docs/stable/elixir/GenServer.html">Task.Supervisor</a></h2>
+
+<p>If you have tasks that can be safely retried, you can use a <code>Task.Supervisor</code> to manage them. Just add the supervisor to your app&rsquo;s supervision tree in <code>lib/myapp.ex</code>.</p>
+<div class="highlight"><pre class="chroma"><code class="language-diff" data-lang="diff">children = [
+  supervisor(MyApp.Endpoint, []),
+  supervisor(MyApp.Repo, []),
+<span class="gi">+ supervisor(Task.Supervisor, [[name: MyApp.TaskSupervisor, restart: :transient]])
+</span><span class="gi"></span>]
+</code></pre></div>
+<p>The <code>restart: :transient</code> option is important, because it causes the <code>Task.Supervisor</code> to retry failed tasks. The default setting is <code>:temporary</code>, and does not retry tasks.</p>
+
+<p>With this in place, you can start a supervised task like so:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="p"></span><span class="nc">Task.Supervisor</span><span class="o">.</span><span class="n">start_child</span> <span class="p"></span><span class="nc">MyApp.TaskSupervisor</span><span class="p">,</span> <span class="n">fn</span> <span class="o">-&gt;</span>
+  <span class="n">do_background_work</span>
+<span class="n">end</span></code></pre></div>
+<p>Or, if you care about the result, you can use <code>Task.Supervisor.async/2</code> and await the results:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">task</span> <span class="o">=</span> <span class="p"></span><span class="nc">Task.Supervisor</span><span class="o">.</span><span class="n">async</span> <span class="p"></span><span class="nc">MyApp.TaskSupervisor</span><span class="p">,</span> <span class="n">fn</span> <span class="o">-&gt;</span>
+  <span class="n">do_background_work</span>
+<span class="n">end</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="p"></span><span class="nc">Task</span><span class="o">.</span><span class="n">await</span><span class="p">(</span><span class="n">task</span><span class="p">)</span></code></pre></div>
+<p>If the tasks managed by this supervisor fail, they will be retried automatically until they succeed. It&rsquo;s also possible to start tasks on a separate node (separate hardware!):</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="p"></span><span class="nc">Task.Supervisor</span><span class="o">.</span><span class="n">async</span><span class="p">({</span><span class="nc">MyApp.TaskSupervisor</span><span class="p">,</span> <span class="ss">:remote</span><span class="na">@local</span><span class="p">},</span>
+                      <span class="p"></span><span class="nc">ModuleName</span><span class="p">,</span> <span class="ss">:function</span><span class="p">,</span> <span class="p">[</span><span class="n">args</span><span class="p">])</span></code></pre></div>
+<p>This only works if the other node has a supervisor named <code>MyApp.TaskSupervisor</code> and is also running a version of <code>ModuleName</code>, of course.</p>
+
+<h2 id="when-are-libraries-needed">When are Libraries Needed?</h2>
+
+<p>You may still need a library if you need queues and job prioritization, or if your nodes don&rsquo;t have network access to each other, and you therefore have to share a queue through Redis. However, you can get pretty far using only the <code>Task</code> module.</p>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2016/01/28/seo-tags-in-phoenix/" data-toggle="tooltip" data-placement="top" title="SEO Tags In Phoenix">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2016/04/23/multidimensional-arrays-in-elixir/" data-toggle="tooltip" data-placement="top" title="Multidimensional Arrays in Elixir">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

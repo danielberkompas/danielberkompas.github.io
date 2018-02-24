@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Contracts: Type Checking for Ruby</title>
+  <meta property="og:title" content="Contracts: Type Checking for Ruby" />
+  <meta name="twitter:title" content="Contracts: Type Checking for Ruby" />
+  <meta name="description" content="Like many Rubyists who read popular coding news, I recently came across the Contracts gem. It caught my eye because it implements some of the features I like in Elixir, but for Ruby.
+
+">
+  <meta property="og:description" content="Like many Rubyists who read popular coding news, I recently came across the Contracts gem. It caught my eye because it implements some of the features I like in Elixir, but for Ruby.
+
+">
+  <meta name="twitter:description" content="Like many Rubyists who read popular coding news, I recently came across the Contracts gem. It caught my eye because it implements some of the features I like in Elixir, but for Ruby.
+
+">
+  <meta name="author" content="Daniel Berkompas"/>
+  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@dberkom" />
+  <meta name="twitter:creator" content="@dberkom" />
+  <meta property="og:url" content="https://blog.danielberkompas.com/2015/04/01/contracts-gem/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Random Bits" />
+
+  <meta name="generator" content="Hugo 0.36.1" />
+  <link rel="canonical" href="https://blog.danielberkompas.com/2015/04/01/contracts-gem/" />
+  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+<script>
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-23392891-3', 'auto');
+ga('send', 'pageview');
+</script>
+<script async src='//www.google-analytics.com/analytics.js'></script>
+
+</head>
+
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/">Blog</a>
+            </li>
+          
+        
+          
+            <li class="navlinks-container">
+              <a class="navlinks-parent" href="javascript:void(0)">Courses</a>
+              <div class="navlinks-children">
+                
+                  <a href="https://www.learnelixir.tv">Learn Elixir</a>
+                
+                  <a href="https://www.learnphoenix.tv">Learn Phoenix</a>
+                
+              </div>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Projects" href="/projects">Projects</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/about">About</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="Tags" href="/tags">Tags</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        
+          <a title="Random Bits" href="https://blog.danielberkompas.com/">
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+          </a>
+        
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+
+
+    
+  
+  
+  
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              <h1>Contracts: Type Checking for Ruby</h1>
+                
+                
+                  <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on April 1, 2015
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 4 minutes (711 words)
+  
+  
+</span>
+
+
+                
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>Like many Rubyists who read popular coding news, I recently came across the <a href="https://rubygems.org/gems/contracts">Contracts</a> gem. It caught my eye because it implements some of the features I like in <a href="http://elixir-lang.org">Elixir</a>, but for Ruby.</p>
+
+<p></p>
+
+<h2 id="type-annotations-in-elixir">Type Annotations in Elixir</h2>
+
+<p>Both Ruby and Elixir are duck-typed languages. However, Elixir (and its parent, Erlang) allow for static type analysis through annotations. In Elixir, they look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="na">@spec</span> <span class="n">add</span><span class="p">(</span><span class="n">integer</span><span class="p">,</span> <span class="n">integer</span><span class="p">)</span> <span class="o">::</span> <span class="n">integer</span>
+<span class="n">def</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="n">do</span>
+  <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="n">end</span></code></pre></div>
+<p>Custom types can be defined:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="na">@type</span> <span class="n">uuid</span> <span class="o">::</span> <span class="p"></span><span class="nc">String</span><span class="o">.</span><span class="n">t</span>
+
+<span class="na">@spec</span> <span class="n">find</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span> <span class="o">::</span> <span class="n">map</span>
+<span class="n">def</span> <span class="n">find</span><span class="p">(</span><span class="n">uuid</span><span class="p">)</span> <span class="n">do</span>
+  <span class="c1"># implementation here</span>
+<span class="n">end</span></code></pre></div>
+<p>Arguments can be deconstructed via pattern matching in type specs, just like they can in function definitions. Suppose the <code>add/2</code> function took a tuple instead of two arguments. You could write it like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="na">@spec</span> <span class="n">add</span><span class="p">({</span><span class="n">integer</span><span class="p">,</span> <span class="n">integer</span><span class="p">})</span> <span class="o">::</span> <span class="n">integer</span>
+<span class="n">def</span> <span class="n">add</span><span class="p">({</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">}),</span> <span class="ss">do</span><span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span></code></pre></div>
+<p>All together, your <code>Math</code> module might look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">Math</span> <span class="n">do</span>
+  <span class="na">@spec</span> <span class="n">add</span><span class="p">({</span><span class="n">integer</span><span class="p">,</span> <span class="n">integer</span><span class="p">})</span> <span class="o">::</span> <span class="n">integer</span>
+  <span class="n">def</span> <span class="n">add</span><span class="p">({</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">}),</span> <span class="ss">do</span><span class="p">:</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+  <span class="na">@spec</span> <span class="n">add</span><span class="p">(</span><span class="n">integer</span><span class="p">,</span> <span class="n">integer</span><span class="p">)</span> <span class="o">::</span> <span class="n">integer</span>
+  <span class="n">def</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="n">end</span>
+
+<span class="p"></span><span class="nc">Math</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>   <span class="c1"># =&gt; 5</span>
+<span class="p"></span><span class="nc">Math</span><span class="o">.</span><span class="n">add</span><span class="p">({</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">})</span> <span class="c1"># =&gt; 5</span>
+<span class="p"></span><span class="nc">Math</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&#34;hello&#34;</span><span class="p">)</span> <span class="c1"># =&gt; Error: no matching function definition</span></code></pre></div>
+<p>In Elixir, these type annotations are analyzed at compile-time for some errors, and the compiled BEAM file can also be run through <a href="http://www.erlang.org/doc/man/dialyzer.html">Dialyzer</a> for static analysis. Together, this two step process can find type errors <em>without even running your code,</em> very similarly to statically typed languages.</p>
+
+<h2 id="type-annotations-in-ruby-using-contracts">Type Annotations in Ruby using Contracts</h2>
+
+<p>The <a href="https://rubygems.org/gems/contracts">Contracts gem</a> is able to do a lot of the same kind of type annotation that Elixir can do. It even adds support for multiple definitions of the same method!</p>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s2">&#34;contracts&#34;</span>
+
+<span class="k">class</span> <span class="nc">Math</span>
+  <span class="kp">include</span> <span class="no">Contracts</span>
+
+  <span class="c1"># Tuple version</span>
+  <span class="c1"># Ruby doesn&#39;t have tuples, so we&#39;ll use a two-element array</span>
+  <span class="no">Contract</span> <span class="o">[</span><span class="no">Num</span><span class="p">,</span> <span class="no">Num</span><span class="o">]</span> <span class="o">=&gt;</span> <span class="no">Num</span>
+  <span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">add</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
+    <span class="n">add</span> <span class="n">numbers</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">,</span> <span class="n">numbers</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Two arguments version</span>
+  <span class="no">Contract</span> <span class="no">Num</span><span class="p">,</span> <span class="no">Num</span> <span class="o">=&gt;</span> <span class="no">Num</span>
+  <span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">math</span> <span class="o">=</span> <span class="no">Math</span><span class="o">.</span><span class="n">new</span>
+<span class="n">math</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="o"></span><span class="p">,</span> <span class="mi">2</span><span class="o"></span><span class="p">)</span>      <span class="c1"># =&gt; 3</span>
+<span class="n">math</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">[</span><span class="mi">1</span><span class="o"></span><span class="p">,</span> <span class="mi">2</span><span class="o">]</span><span class="p">)</span>    <span class="c1"># =&gt; 3</span>
+<span class="n">math</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">[</span><span class="mi">1</span><span class="o"></span><span class="p">,</span> <span class="mi">2</span><span class="o"></span><span class="p">,</span> <span class="mi">3</span><span class="o">]</span><span class="p">)</span> <span class="c1"># =&gt; Error, no matching contract</span>
+<span class="n">math</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&#34;hello&#34;</span><span class="p">)</span>   <span class="c1"># =&gt; Error, no matching contract</span></code></pre></div>
+<p>It also adds some of the pattern matching goodness that Elixir brings to the table. Suppose I had a function <code>handle_response</code>, that is supposed to deal with a response from a web API. In Elixir, that function might look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">handle_response</span><span class="p">(</span><span class="ss">:error</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span> <span class="n">do</span>
+  <span class="c1"># Handle error case</span>
+<span class="n">end</span>
+
+<span class="n">def</span> <span class="n">handle_response</span><span class="p">(</span><span class="ss">:success</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span> <span class="n">do</span>
+  <span class="c1"># Handle success case</span>
+<span class="n">end</span></code></pre></div>
+<p>In Ruby without the Contracts gem, it would look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+  <span class="k">case</span> <span class="n">status</span>
+  <span class="k">when</span> <span class="ss">:error</span> <span class="k">then</span> <span class="c1"># handle error</span>
+  <span class="k">when</span> <span class="ss">:success</span> <span class="k">then</span> <span class="c1"># handle success</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></div>
+<p>With the Contracts gem, it looks a lot more like Elixir:</p>
+<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="no">Contract</span> <span class="ss">:error</span><span class="p">,</span> <span class="nb">String</span> <span class="o">=&gt;</span> <span class="no">Any</span>
+<span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+  <span class="c1"># handle error</span>
+<span class="k">end</span>
+
+<span class="no">Contract</span> <span class="ss">:success</span><span class="p">,</span> <span class="nb">String</span> <span class="o">=&gt;</span> <span class="no">Any</span>
+<span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">handle_response</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+  <span class="c1"># Handle success case</span>
+<span class="k">end</span></code></pre></div>
+<h2 id="important-differences-between-contracts-and-elixir">Important Differences between Contracts and Elixir</h2>
+
+<p>There are a few important differences between the <a href="https://rubygems.org/gems/contracts">Contracts</a> gem and Elixir&rsquo;s type annotations.</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="center">Contracts</th>
+<th align="center">Elixir</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Compile-time</td>
+<td align="center"><span class="red">N/A</span></td>
+<td align="center"><span class="green">Yes</span></td>
+</tr>
+
+<tr>
+<td align="left">Static analysis</td>
+<td align="center"><span class="red">No</span></td>
+<td align="center"><span class="green">Yes</span></td>
+</tr>
+
+<tr>
+<td align="left">Violation errors</td>
+<td align="center"><span class="green">Yes</span></td>
+<td align="center"><span class="green">Yes</span></td>
+</tr>
+
+<tr>
+<td align="left">Pattern matching</td>
+<td align="center"><span class="green">Yes</span></td>
+<td align="center"><span class="green">Yes</span></td>
+</tr>
+
+<tr>
+<td align="left">Custom types</td>
+<td align="center"><span class="green">Yes</span></td>
+<td align="center"><span class="green">Yes</span></td>
+</tr>
+</tbody>
+</table>
+
+<p>Since Ruby isn&rsquo;t compiled, the contracts are not statically analyzed prior to running your code. You won&rsquo;t catch a contract error before it occurs, so your tests would still need to exercise most of your code.</p>
+
+<h2 id="benefits">Benefits</h2>
+
+<p>Why should you want type annotations? I can think of several reasons:</p>
+
+<ul>
+<li><strong>They&rsquo;re optional</strong>. You don&rsquo;t have to use annotations when you want
+duck-typing. But when types are actually important, you can use them.</li>
+<li><strong>Type errors do exist.</strong> Even if they don&rsquo;t matter to <a href="http://twitter.com/dhh">@dhh</a>.</li>
+<li><strong>Contracts provide free documentation.</strong> Very few functions can handle <em>any</em> input. This means that developers always have to look up what types the function can handle, and if you document that, it will make their lives easier. Documentation can easily be generated off these annotations.</li>
+<li><strong>Code with greater confidence.</strong> You will know that functions won&rsquo;t run without receiving valid input, cutting down on the number of bad things that could occur.</li>
+</ul>
+
+<p>Overall, I think the <a href="https://rubygems.org/gems/contracts">Contracts</a> gem looks great, and I&rsquo;m excited to use it in one of my next Ruby projects.</p>
+
+<h2 id="additional-resources">Additional Resources</h2>
+
+<ul>
+<li><a href="http://egonschiele.github.io/contracts.ruby/">Contract Gem Tutorial</a></li>
+<li><a href="http://disnetdev.com/contracts.coffee/">Contracts.coffee</a></li>
+</ul>
+
+<p>P.S. This is <em>not</em> an April Fool&rsquo;s joke.</p>
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/" data-toggle="tooltip" data-placement="top" title="Stream Paginated APIs in Elixir">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://blog.danielberkompas.com/2015/04/03/run-dialyzer-on-elixir-on-travis/" data-toggle="tooltip" data-placement="top" title="Run Dialyzer on Elixir on Travis CI">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+        
+          <div class="disqus-comments">
+            <div id="disqus_thread"></div>
+<script>
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+          </div>
+        
+        
+      
+
+    </div>
+  </div>
+</div>
+
+    <footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/danielberkompas" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://twitter.com/dberkom" title="Twitter">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
+                  <span class="fa-stack fa-lg">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            
+            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
+            
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              <a href="danielberkompas.com">Daniel Berkompas</a>
+            
+          
+
+          &nbsp;&bull;&nbsp;
+          2017
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://blog.danielberkompas.com/">Random Bits</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
+<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+  </body>
+</html>
+

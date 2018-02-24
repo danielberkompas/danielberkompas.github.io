@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Twilio on Random Bits</title>
+    <link>https://blog.danielberkompas.com/tags/twilio/</link>
+    <description>Recent content in Twilio on Random Bits</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 28 Mar 2015 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://blog.danielberkompas.com/tags/twilio/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Stream Paginated APIs in Elixir</title>
+      <link>https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/</link>
+      <pubDate>Sat, 28 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/</guid>
+      <description>&lt;h2 id=&#34;this-article-was-recently-featured-in-elixir-radar-http-plataformatec-com-br-elixir-radar-since-it-was-written-i-ve-found-a-simpler-way-to-implement-this-kind-of-stream-i-ll-be-writing-an-updated-tutorial-in-the-future-but-if-you-re-interested-you-should-also-check-out-the-current-state-of-extwilio-resultstream-https-github-com-danielberkompas-ex-twilio-blob-371f2b263d763d1459b467d1fbe8783fce825c0e-lib-ex-twilio-result-stream-ex&#34;&gt;_This article was recently featured in &lt;a href=&#34;http://plataformatec.com.br/elixir-radar&#34;&gt;Elixir Radar&lt;/a&gt;. Since it was written, I&amp;rsquo;ve found a simpler way to implement this kind of Stream. I&amp;rsquo;ll be writing an updated tutorial in the future, but if you&amp;rsquo;re interested, you should also check out the current state of &lt;a href=&#34;https://github.com/danielberkompas/ex_twilio/blob/371f2b263d763d1459b467d1fbe8783fce825c0e/lib/ex_twilio/result_stream.ex&#34;&gt;ExTwilio.ResultStream&lt;/a&gt;._&lt;/h2&gt;
+
+&lt;p&gt;This past week, as I worked on my new &lt;a href=&#34;https://github.com/danielberkompas/ex_twilio&#34;&gt;ExTwilio&lt;/a&gt; API library for &lt;a href=&#34;https://www.twilio.com&#34;&gt;Twilio&lt;/a&gt;, I ran into a snag dealing with &lt;a href=&#34;https://www.twilio.com/docs/api/rest/response#response-formats-list&#34;&gt;Twilio&amp;rsquo;s API pagination&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Twilio paginates its &amp;ldquo;list&amp;rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch &lt;em&gt;all&lt;/em&gt; of a resource and perform operations on it, like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-elixir&#34; data-lang=&#34;elixir&#34;&gt;&lt;span class=&#34;n&#34;&gt;calls&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;ExTwilio.Call&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;all&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Enum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;each&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;calls&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;fn&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;call&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;c1&#34;&gt;# perform some operation&lt;/span&gt;
+&lt;span class=&#34;n&#34;&gt;end&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Users won&amp;rsquo;t want to mess with the details of pagination. They want to get a collection containing everything and then operate on it.&lt;/p&gt;
+
+&lt;p&gt;I find that there are two basic ways to achieve this, a &lt;em&gt;blocking&lt;/em&gt; way and a &lt;em&gt;non-blocking&lt;/em&gt; way.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>ExTwiml</title>
+      <link>https://blog.danielberkompas.com/2015/03/11/ex-twiml---/2015/03/11/ex-twiml.html/</link>
+      <pubDate>Wed, 11 Mar 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2015/03/11/ex-twiml---/2015/03/11/ex-twiml.html/</guid>
+      <description>&lt;p&gt;At &lt;a href=&#34;http://leadsimple.com&#34;&gt;LeadSimple&lt;/a&gt;, we use &lt;a href=&#34;http://twilio.com&#34;&gt;Twilio&lt;/a&gt; to handle phone call routing. Twilio interacts with regular HTTP endpoints on your server to control calls and SMS messages, through a form of XML they call &lt;code&gt;TwiML&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;ve been toying recently ideas on how to bring next-generation Erlang (Elixir) and next-generation telephony (Twilio) together. Toward that end, I made a little library this week to make generating TwiML from Elixir easy.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>
