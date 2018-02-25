@@ -534,11 +534,16 @@ Occupation I create software for a living, with a focus on backend servers. Abou
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://blog.danielberkompas.com/projects/</guid>
-      <description>Courses LearnElixir.tv Teaches Elixir with step-by-step video tutorials.
-LearnPhoenix.tv Teaches how to use Phoenix, the popular Elixir web framework.
-
+      <description>Courses I&amp;rsquo;m passionate about teaching programming, so I created the following courses:
+LearnElixir.tv Teaches Elixir with step-by-step video tutorials.
+ LearnPhoenix.tv Teaches Elixir with step-by-step video tutorials.
+  
 Open Source Software I built and maintain several libraries on my own:
-   Project Language Stats Description     number Elixir  Converts numbers to common formats   ex_twilio Elixir  API client for Twilio   cloak Elixir  Encrypts database fields with Ecto   immortal Elixir  Helpers for OTP applications   destructure Elixir  Javascript-style destructuring</description>
+Number Number formatting for Elixir
+ ExTwilio API client for Twilio
+  Cloak Encrypts database fields
+ Immortal Helpers for OTP applications
+  Destructure Javascript destructuring for Elixir</description>
     </item>
     
   </channel>

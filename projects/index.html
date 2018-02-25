@@ -13,8 +13,8 @@
   <meta name="twitter:description" content="Things I&#39;ve made or contributed to">
   <meta name="author" content="Daniel Berkompas"/>
   <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
-  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
-  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar.jpg" />
+  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
+  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@dberkom" />
   <meta name="twitter:creator" content="@dberkom" />
@@ -29,7 +29,8 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/project.css" />
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
@@ -141,7 +142,7 @@ ga('send', 'pageview');
       <div class="avatar-img-border">
         
           <a title="Random Bits" href="https://blog.danielberkompas.com/">
-            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar.jpg" alt="Random Bits" />
+            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar-blue.jpg" alt="Random Bits" />
           </a>
         
       </div>
@@ -196,13 +197,19 @@ ga('send', 'pageview');
 
 <h3 id="courses">Courses</h3>
 
-<h4 id="learnelixir-tv-https-www-learnelixir-tv"><a href="https://www.learnelixir.tv">LearnElixir.tv</a></h4>
+<p>I&rsquo;m passionate about teaching programming, so I created the following courses:</p>
 
-<p>Teaches Elixir with step-by-step video tutorials.</p>
+<div class="row">
+  <article class="project col-sm-6 col-xs-12">
+    <h4><a href="https://www.learnelixir.tv">LearnElixir.tv</a></h4>
+    <p>Teaches Elixir with step-by-step video tutorials.</p>
+  </article>
 
-<h4 id="learnphoenix-tv-https-www-learnphoenix-tv"><a href="https://www.learnphoenix.tv">LearnPhoenix.tv</a></h4>
-
-<p>Teaches how to use Phoenix, the popular Elixir web framework.</p>
+  <article class="project col-sm-6 col-xs-12">
+    <h4><a href="https://www.learnphoenix.tv">LearnPhoenix.tv</a></h4>
+    <p>Teaches Elixir with step-by-step video tutorials.</p>
+  </article>
+</div>
 
 <p><br /></p>
 
@@ -210,98 +217,79 @@ ga('send', 'pageview');
 
 <p>I built and maintain several libraries on my own:</p>
 
-<table>
-<thead>
-<tr>
-<th>Project</th>
-<th>Language</th>
-<th>Stats</th>
-<th>Description</th>
-</tr>
-</thead>
+<div class="row">
+  <article class="project col-sm-6 col-xs-12">
+    <img class="pull-right" alt="number downloads" src="https://img.shields.io/hexpm/dt/number.svg?style=flat-square" />
+    <h4><a href="https://github.com/danielberkompas/number">Number</a></h4>
+    <p>Number formatting for Elixir</p>
+  </article>
 
-<tbody>
-<tr>
-<td><a href="https://github.com/danielberkompas/number">number</a></td>
-<td><a href="https://elixir-lang.org">Elixir</a></td>
-<td><img src="https://img.shields.io/hexpm/dt/number.svg?style=flat-square" alt="" /></td>
-<td>Converts numbers to common formats</td>
-</tr>
+  <article class="project col-sm-6 col-xs-12">
+    <img class="pull-right" alt="ex_twilio downloads" src="https://img.shields.io/hexpm/dt/ex_twilio.svg?style=flat-square" />
+    <h4><a href="https://github.com/danielberkompas/ex_twilio">ExTwilio</a></h4>
+    <p>API client for Twilio</p>
+  </article>
+</div>
 
-<tr>
-<td><a href="https://github.com/danielberkompas/ex_twilio">ex_twilio</a></td>
-<td><a href="https://elixir-lang.org">Elixir</a></td>
-<td><img src="https://img.shields.io/hexpm/dt/ex_twilio.svg?style=flat-square" alt="" /></td>
-<td>API client for Twilio</td>
-</tr>
+<div class="row">
+  <article class="project col-sm-6 col-xs-12">
+    <img class="pull-right" alt="cloak downloads" src="https://img.shields.io/hexpm/dt/cloak.svg?style=flat-square" />
+    <h4><a href="https://github.com/danielberkompas/cloak">Cloak</a></h4>
+    <p>Encrypts database fields</p>
+  </article>
 
-<tr>
-<td><a href="https://github.com/danielberkompas/cloak">cloak</a></td>
-<td><a href="https://elixir-lang.org">Elixir</a></td>
-<td><img src="https://img.shields.io/hexpm/dt/cloak.svg?style=flat-square" alt="" /></td>
-<td>Encrypts database fields with Ecto</td>
-</tr>
+  <article class="project col-sm-6 col-xs-12">
+    <img class="pull-right" alt="immortal downloads" src="https://img.shields.io/hexpm/dt/immortal.svg?style=flat-square" />
+    <h4><a href="https://github.com/danielberkompas/immortal">Immortal</a></h4>
+    <p>Helpers for OTP applications</p>
+  </article>
+</div>
 
-<tr>
-<td><a href="https://github.com/danielberkompas/immortal">immortal</a></td>
-<td><a href="https://elixir-lang.org">Elixir</a></td>
-<td><img src="https://img.shields.io/hexpm/dt/immortal.svg?style=flat-square" alt="" /></td>
-<td>Helpers for OTP applications</td>
-</tr>
+<div class="row">
+  <article class="project col-sm-6 col-xs-12">
+    <img class="pull-right" alt="destructure downloads" src="https://img.shields.io/hexpm/dt/destructure.svg?style=flat-square" />
+    <h4><a href="https://github.com/danielberkompas/destructure">Destructure</a></h4>
+    <p>Javascript destructuring for Elixir</p>
+  </article>
 
-<tr>
-<td><a href="https://github.com/danielberkompas/destructure">destructure</a></td>
-<td><a href="https://elixir-lang.org">Elixir</a></td>
-<td><img src="https://img.shields.io/hexpm/dt/destructure.svg?style=flat-square" alt="" /></td>
-<td>Javascript-style destructuring</td>
-</tr>
-</tbody>
-</table>
+  <article class="project col-sm-6 col-xs-12">
+    <img class="pull-right" alt="delegate_with_docs downloads" src="https://img.shields.io/hexpm/dt/delegate_with_docs.svg?style=flat-square" />
+    <h4><a href="https://github.com/danielberkompas/delegate_with_docs">DelegateWithDocs</a></h4>
+    <p>Preserve delegate function docs</p>
+  </article>
+</div>
 
 <p><br /></p>
 
 <p>I built and maintain the following libraries as part of my day job at <a href="https://infinite.red">Infinite Red</a>.</p>
 
-<table>
-<thead>
-<tr>
-<th>Project</th>
-<th>Language</th>
-<th>Stats</th>
-<th>Description</th>
-</tr>
-</thead>
+<div class="row">
+  <article class="project col-sm-6 col-xs-12">
+    <img class="pull-right" alt="authority downloads" src="https://img.shields.io/hexpm/dt/authority.svg?style=flat-square" />
+    <h4><a href="https://github.com/infinitered/authority">Authority</a></h4>
+    <p>Authentication specification</p>
+  </article>
 
-<tbody>
-<tr>
-<td><a href="https://github.com/infinitered/authority">authority</a></td>
-<td><a href="https://elixir-lang.org">Elixir</a></td>
-<td><img src="https://img.shields.io/hexpm/dt/authority.svg?style=flat-square" alt="" /></td>
-<td>Authentication specification</td>
-</tr>
+  <article class="project col-sm-6 col-xs-12">
+    <img class="pull-right" alt="authority_ecto downloads" src="https://img.shields.io/hexpm/dt/authority_ecto.svg?style=flat-square" />
+    <h4><a href="https://github.com/infinitered/authority_ecto">AuthorityEcto</a></h4>
+    <p>Ecto integration for Authority</p>
+  </article>
+</div>
 
-<tr>
-<td><a href="https://github.com/infinitered/authority_ecto">authority_ecto</a></td>
-<td><a href="https://elixir-lang.org">Elixir</a></td>
-<td><img src="https://img.shields.io/hexpm/dt/authority_ecto.svg?style=flat-square" alt="" /></td>
-<td>Ecto integration for Authority</td>
-</tr>
+<div class="row">
+  <article class="project col-sm-6 col-xs-12">
+    <img class="pull-right" alt="maybe_ecto downloads" src="https://img.shields.io/hexpm/dt/maybe.svg?style=flat-square" />
+    <h4><a href="https://github.com/infinitered/maybe">Maybe</a></h4>
+    <p><code>nil</code> protection in nested maps</p>
+  </article>
 
-<tr>
-<td><a href="https://github.com/infinitered/maybe">maybe</a></td>
-<td><a href="https://elixir-lang.org">Elixir</a></td>
-<td><img src="https://img.shields.io/hexpm/dt/maybe.svg?style=flat-square" alt="" /></td>
-<td><code>nil</code> protection in nested structures</td>
-</tr>
-
-<tr>
-<td><a href="https://github.com/infinitered/elasticsearch-elixir">elasticsearch</a></td>
-<td><a href="https://elixir-lang.org">Elixir</a></td>
-<td><img src="https://img.shields.io/hexpm/dt/elasticsearch.svg?style=flat-square" alt="" /></td>
-<td>API client for Elasticsearch</td>
-</tr>
-</tbody>
-</table>
+  <article class="project col-sm-6 col-xs-12">
+    <img class="pull-right" alt="elasticsearch-elixir_ecto downloads" src="https://img.shields.io/hexpm/dt/elasticsearch.svg?style=flat-square" />
+    <h4><a href="https://github.com/infinitered/elasticsearch-elixir">Elasticsearch</a></h4>
+    <p>API client for Elasticsearch</p>
+  </article>
+</div>
 
       </article>
 
