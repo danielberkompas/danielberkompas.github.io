@@ -175,6 +175,48 @@ ga('send', 'pageview');
         <div class="posts-list">
           
             <article class="post-preview">
+              <a href="https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/">
+                <h2 class="post-title">Stream Paginated APIs in Elixir</h2>
+
+                
+              </a>
+
+              <p class="post-meta">
+                Posted on March 28, 2015
+              </p>
+              <div class="post-entry">
+                
+                  <h2 id="this-article-was-recently-featured-in-elixir-radar-http-plataformatec-com-br-elixir-radar-since-it-was-written-i-ve-found-a-simpler-way-to-implement-this-kind-of-stream-i-ll-be-writing-an-updated-tutorial-in-the-future-but-if-you-re-interested-you-should-also-check-out-the-current-state-of-extwilio-resultstream-https-github-com-danielberkompas-ex-twilio-blob-371f2b263d763d1459b467d1fbe8783fce825c0e-lib-ex-twilio-result-stream-ex">_This article was recently featured in <a href="http://plataformatec.com.br/elixir-radar">Elixir Radar</a>. Since it was written, I&rsquo;ve found a simpler way to implement this kind of Stream. I&rsquo;ll be writing an updated tutorial in the future, but if you&rsquo;re interested, you should also check out the current state of <a href="https://github.com/danielberkompas/ex_twilio/blob/371f2b263d763d1459b467d1fbe8783fce825c0e/lib/ex_twilio/result_stream.ex">ExTwilio.ResultStream</a>._</h2>
+
+<p>This past week, as I worked on my new <a href="https://github.com/danielberkompas/ex_twilio">ExTwilio</a> API library for <a href="https://www.twilio.com">Twilio</a>, I ran into a snag dealing with <a href="https://www.twilio.com/docs/api/rest/response#response-formats-list">Twilio&rsquo;s API pagination</a>.</p>
+
+<p>Twilio paginates its &ldquo;list&rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch <em>all</em> of a resource and perform operations on it, like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">calls</span> <span class="o">=</span> <span class="p"></span><span class="nc">ExTwilio.Call</span><span class="o">.</span><span class="n">all</span>
+<span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">each</span> <span class="n">calls</span><span class="p">,</span> <span class="n">fn</span><span class="p">(</span><span class="n">call</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="c1"># perform some operation</span>
+<span class="n">end</span></code></pre></div>
+<p>Users won&rsquo;t want to mess with the details of pagination. They want to get a collection containing everything and then operate on it.</p>
+
+<p>I find that there are two basic ways to achieve this, a <em>blocking</em> way and a <em>non-blocking</em> way.</p>
+
+<p></p>
+                  <a href="https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/" class="post-read-more">[Read More]</a>
+                
+              </div>
+
+              
+                <span class="post-meta">
+                  
+                    #<a href="https://blog.danielberkompas.com//tags/elixir/">elixir</a>&nbsp;
+                  
+                    #<a href="https://blog.danielberkompas.com//tags/twilio/">twilio</a>&nbsp;
+                  
+                </span>
+              
+
+            </article>
+          
+            <article class="post-preview">
               <a href="https://blog.danielberkompas.com/2015/03/21/manage-env-vars-in-elixir/">
                 <h2 class="post-title">Manage Environment Variables in Elixir</h2>
 
@@ -466,28 +508,6 @@ $ git reset --soft HEAD~1</code></pre></div>
 
             </article>
           
-            <article class="post-preview">
-              <a href="https://blog.danielberkompas.com/2015/02/07/yet-another-tech-blog/">
-                <h2 class="post-title">Yet Another Tech Blog</h2>
-
-                
-              </a>
-
-              <p class="post-meta">
-                Posted on February 7, 2015
-              </p>
-              <div class="post-entry">
-                
-                  After a long series of attempts to get my blog up and running, I&rsquo;ve finally settled on a stack I can be happy with for now: Jekyll on Github pages. It&rsquo;s secure, doesn&rsquo;t require me to mess with hosting, and lets me write, which is after all what a blog is all about.
-I plan to write about my day-to-day experiences with technology, particularly the tech that I&rsquo;m using or learning.
-                  <a href="https://blog.danielberkompas.com/2015/02/07/yet-another-tech-blog/" class="post-read-more">[Read More]</a>
-                
-              </div>
-
-              
-
-            </article>
-          
         </div>
         
           <ul class="pager main-pager">
@@ -496,6 +516,10 @@ I plan to write about my day-to-day experiences with technology, particularly th
                 <a href="/post/page/3/">&larr; Newer Posts</a>
               </li>
             
+            
+              <li class="next">
+                <a href="/post/page/5/">Older Posts &rarr;</a>
+              </li>
             
           </ul>
         
@@ -554,7 +578,7 @@ I plan to write about my day-to-day experiences with technology, particularly th
           
 
           &nbsp;&bull;&nbsp;
-          2017
+          2018
 
           
             &nbsp;&bull;&nbsp;

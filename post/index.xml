@@ -6,10 +6,26 @@
     <description>Recent content in Posts on Random Bits</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 30 Sep 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 Mar 2018 04:25:00 -0700</lastBuildDate>
     
 	<atom:link href="https://blog.danielberkompas.com/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Flexible Design with Adapters</title>
+      <link>https://blog.danielberkompas.com/2018/03/17/flexible-design-with-adapters/</link>
+      <pubDate>Sat, 17 Mar 2018 04:25:00 -0700</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2018/03/17/flexible-design-with-adapters/</guid>
+      <description>&lt;p&gt;With Phoenix 1.3 well behind us now, Elixir developers understand how to
+approach most problems &amp;ldquo;The Elixir Way&amp;rdquo;:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Create a well-named context module for the problem, e.g. &amp;ldquo;Payment&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;Put functions in it, which don&amp;rsquo;t expose how data is persisted&lt;/li&gt;
+&lt;li&gt;Profit&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
     
     <item>
       <title>Why Your Software Projects Fail</title>

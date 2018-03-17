@@ -1,3 +1,19 @@
+/* Text */
+
+article ul {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+article ul li {
+  line-height: 1.7;
+}
+
+article p {
+  line-height: 1.7;
+}
+
+/* Navigation */
 .navbar-custom {
   background-color: #333;
 }

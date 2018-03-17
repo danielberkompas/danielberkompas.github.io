@@ -195,6 +195,46 @@ ga('send', 'pageview');
           
           
             <article class="post-preview">
+              <a href="https://blog.danielberkompas.com/2015/06/10/how-to-write-guard-macros/">
+                <h2 class="post-title">How to Write Guard Macros</h2>
+                
+                
+              </a>
+
+              <span class="post-meta">
+  
+  
+  <i class="fa fa-calendar-o"></i>&nbsp;Posted on June 10, 2015
+  
+  
+  &nbsp;|&nbsp;
+  <i class="fa fa-clock-o"></i> 2 minutes (264 words)
+  
+  
+</span>
+
+
+              <div class="post-entry">
+                
+                  <p>I recently discovered that it is possible to write custom guard macros for Elixir, provided that the macro expands to expressions that are supported in guards natively.</p>
+
+<p>I used this to create an <code>is_blank</code> guard. Elixir doesn&rsquo;t come with a <code>blank?</code> function, so you have to do it manually. Blank values are <code>&quot; &quot;</code>, <code>&quot;&quot;</code>, and <code>nil</code>. To check <code>blank?</code> in Elixir, you can check if a given value is <code>in</code> this array of blank values.</p>
+
+<p></p>
+                  <a href="https://blog.danielberkompas.com/2015/06/10/how-to-write-guard-macros/" class="post-read-more">[Read More]</a>
+                
+              </div>
+
+              
+                <span class="post-meta">
+                
+                  #<a href="https://blog.danielberkompas.com//tags/elixir/">elixir</a>&nbsp;
+                
+                </span>
+              
+            </article>
+          
+            <article class="post-preview">
               <a href="https://blog.danielberkompas.com/2015/06/09/number-helpers-for-elixir/">
                 <h2 class="post-title">Number Helpers For Elixir</h2>
                 
@@ -540,57 +580,6 @@ ga('send', 'pageview');
               
             </article>
           
-            <article class="post-preview">
-              <a href="https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/">
-                <h2 class="post-title">Stream Paginated APIs in Elixir</h2>
-                
-                
-              </a>
-
-              <span class="post-meta">
-  
-  
-  <i class="fa fa-calendar-o"></i>&nbsp;Posted on March 28, 2015
-  
-  
-  &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 7 minutes (1314 words)
-  
-  
-</span>
-
-
-              <div class="post-entry">
-                
-                  <h2 id="this-article-was-recently-featured-in-elixir-radar-http-plataformatec-com-br-elixir-radar-since-it-was-written-i-ve-found-a-simpler-way-to-implement-this-kind-of-stream-i-ll-be-writing-an-updated-tutorial-in-the-future-but-if-you-re-interested-you-should-also-check-out-the-current-state-of-extwilio-resultstream-https-github-com-danielberkompas-ex-twilio-blob-371f2b263d763d1459b467d1fbe8783fce825c0e-lib-ex-twilio-result-stream-ex">_This article was recently featured in <a href="http://plataformatec.com.br/elixir-radar">Elixir Radar</a>. Since it was written, I&rsquo;ve found a simpler way to implement this kind of Stream. I&rsquo;ll be writing an updated tutorial in the future, but if you&rsquo;re interested, you should also check out the current state of <a href="https://github.com/danielberkompas/ex_twilio/blob/371f2b263d763d1459b467d1fbe8783fce825c0e/lib/ex_twilio/result_stream.ex">ExTwilio.ResultStream</a>._</h2>
-
-<p>This past week, as I worked on my new <a href="https://github.com/danielberkompas/ex_twilio">ExTwilio</a> API library for <a href="https://www.twilio.com">Twilio</a>, I ran into a snag dealing with <a href="https://www.twilio.com/docs/api/rest/response#response-formats-list">Twilio&rsquo;s API pagination</a>.</p>
-
-<p>Twilio paginates its &ldquo;list&rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch <em>all</em> of a resource and perform operations on it, like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">calls</span> <span class="o">=</span> <span class="p"></span><span class="nc">ExTwilio.Call</span><span class="o">.</span><span class="n">all</span>
-<span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">each</span> <span class="n">calls</span><span class="p">,</span> <span class="n">fn</span><span class="p">(</span><span class="n">call</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="c1"># perform some operation</span>
-<span class="n">end</span></code></pre></div>
-<p>Users won&rsquo;t want to mess with the details of pagination. They want to get a collection containing everything and then operate on it.</p>
-
-<p>I find that there are two basic ways to achieve this, a <em>blocking</em> way and a <em>non-blocking</em> way.</p>
-
-<p></p>
-                  <a href="https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/" class="post-read-more">[Read More]</a>
-                
-              </div>
-
-              
-                <span class="post-meta">
-                
-                  #<a href="https://blog.danielberkompas.com//tags/elixir/">elixir</a>&nbsp;
-                
-                  #<a href="https://blog.danielberkompas.com//tags/twilio/">twilio</a>&nbsp;
-                
-                </span>
-              
-            </article>
-          
         </div>
 
         
@@ -662,7 +651,7 @@ ga('send', 'pageview');
           
 
           &nbsp;&bull;&nbsp;
-          2017
+          2018
 
           
             &nbsp;&bull;&nbsp;
