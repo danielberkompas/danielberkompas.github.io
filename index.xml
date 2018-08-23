@@ -6,10 +6,21 @@
     <description>Recent content on Bits &amp; Sundry</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 17 Mar 2018 04:25:00 -0700</lastBuildDate>
+    <lastBuildDate>Wed, 22 Aug 2018 20:05:17 -0700</lastBuildDate>
     
 	<atom:link href="https://blog.danielberkompas.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ElixirConf 2018 Talk Picks</title>
+      <link>https://blog.danielberkompas.com/2018/08/22/elixirconf-2018-talk-picks/</link>
+      <pubDate>Wed, 22 Aug 2018 20:05:17 -0700</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2018/08/22/elixirconf-2018-talk-picks/</guid>
+      <description>Now that ElixirConf 2018 is coming soon, and they&amp;rsquo;ve announced the schedule, I thought I&amp;rsquo;d put together a list of the talks I want to attend and why.
+I have two goals for this conference:
+ Find out what kinds of projects people are building in Elixir Learn what (if anything) makes Elixir uniquely good for those projects  My sense of the Elixir community is that we often use Elixir to build monolithic stateless apps backed by a single database.</description>
+    </item>
     
     <item>
       <title>Flexible Design with Adapters</title>

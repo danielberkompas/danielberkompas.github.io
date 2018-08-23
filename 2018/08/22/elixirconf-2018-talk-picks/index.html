@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Daniel Berkompas">
+<meta name="description" content="Describe your website">
+<meta name="generator" content="Hugo 0.47.1" />
+<title>ElixirConf 2018 Talk Picks</title>
+<link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+
+
+<link href="https://blog.danielberkompas.com/index.xml" rel="alternate" type="application/rss+xml" title="Bits &amp; Sundry" />
+
+
+<meta property="og:title" content="ElixirConf 2018 Talk Picks" />
+<meta property="og:description" content="Now that ElixirConf 2018 is coming soon, and they&rsquo;ve announced the schedule, I thought I&rsquo;d put together a list of the talks I want to attend and why.
+I have two goals for this conference:
+ Find out what kinds of projects people are building in Elixir Learn what (if anything) makes Elixir uniquely good for those projects  My sense of the Elixir community is that we often use Elixir to build monolithic stateless apps backed by a single database." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.danielberkompas.com/2018/08/22/elixirconf-2018-talk-picks/" /><meta property="article:published_time" content="2018-08-22T20:05:17-07:00"/>
+<meta property="article:modified_time" content="2018-08-22T20:05:17-07:00"/>
+
+
+<meta itemprop="name" content="ElixirConf 2018 Talk Picks">
+<meta itemprop="description" content="Now that ElixirConf 2018 is coming soon, and they&rsquo;ve announced the schedule, I thought I&rsquo;d put together a list of the talks I want to attend and why.
+I have two goals for this conference:
+ Find out what kinds of projects people are building in Elixir Learn what (if anything) makes Elixir uniquely good for those projects  My sense of the Elixir community is that we often use Elixir to build monolithic stateless apps backed by a single database.">
+
+
+<meta itemprop="datePublished" content="2018-08-22T20:05:17-07:00" />
+<meta itemprop="dateModified" content="2018-08-22T20:05:17-07:00" />
+<meta itemprop="wordCount" content="930">
+
+
+
+<meta itemprop="keywords" content="elixir,conference," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ElixirConf 2018 Talk Picks"/>
+<meta name="twitter:description" content="Now that ElixirConf 2018 is coming soon, and they&rsquo;ve announced the schedule, I thought I&rsquo;d put together a list of the talks I want to attend and why.
+I have two goals for this conference:
+ Find out what kinds of projects people are building in Elixir Learn what (if anything) makes Elixir uniquely good for those projects  My sense of the Elixir community is that we often use Elixir to build monolithic stateless apps backed by a single database."/>
+<meta name="twitter:site" content="@https://www.twitter.com/dberkom"/>
+
+
+    </head>
+<body>
+    <nav class="main-nav">
+	
+		<a href='https://blog.danielberkompas.com'> <span class="arrow">←</span>Home</a>
+	
+
+	
+ 		<a href='/projects'>Projects</a>
+  	
+ 		<a href='/about'>About</a>
+  	
+ 		<a href='/tags'>Tags</a>
+  	
+
+	
+		<a class="cta" href="https://blog.danielberkompas.com/index.xml">Subscribe</a>
+	
+</nav>
+
+    <section id="wrapper">
+        
+        
+<article class="post">
+  <header>
+    <h1>ElixirConf 2018 Talk Picks</h1>
+    <h2 class="subtitle"></h2>
+    <h2 class="headline">
+      August 22, 2018
+      <br>   
+      <a href="https://blog.danielberkompas.com/%20tags/elixir%20">elixir</a>
+      
+      <a href="https://blog.danielberkompas.com/%20tags/conference%20">conference</a>
+        
+    </h2>
+  </header>
+  <section id="post-body">
+    
+
+<p>Now that ElixirConf 2018 is coming soon, and they&rsquo;ve announced <a href="https://elixirconf.com/#training-schedule">the
+schedule</a>, I thought I&rsquo;d put
+together a list of the talks I want to attend and why.</p>
+
+<p>I have two goals for this conference:</p>
+
+<ol>
+<li>Find out what kinds of projects people are building in Elixir</li>
+<li>Learn what (if anything) makes Elixir <em>uniquely</em> good for those projects</li>
+</ol>
+
+<p>My sense of the Elixir community is that we often use Elixir to build
+monolithic stateless apps backed by a single database.<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> Except in the
+(rare?) case that we need in-memory state, we don&rsquo;t use GenServers,
+distributed Elixir, or OTP releases.</p>
+
+<p>There&rsquo;s a good reason for that! As soon as you start using these features and
+run more than a single node, you have to worry about the CAP theorem, raft
+protocols, complicated deployments, and more. Using OTP on multiple nodes is
+like building your own distributed database! Rather than manage all that
+complexity, most Elixir programmers use a database that handles distributed
+state for them.</p>
+
+<p>This is absolutely the <em>correct</em> choice for many teams and many apps. But
+what does this mean for Elixir? Without OTP, Elixir is really just a faster,
+more concurrent Ruby. In the world of fast, concurrent mainstream languages,
+cloud microservices and Kubernetes, is a better Ruby good enough?<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+
+<p>With that question in mind, here are my talk picks for ElixirConf 2018.</p>
+
+<hr />
+
+<h2 id="thursday-september-5">Thursday, September 5</h2>
+
+<h4 id="10-15-10-55-elixir-at-a-walking-pace-lance-halvorsen-https-elixirconf-com-2018-speakers-lance-halvorsen">10:15-10:55 - Elixir at a Walking Pace - <a href="https://elixirconf.com/2018/speakers/lance-halvorsen">Lance Halvorsen</a></h4>
+
+<p>Lance will talk about how well Elixir worked for a situation where data consistency was the most important thing. (Not fault tolerance or speed) It sounds like they had a lot of in-memory state to manage.</p>
+
+<h4 id="11-00-11-40-ux-design-practices-for-real-time-apps-bailey-miller-https-elixirconf-com-2018-speakers-bailey-miller">11:00-11:40 - UX Design Practices for Real Time Apps - <a href="https://elixirconf.com/2018/speakers/bailey-miller">Bailey Miller</a></h4>
+
+<p>This looks like it should contain some generally useful tips. The other two talks in this time slot looked less interesting to me.</p>
+
+<h4 id="13-00-13-40-building-an-sla-monitoring-tool-using-elixir-otp-aish-dahal-https-elixirconf-com-2018-speakers-aish-dahal">13:00-13:40 - Building an SLA Monitoring Tool Using Elixir/OTP - <a href="https://elixirconf.com/2018/speakers/aish-dahal">Aish Dahal</a></h4>
+
+<p>This is a close one. &ldquo;Growing Applications and Taming Complexity&rdquo; by Aaron Renner is also competing for this slot, and also looks excellent. I&rsquo;m very interested to see what Pagerduty built in Elixir and why, however.</p>
+
+<h4 id="13-45-14-25-we-re-just-getting-started-our-three-years-with-elixir-maciej-kaszubowski-https-elixirconf-com-2018-speakers-maciej-kaszubowski">13:45-14:25 - We&rsquo;re Just Getting Started - Our Three Years with Elixir - <a href="https://elixirconf.com/2018/speakers/maciej-kaszubowski">Maciej Kaszubowski</a></h4>
+
+<p>This is a long experience with Elixir and could offer a lot of insight into what has gone well and poorly over that time.</p>
+
+<h4 id="15-00-15-40-did-you-hear-that-wind-frank-kumro-https-elixirconf-com-2018-speakers-frank-kumro">15:00-15:40 - Did You Hear That Wind? - <a href="https://elixirconf.com/2018/speakers/frank-kumro">Frank Kumro</a></h4>
+
+<p>This is a talk about Elixir on hardware. (Internet of Things) This is an unexplored area for me, where Elixir could definitely make some gains. Hardware has in-memory state by definition, and often needs fault tolerance for that in-memory state.</p>
+
+<h4 id="15-45-16-25-interfacing-with-machine-learned-models-matthew-gardner-https-elixirconf-com-2018-speakers-mathew-gardner">15:45-16:25 - Interfacing with Machine-Learned Models - <a href="https://elixirconf.com/2018/speakers/mathew-gardner">Matthew Gardner</a></h4>
+
+<p>Machine learning is an interesting area and it would be nice to know how to integrate with it using Elixir. Another talk in this time slot also looks like it could be good: &ldquo;Building Realtime Video Chat in Phoenix.&rdquo; If you attend that one, tell me if the speaker ran multiple nodes or a single node for their video chat app. (Multiple nodes is much harder and more interesting)</p>
+
+<hr />
+
+<h2 id="friday">Friday</h2>
+
+<h4 id="10-35-11-15-event-sourcing-james-smith-https-elixirconf-com-2018-speakers-james-smith">10:35-11:15 - Event Sourcing - <a href="https://elixirconf.com/2018/speakers/james-smith">James Smith</a></h4>
+
+<p>Event sourcing or CQRS comes up a lot when writing microservices. I&rsquo;m curious how it worked for an Elixir app, and how they deal with privacy regulations like GDPR.</p>
+
+<h4 id="11-20-12-00-behaviour-trees-and-battleship-jeff-schomay-https-elixirconf-com-2018-speakers-jeff-schomay">11:20-12:00 - Behaviour Trees and Battleship - <a href="https://elixirconf.com/2018/speakers/jeff-schomay">Jeff Schomay</a></h4>
+
+<p>Looks like a good computer-science talk. There&rsquo;s a close second also competing for this time slot: &ldquo;Breaking Down the User Monolith&rdquo;. However, it looks to me like that talk will still use a single database for all the user data, so the user monolith may remain.</p>
+
+<h4 id="13-30-14-10-going-multi-node-eric-oestrich-https-elixirconf-com-2018-speakers-eric-oestrich">13:30-14:10 - Going Multi-Node - <a href="https://elixirconf.com/2018/speakers/eric-oestrich">Eric Oestrich</a></h4>
+
+<p>Does Elixir live up to the hype once your system becomes distributed on multiple nodes? Or do you still have the same problems everyone else has?<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></p>
+
+<h4 id="14-15-14-55-using-elixir-genstage-to-track-video-watch-progress-emerson-macedo-https-elixirconf-com-2018-speakers-emerson-macedo">14:15-14:55 - Using Elixir GenStage to Track Video Watch Progress - <a href="https://elixirconf.com/2018/speakers/emerson-macedo">Emerson Macedo</a></h4>
+
+<p>I&rsquo;m interested in a real-world use case for GenStage. Most people seem to be using Kinesis or other similar things for data pipelines.</p>
+
+<h4 id="15-30-16-10-using-elixir-and-otp-behaviors-to-monitor-infrastructure-jeffrey-gillis-https-elixirconf-com-2018-speakers-jeffrey-gillis">15:30-16:10 - Using Elixir and OTP behaviors to monitor infrastructure - <a href="https://elixirconf.com/2018/speakers/jeffrey-gillis">Jeffrey Gillis</a></h4>
+
+<p>Another interesting use case. I want to know how well this works.</p>
+
+<h4 id="16-15-16-55-building-a-stateful-web-application-with-elixir-enio-lopes-https-elixirconf-com-2018-speakers-enio-lopes">16:15-16:55 - Building a Stateful Web Application with Elixir - <a href="https://elixirconf.com/2018/speakers/enio-lopes">Enio Lopes</a></h4>
+
+<p>The blurb on this talk addresses exactly the concerns I&rsquo;m raising about Elixir. Elixir&rsquo;s biggest selling point is for building stateful apps, but how often do you need to do that, and how much does Elixir really help once you make the app distributed?</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1">An app with a single database <em>is</em> a monolith. Even if your app is an umbrella app with bounded contexts, if there&rsquo;s only one database, everything is still coupled at the DB level. Over time, this coupling will undermine your attempts to keep your contexts pure. If your app is complex enough to need a lot of contexts, you shouldn&rsquo;t use a single database.
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2">Consider that Node.js or Go are fast and concurrent enough for most stateless apps and are much more popular than Elixir. This means they&rsquo;re easier to hire for, and have a lot of inertia. Also consider that to get real benefits out of OTP, you need a mostly-Elixir deployment environment, otherwise you&rsquo;ll use HTTP/JSON to communicate between services anyway. It&rsquo;s unrealistic for most organizations to rewrite their entire prodution stack in Elixir just so they can use OTP.
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3">Except you&rsquo;ll be using hand-rolled solutions, whereas everyone else will have access to tools maintained by the big tech companies.
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+  </section>
+</article>
+
+<footer id="post-meta" class="clearfix">
+  <a href="https://twitter.com/dberkom">
+    <img class="avatar" src="/img/avatar.png">
+    <div>
+      <span class="dark">Daniel Berkompas</span>
+      <span>Full-stack software engineer at <a href="https://infinite.red">Infinite Red</a></span>
+    </div>
+    </a>
+  <section id="sharing">
+    <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fblog.danielberkompas.com%2f2018%2f08%2f22%2felixirconf-2018-talk-picks%2f - ElixirConf%202018%20Talk%20Picks by @dberkom"><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+  </section>
+</footer>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
+
+    
+    
+    
+        <li>
+            <a href="/2018/03/17/flexible-design-with-adapters/">Flexible Design with Adapters<aside class="dates">Mar 17 2018</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/09/30/why-your-software-projects-fail/">Why Your Software Projects Fail<aside class="dates">Sep 30 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/01/17/reusable-templates-in-phoenix/">Reusable Templates in Phoenix<aside class="dates">Jan 17 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/09/27/ecto-multi-services/">Replace Callbacks with Ecto.Multi<aside class="dates">Sep 27 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/23/multidimensional-arrays-in-elixir/">Multidimensional Arrays in Elixir<aside class="dates">Apr 23 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/05/background-jobs-in-phoenix/">Background Jobs in Phoenix<aside class="dates">Apr 5 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/01/28/seo-tags-in-phoenix/">SEO Tags In Phoenix<aside class="dates">Jan 28 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/12/08/use-gen-event-with-ecto-callbacks/">Using GenEvent With Ecto Callbacks<aside class="dates">Dec 8 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/10/15/why-im-checking-out-graphql/">Why I&#39;m Checking Out GraphQL<aside class="dates">Oct 15 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/09/25/announcing-learn-elixir-tv/">Announcing LearnElixir.tv<aside class="dates">Sep 25 2015</aside></a>
+        </li>
+    
+</ul>
+ 
+
+        <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.github.com/danielberkompas">
+        <i class="fa fa-github"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.twitter.com/dberkom">
+        <i class="fa fa-twitter"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+        © Copyright 2018 Daniel Berkompas
+    
+    </p>
+</footer>
+
+    </section>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script>
+<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-23392891-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+</body>
+</html>
