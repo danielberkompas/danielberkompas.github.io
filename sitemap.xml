@@ -212,6 +212,12 @@
   </url>
   
   <url>
+    <loc>https://blog.danielberkompas.com/</loc>
+    <lastmod>2018-03-17T04:25:00-07:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>https://blog.danielberkompas.com/categories/</loc>
     <priority>0</priority>
   </url>
@@ -265,12 +271,6 @@
   
   <url>
     <loc>https://blog.danielberkompas.com/projects/</loc>
-  </url>
-  
-  <url>
-    <loc>https://blog.danielberkompas.com/</loc>
-    <lastmod>2018-03-17T04:25:00-07:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>

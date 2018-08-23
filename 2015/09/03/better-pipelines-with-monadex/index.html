@@ -1,210 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<html lang="en-us">
+	<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Daniel Berkompas">
+<meta name="description" content="Describe your website">
+<meta name="generator" content="Hugo 0.47.1" />
+<title>Better Pipelines with Monadex</title>
+<link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
 
-  <title>Better Pipelines with Monadex</title>
-  <meta property="og:title" content="Better Pipelines with Monadex" />
-  <meta name="twitter:title" content="Better Pipelines with Monadex" />
-  <meta name="description" content="Before I get started, let me be blunt, this is not another monad tutorial. The world has enough of those already. I&rsquo;m not going to write about functors and applicatives or other technical theory. This is just a post about how a particular monad made my life better.
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+
+
+<link href="https://blog.danielberkompas.com/index.xml" rel="alternate" type="application/rss+xml" title="Bits &amp; Sundry" />
+
+
+<meta property="og:title" content="Better Pipelines with Monadex" />
+<meta property="og:description" content="Before I get started, let me be blunt, this is not another monad tutorial. The world has enough of those already. I&rsquo;m not going to write about functors and applicatives or other technical theory. This is just a post about how a particular monad made my life better.
+The Problem: Network Requests I&rsquo;m building a Phoenix app where people can buy something. So, I needed to integrate with my favorite gateway, Stripe, which involves making a series of network requests each time a user makes a purchase." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.danielberkompas.com/2015/09/03/better-pipelines-with-monadex/" /><meta property="article:published_time" content="2015-09-03T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2015-09-03T00:00:00&#43;00:00"/>
+
+
+<meta itemprop="name" content="Better Pipelines with Monadex">
+<meta itemprop="description" content="Before I get started, let me be blunt, this is not another monad tutorial. The world has enough of those already. I&rsquo;m not going to write about functors and applicatives or other technical theory. This is just a post about how a particular monad made my life better.
 The Problem: Network Requests I&rsquo;m building a Phoenix app where people can buy something. So, I needed to integrate with my favorite gateway, Stripe, which involves making a series of network requests each time a user makes a purchase.">
-  <meta property="og:description" content="Before I get started, let me be blunt, this is not another monad tutorial. The world has enough of those already. I&rsquo;m not going to write about functors and applicatives or other technical theory. This is just a post about how a particular monad made my life better.
-The Problem: Network Requests I&rsquo;m building a Phoenix app where people can buy something. So, I needed to integrate with my favorite gateway, Stripe, which involves making a series of network requests each time a user makes a purchase.">
-  <meta name="twitter:description" content="Before I get started, let me be blunt, this is not another monad tutorial. The world has enough of those already. I&rsquo;m not going to write about functors and applicatives or other technical …">
-  <meta name="author" content="Daniel Berkompas"/>
-  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
-  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@dberkom" />
-  <meta name="twitter:creator" content="@dberkom" />
-  <meta property="og:url" content="https://blog.danielberkompas.com/2015/09/03/better-pipelines-with-monadex/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Random Bits" />
-
-  <meta name="generator" content="Hugo 0.36.1" />
-  <link rel="canonical" href="https://blog.danielberkompas.com/2015/09/03/better-pipelines-with-monadex/" />
-  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/project.css" />
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+<meta itemprop="datePublished" content="2015-09-03T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2015-09-03T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1018">
 
 
 
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+<meta itemprop="keywords" content="" />
 
-<div class="pswp__bg"></div>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Better Pipelines with Monadex"/>
+<meta name="twitter:description" content="Before I get started, let me be blunt, this is not another monad tutorial. The world has enough of those already. I&rsquo;m not going to write about functors and applicatives or other technical theory. This is just a post about how a particular monad made my life better.
+The Problem: Network Requests I&rsquo;m building a Phoenix app where people can buy something. So, I needed to integrate with my favorite gateway, Stripe, which involves making a series of network requests each time a user makes a purchase."/>
+<meta name="twitter:site" content="@https://www.twitter.com/dberkom"/>
 
-<div class="pswp__scroll-wrap">
-    
-    <div class="pswp__container">
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-    </div>
-    
-    <div class="pswp__ui pswp__ui--hidden">
-    <div class="pswp__top-bar">
-      
-      <div class="pswp__counter"></div>
-      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-      <button class="pswp__button pswp__button--share" title="Share"></button>
-      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-      
-      
-      <div class="pswp__preloader">
-        <div class="pswp__preloader__icn">
-          <div class="pswp__preloader__cut">
-            <div class="pswp__preloader__donut"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-      <div class="pswp__share-tooltip"></div>
-    </div>
-    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-    </button>
-    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-    </button>
-    <div class="pswp__caption">
-      <div class="pswp__caption__center"></div>
-    </div>
-    </div>
-    </div>
-</div>
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-23392891-3', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
+    </head>
+<body>
+    <nav class="main-nav">
+	
+		<a href='https://blog.danielberkompas.com'> <span class="arrow">←</span>Home</a>
+	
 
-</head>
+	
+ 		<a href='/projects'>Projects</a>
+  	
+ 		<a href='/about'>About</a>
+  	
+ 		<a href='/tags'>Tags</a>
+  	
 
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav navbar-right">
-        
-          
-            <li>
-              <a title="Blog" href="/">Blog</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Projects" href="/projects">Projects</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="About" href="/about">About</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Tags" href="/tags">Tags</a>
-            </li>
-          
-        
-
-        
-
-        
-      </ul>
-    </div>
-
-    <div class="avatar-container">
-      <div class="avatar-img-border">
-        
-          <a title="Random Bits" href="https://blog.danielberkompas.com/">
-            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar-blue.jpg" alt="Random Bits" />
-          </a>
-        
-      </div>
-    </div>
-
-  </div>
+	
+		<a class="cta" href="https://blog.danielberkompas.com/index.xml">Subscribe</a>
+	
 </nav>
 
-
-
-
-    
-  
-  
-  
-
-
-
-
-  
-
-  <header class="header-section ">
-    
-    <div class="intro-header no-img">
-      
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="post-heading">
-              <h1>Better Pipelines with Monadex</h1>
-                
-                
-                  <span class="post-meta">
-  
-  
-  <i class="fa fa-calendar-o"></i>&nbsp;Posted on September 3, 2015
-  
-  
-  &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 5 minutes (1018 words)
-  
-  
-</span>
-
-
-                
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-
-    
-<div class="container" role="main">
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <article role="main" class="blog-post">
+    <section id="wrapper">
         
+        
+<article class="post">
+  <header>
+    <h1>Better Pipelines with Monadex</h1>
+    <h2 class="subtitle"></h2>
+    <h2 class="headline">
+      September 3, 2015
+      <br> 
+    </h2>
+  </header>
+  <section id="post-body">
+    
 
 <p>Before I get started, let me be blunt, <strong>this is not another monad tutorial</strong>. The world has enough of those already.  I&rsquo;m not going to write about functors and applicatives or other technical theory.  This is just a post about how a particular monad made my life better.</p>
 
@@ -226,40 +106,49 @@ ga('send', 'pageview');
 <h2 id="the-pipeline-operator-isn-t-enough">The Pipeline Operator Isn&rsquo;t Enough</h2>
 
 <p>I started out with a naive solution, using Elixir&rsquo;s normally adequate pipe operator to tie the steps together:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">result</span> <span class="o">=</span> <span class="n">user</span>
-         <span class="o">|&gt;</span> <span class="n">assert_not_purchased_yet</span>
-         <span class="o">|&gt;</span> <span class="n">create_stripe_customer</span><span class="p">(</span><span class="n">stripe_token</span><span class="p">)</span> <span class="c1"># From Stripe.js</span>
-         <span class="o">|&gt;</span> <span class="n">create_stripe_charge</span>
-         <span class="o">|&gt;</span> <span class="n">update_database</span></code></pre></div>
+
+<pre><code class="language-elixir">result = user
+         |&gt; assert_not_purchased_yet
+         |&gt; create_stripe_customer(stripe_token) # From Stripe.js
+         |&gt; create_stripe_charge
+         |&gt; update_database
+</code></pre>
+
 <p>The obvious problem with this is that regardless of the result of each function, the next function will be called. For example, <code>create_stripe_charge/1</code> will still run even if <code>create_stripe_customer/2</code> failed.</p>
 
 <p>I can work around this by making each function return either <code>{:ok, state}</code> or <code>{:error, reason}</code>. If a function gets <code>{:error, reason}</code>, it should do nothing, which would have the same result as if it wasn&rsquo;t called at all.</p>
 
 <p>Here&rsquo;s how that looks:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">create_stripe_customer</span><span class="p">({</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">state</span><span class="p">},</span> <span class="n">stripe_token</span><span class="p">)</span> <span class="n">do</span>
-  <span class="c1"># Create Stripe customer, return {:ok, state} or {:error, reason}</span>
-<span class="n">end</span>
-<span class="n">def</span> <span class="n">create_stripe_customer</span><span class="p">({</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">=</span> <span class="n">error</span><span class="p">,</span> <span class="n">_stripe_token</span><span class="p">)</span> <span class="n">do</span>
-  <span class="n">error</span> <span class="c1"># just return the error</span>
-<span class="n">end</span>
 
-<span class="n">def</span> <span class="n">create_stripe_charge</span><span class="p">({</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">state</span><span class="p">})</span> <span class="n">do</span>
-  <span class="c1"># Create stripe charge, return {:ok, state} or {:error, reason}</span>
-<span class="n">end</span>
-<span class="n">def</span> <span class="n">create_stripe_charge</span><span class="p">({</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">=</span> <span class="n">error</span><span class="p">)</span> <span class="n">do</span>
-  <span class="n">error</span>
-<span class="n">end</span></code></pre></div>
+<pre><code class="language-elixir">def create_stripe_customer({:ok, state}, stripe_token) do
+  # Create Stripe customer, return {:ok, state} or {:error, reason}
+end
+def create_stripe_customer({:error, _} = error, _stripe_token) do
+  error # just return the error
+end
+
+def create_stripe_charge({:ok, state}) do
+  # Create stripe charge, return {:ok, state} or {:error, reason}
+end
+def create_stripe_charge({:error, _} = error) do
+  error
+end
+</code></pre>
+
 <p>This way, if <code>create_stripe_customer/2</code> returns an error, then <code>create_stripe_charge/1</code> will do nothing. We can repeat this pattern all the way down the chain, and pipeline will then look something like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">result</span> <span class="o">=</span> <span class="n">user</span>
-         <span class="o">|&gt;</span> <span class="n">assert_not_purchased_yet</span>
-         <span class="o">|&gt;</span> <span class="n">create_stripe_customer</span><span class="p">(</span><span class="n">stripe_token</span><span class="p">)</span> <span class="c1"># From Stripe.js</span>
-         <span class="o">|&gt;</span> <span class="n">create_stripe_charge</span>
-         <span class="o">|&gt;</span> <span class="n">update_database</span>
 
-<span class="n">case</span> <span class="n">result</span> <span class="n">do</span>
-  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>     <span class="o">-&gt;</span> <span class="c1"># Display success to user</span>
-  <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">reason</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="c1"># Display error reason to user</span>
-<span class="n">end</span></code></pre></div>
+<pre><code class="language-elixir">result = user
+         |&gt; assert_not_purchased_yet
+         |&gt; create_stripe_customer(stripe_token) # From Stripe.js
+         |&gt; create_stripe_charge
+         |&gt; update_database
+
+case result do
+  {:ok, state}     -&gt; # Display success to user
+  {:error, reason} -&gt; # Display error reason to user
+end
+</code></pre>
+
 <p>This works, but it isn&rsquo;t very elegant. I have to add a new function definition for each function in the pipeline to handle the error case.</p>
 
 <h2 id="monads-to-the-rescue">Monads to the Rescue!</h2>
@@ -267,77 +156,92 @@ ga('send', 'pageview');
 <p>I knew enough about monads at this point to vaguely understand that they are a bit like pipelines. Maybe there was a kind of monad that could make this better?</p>
 
 <p>It turns out that there is. The excellent <a href="https://github.com/rob-brown/MonadEx">Monadex</a> library for Elixir provides just what I needed, the <code>Monad.Result</code> monad. Rather than talk theory, let&rsquo;s just look at how we use this thing:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.Purchase</span> <span class="n">do</span>
-  <span class="n">use</span> <span class="p"></span><span class="nc">Monad.Operators</span> <span class="c1"># Brings in the ~&gt;&gt; bind operator</span>
 
-  <span class="c1"># Import functions from the Monad.Result module.</span>
-  <span class="c1"># These will be used to wrap the state that we pass through</span>
-  <span class="c1"># all of our functions.</span>
-  <span class="n">import</span> <span class="p"></span><span class="nc">Monad.Result</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">success?</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                              <span class="ss">unwrap!</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                              <span class="ss">success</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-                              <span class="ss">error</span><span class="p">:</span> <span class="mi">1</span><span class="p">]</span>
+<pre><code class="language-elixir">defmodule MyApp.Purchase do
+  use Monad.Operators # Brings in the ~&gt;&gt; bind operator
 
-  <span class="n">def</span> <span class="n">create</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">stripe_token</span><span class="p">)</span> <span class="n">do</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="c1"># Wrap user with the &#34;success&#34; monad state</span>
-             <span class="o">~&gt;&gt;</span> <span class="n">fn</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">assert_not_purchased_yet</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="n">end</span>
-             <span class="o">~&gt;&gt;</span> <span class="n">fn</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">create_stripe_customer</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">stripe_token</span><span class="p">)</span> <span class="n">end</span>
-             <span class="o">~&gt;&gt;</span> <span class="n">fn</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">create_stripe_charge</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="n">end</span>
-             <span class="o">~&gt;&gt;</span> <span class="n">fn</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">update_database</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="n">end</span>
+  # Import functions from the Monad.Result module.
+  # These will be used to wrap the state that we pass through
+  # all of our functions.
+  import Monad.Result, only: [success?: 1,
+                              unwrap!: 1,
+                              success: 1,
+                              error: 1]
 
-    <span class="n">if</span> <span class="n">success?</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1"># %Monad.Result{type: :success, value: user}</span>
-      <span class="n">value</span> <span class="o">=</span> <span class="n">unwrap!</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1"># Same as result.value</span>
-      <span class="c1"># Display success to user</span>
-    <span class="n">else</span>
-      <span class="c1"># Display error to user</span>
-    <span class="n">end</span>
-  <span class="n">end</span>
+  def create(user, stripe_token) do
+    result = success(user) # Wrap user with the &quot;success&quot; monad state
+             ~&gt;&gt; fn user -&gt; assert_not_purchased_yet(user) end
+             ~&gt;&gt; fn user -&gt; create_stripe_customer(user, stripe_token) end
+             ~&gt;&gt; fn user -&gt; create_stripe_charge(user) end
+             ~&gt;&gt; fn user -&gt; update_database(user) end
 
-  <span class="c1"># ...</span>
-<span class="n">end</span></code></pre></div>
+    if success?(result) # %Monad.Result{type: :success, value: user}
+      value = unwrap!(result) # Same as result.value
+      # Display success to user
+    else
+      # Display error to user
+    end
+  end
+
+  # ...
+end
+</code></pre>
+
 <p>First, we <code>use</code> the <code>Monad.Operators</code> module. This brings in the <code>~&gt;&gt;</code> operator which we&rsquo;ll get to in a minute. Next, we import most of the functions from <code>Monad.Result</code>.</p>
 
 <p>Underneath the hood, a <code>Monad.Result</code> is just a struct that wraps state, not all that different from a <code>{:ok, state}</code> or <code>{:error, reason}</code> tuple.</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="p">%</span><span class="nc">Monad.Result</span><span class="p">{</span><span class="ss">type</span><span class="p">:</span> <span class="ss">:error</span> <span class="o">|</span> <span class="ss">:success</span><span class="p">,</span> <span class="ss">value</span><span class="p">:</span> <span class="n">state</span><span class="p">}</span></code></pre></div>
+
+<pre><code class="language-elixir">%Monad.Result{type: :error | :success, value: state}
+</code></pre>
+
 <p>So, the first thing we do is wrap our state, the <code>user</code> variable, with a
 <code>Monad.Result</code> struct. Since this is the first part of our pipeline, we&rsquo;ll start with a <code>:success</code> struct.</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="c1"># =&gt; %Monad.Result{type: :success, value: user}</span></code></pre></div>
+
+<pre><code class="language-elixir">success(user) # =&gt; %Monad.Result{type: :success, value: user}
+</code></pre>
+
 <p>The <code>~&gt;&gt;</code> operator, when used with the <code>Monad.Result</code> monad, will ensure that the next function in the pipeline only runs if the previous one returned a <code>:success</code> result. Otherwise, it terminates immediately and returns the last <code>Monad.Result</code> that was returned.</p>
 
 <p>If we use a <code>~&gt;&gt;</code> pipeline instead of the regular <code>|&gt;</code> pipeline, our functions can then look like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">assert_not_purchased_yet</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="n">do</span>
-  <span class="n">case</span> <span class="n">purchased?</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="n">do</span>
-    <span class="n">true</span>  <span class="o">-&gt;</span> <span class="n">error</span><span class="p">(</span><span class="s2">&#34;Already purchased.&#34;</span><span class="p">)</span>
-    <span class="n">false</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="c1"># Return whatever state the next function needs</span>
-  <span class="n">end</span>
-<span class="n">end</span>
 
-<span class="n">def</span> <span class="n">create_stripe_customer</span><span class="p">(%{</span><span class="ss">stripe_customer_id</span><span class="p">:</span> <span class="n">id</span><span class="p">}</span> <span class="o">=</span> <span class="n">user</span><span class="p">)</span> <span class="n">when</span> <span class="n">id</span> <span class="o">!=</span> <span class="n">nil</span> <span class="n">do</span>
-  <span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="c1"># The user already has a stripe customer id, so do nothing</span>
-<span class="n">end</span>
-<span class="n">def</span> <span class="n">create_stripe_customer</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">stripe_token</span><span class="p">)</span> <span class="n">do</span>
-  <span class="n">case</span> <span class="p"></span><span class="nc">Stripe.Customer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="n">do</span> <span class="c1"># pseudocode</span>
-    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">_customer</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">reason</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">error</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span>
-  <span class="n">end</span>
-<span class="n">end</span>
+<pre><code class="language-elixir">def assert_not_purchased_yet(user) do
+  case purchased?(user) do
+    true  -&gt; error(&quot;Already purchased.&quot;)
+    false -&gt; success(user) # Return whatever state the next function needs
+  end
+end
 
-<span class="n">def</span> <span class="n">create_stripe_charge</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="n">do</span>
-  <span class="n">case</span> <span class="p"></span><span class="nc">Stripe.Charge</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">...</span><span class="p">)</span> <span class="n">do</span> <span class="c1"># pseudocode</span>
-    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">_charge</span><span class="p">}</span>   <span class="o">-&gt;</span> <span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
-    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">reason</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">error</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span>
-  <span class="n">end</span>
-<span class="n">end</span>
+def create_stripe_customer(%{stripe_customer_id: id} = user) when id != nil do
+  success(user) # The user already has a stripe customer id, so do nothing
+end
+def create_stripe_customer(user, stripe_token) do
+  case Stripe.Customer.create(user) do # pseudocode
+    {:ok, _customer} -&gt; success(user)
+    {:error, reason} -&gt; error(reason)
+  end
+end
 
-<span class="c1"># etc ...</span></code></pre></div>
+def create_stripe_charge(user) do
+  case Stripe.Charge.create(...) do # pseudocode
+    {:ok, _charge}   -&gt; success(user)
+    {:error, reason} -&gt; error(reason)
+  end
+end
+
+# etc ...
+</code></pre>
+
 <p>Much cleaner! Now, we&rsquo;ll only make the Stripe network calls if the previous step was successful. There&rsquo;s no nested tree of <code>if</code> statements, just a simple pipeline. And we can operate on the result of all these operations very simply:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">if</span> <span class="n">success?</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="n">do</span>
-  <span class="c1"># Get the value out of the monad</span>
-  <span class="n">value</span> <span class="o">=</span> <span class="n">unwrap!</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-  <span class="c1"># render success</span>
-<span class="n">else</span>
-  <span class="c1"># render error</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">if success?(result) do
+  # Get the value out of the monad
+  value = unwrap!(result)
+  # render success
+else
+  # render error
+end
+</code></pre>
+
 <h2 id="errors-prevented">Errors Prevented</h2>
 
 <p>This implementation elegantly handles each of the following situations:</p>
@@ -355,29 +259,33 @@ ga('send', 'pageview');
 
 <p>This is the first time I understood how a monad would help me, and I hope it was useful to you too! Whenever you find yourself wishing for a better type of pipeline, give <a href="https://github.com/rob-brown/MonadEx">Monadex</a> a try.</p>
 
-      </article>
+  </section>
+</article>
 
-      
-        <ul class="pager blog-pager">
-          
-            <li class="previous">
-              <a href="https://blog.danielberkompas.com/2015/08/28/how-to-run-elixir-cloud9-ide/" data-toggle="tooltip" data-placement="top" title="How to Run Elixir in Cloud9&#39;s IDE">&larr; Previous Post</a>
-            </li>
-          
-          
-            <li class="next">
-              <a href="https://blog.danielberkompas.com/2015/09/22/cloak-your-ecto-data/" data-toggle="tooltip" data-placement="top" title="Cloak Your Ecto Data">Next Post &rarr;</a>
-            </li>
-          
-        </ul>
-      
+<footer id="post-meta" class="clearfix">
+  <a href="https://twitter.com/dberkom">
+    <img class="avatar" src="/img/avatar.png">
+    <div>
+      <span class="dark">Daniel Berkompas</span>
+      <span>Full-stack software engineer at <a href="https://infinite.red">Infinite Red</a></span>
+    </div>
+    </a>
+  <section id="sharing">
+    <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fblog.danielberkompas.com%2f2015%2f09%2f03%2fbetter-pipelines-with-monadex%2f - Better%20Pipelines%20with%20Monadex by @dberkom"><span class="icon-twitter"> tweet</span></a>
 
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
 
-      
-        
-          <div class="disqus-comments">
-            <div id="disqus_thread"></div>
-<script>
+  </section>
+</footer>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -395,98 +303,103 @@ ga('send', 'pageview');
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-          </div>
-        
-        
-      
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
 
-    </div>
-  </div>
+    
+    
+    
+        <li>
+            <a href="/2018/03/17/flexible-design-with-adapters/">Flexible Design with Adapters<aside class="dates">Mar 17 2018</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/09/30/why-your-software-projects-fail/">Why Your Software Projects Fail<aside class="dates">Sep 30 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/01/17/reusable-templates-in-phoenix/">Reusable Templates in Phoenix<aside class="dates">Jan 17 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/09/27/ecto-multi-services/">Replace Callbacks with Ecto.Multi<aside class="dates">Sep 27 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/23/multidimensional-arrays-in-elixir/">Multidimensional Arrays in Elixir<aside class="dates">Apr 23 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/05/background-jobs-in-phoenix/">Background Jobs in Phoenix<aside class="dates">Apr 5 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/01/28/seo-tags-in-phoenix/">SEO Tags In Phoenix<aside class="dates">Jan 28 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/12/08/use-gen-event-with-ecto-callbacks/">Using GenEvent With Ecto Callbacks<aside class="dates">Dec 8 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/10/15/why-im-checking-out-graphql/">Why I&#39;m Checking Out GraphQL<aside class="dates">Oct 15 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/09/25/announcing-learn-elixir-tv/">Announcing LearnElixir.tv<aside class="dates">Sep 25 2015</aside></a>
+        </li>
+    
+</ul>
+ 
+
+        <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.github.com/danielberkompas">
+        <i class="fa fa-github"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.twitter.com/dberkom">
+        <i class="fa fa-twitter"></i>
+    </a>
+    
+
+
 </div>
 
-    <footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <ul class="list-inline text-center footer-links">
-          
-              <li>
-                <a href="https://github.com/danielberkompas" title="GitHub">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/dberkom" title="Twitter">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-          
-          <li>
-            
-            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
-            
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          
-        </ul>
-        <p class="credits copyright text-muted">
-          
-            
-              <a href="danielberkompas.com">Daniel Berkompas</a>
-            
-          
-
-          &nbsp;&bull;&nbsp;
-          2018
-
-          
-            &nbsp;&bull;&nbsp;
-            <a href="https://blog.danielberkompas.com/">Random Bits</a>
-          
-        </p>
-        
-        <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
-          
-        </p>
-      </div>
-    </div>
-  </div>
+    
+    <p class="small">
+    
+        © Copyright 2018 Daniel Berkompas
+    
+    </p>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+    </section>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script>
+<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-23392891-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
 
 
-  </body>
+</body>
 </html>
-

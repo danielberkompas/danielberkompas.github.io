@@ -1,291 +1,187 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<html lang="en-us">
+	<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Daniel Berkompas">
+<meta name="description" content="Describe your website">
+<meta name="generator" content="Hugo 0.47.1" />
+<title>Telephonist: State Machines for Twilio</title>
+<link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
 
-  <title>Telephonist: State Machines for Twilio</title>
-  <meta property="og:title" content="Telephonist: State Machines for Twilio" />
-  <meta name="twitter:title" content="Telephonist: State Machines for Twilio" />
-  <meta name="description" content="After a couple months of work, I&rsquo;ve finally got the library I&rsquo;ve been working toward for Twilio, and I&rsquo;m calling it &ldquo;Telephonist&rdquo;. You can read all about it over on Github, but here&rsquo;s a taste:
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+
+
+<link href="https://blog.danielberkompas.com/index.xml" rel="alternate" type="application/rss+xml" title="Bits &amp; Sundry" />
+
+
+<meta property="og:title" content="Telephonist: State Machines for Twilio" />
+<meta property="og:description" content="After a couple months of work, I&rsquo;ve finally got the library I&rsquo;ve been working toward for Twilio, and I&rsquo;m calling it &ldquo;Telephonist&rdquo;. You can read all about it over on Github, but here&rsquo;s a taste:
+
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.danielberkompas.com/2015/04/23/telephonist-on-github/" /><meta property="article:published_time" content="2015-04-23T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2015-04-23T00:00:00&#43;00:00"/>
+
+
+<meta itemprop="name" content="Telephonist: State Machines for Twilio">
+<meta itemprop="description" content="After a couple months of work, I&rsquo;ve finally got the library I&rsquo;ve been working toward for Twilio, and I&rsquo;m calling it &ldquo;Telephonist&rdquo;. You can read all about it over on Github, but here&rsquo;s a taste:
 
 ">
-  <meta property="og:description" content="After a couple months of work, I&rsquo;ve finally got the library I&rsquo;ve been working toward for Twilio, and I&rsquo;m calling it &ldquo;Telephonist&rdquo;. You can read all about it over on Github, but here&rsquo;s a taste:
-
-">
-  <meta name="twitter:description" content="After a couple months of work, I&rsquo;ve finally got the library I&rsquo;ve been working toward for Twilio, and I&rsquo;m calling it &ldquo;Telephonist&rdquo;. You can read all about it over on …">
-  <meta name="author" content="Daniel Berkompas"/>
-  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
-  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@dberkom" />
-  <meta name="twitter:creator" content="@dberkom" />
-  <meta property="og:url" content="https://blog.danielberkompas.com/2015/04/23/telephonist-on-github/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Random Bits" />
-
-  <meta name="generator" content="Hugo 0.36.1" />
-  <link rel="canonical" href="https://blog.danielberkompas.com/2015/04/23/telephonist-on-github/" />
-  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/project.css" />
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+<meta itemprop="datePublished" content="2015-04-23T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2015-04-23T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="306">
 
 
 
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+<meta itemprop="keywords" content="elixir," />
 
-<div class="pswp__bg"></div>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Telephonist: State Machines for Twilio"/>
+<meta name="twitter:description" content="After a couple months of work, I&rsquo;ve finally got the library I&rsquo;ve been working toward for Twilio, and I&rsquo;m calling it &ldquo;Telephonist&rdquo;. You can read all about it over on Github, but here&rsquo;s a taste:
 
-<div class="pswp__scroll-wrap">
-    
-    <div class="pswp__container">
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-    </div>
-    
-    <div class="pswp__ui pswp__ui--hidden">
-    <div class="pswp__top-bar">
-      
-      <div class="pswp__counter"></div>
-      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-      <button class="pswp__button pswp__button--share" title="Share"></button>
-      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-      
-      
-      <div class="pswp__preloader">
-        <div class="pswp__preloader__icn">
-          <div class="pswp__preloader__cut">
-            <div class="pswp__preloader__donut"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-      <div class="pswp__share-tooltip"></div>
-    </div>
-    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-    </button>
-    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-    </button>
-    <div class="pswp__caption">
-      <div class="pswp__caption__center"></div>
-    </div>
-    </div>
-    </div>
-</div>
+"/>
+<meta name="twitter:site" content="@https://www.twitter.com/dberkom"/>
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-23392891-3', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
 
-</head>
+    </head>
+<body>
+    <nav class="main-nav">
+	
+		<a href='https://blog.danielberkompas.com'> <span class="arrow">←</span>Home</a>
+	
 
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
-    </div>
+	
+ 		<a href='/projects'>Projects</a>
+  	
+ 		<a href='/about'>About</a>
+  	
+ 		<a href='/tags'>Tags</a>
+  	
 
-    <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav navbar-right">
-        
-          
-            <li>
-              <a title="Blog" href="/">Blog</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Projects" href="/projects">Projects</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="About" href="/about">About</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Tags" href="/tags">Tags</a>
-            </li>
-          
-        
-
-        
-
-        
-      </ul>
-    </div>
-
-    <div class="avatar-container">
-      <div class="avatar-img-border">
-        
-          <a title="Random Bits" href="https://blog.danielberkompas.com/">
-            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar-blue.jpg" alt="Random Bits" />
-          </a>
-        
-      </div>
-    </div>
-
-  </div>
+	
+		<a class="cta" href="https://blog.danielberkompas.com/index.xml">Subscribe</a>
+	
 </nav>
 
-
-
-
-    
-  
-  
-  
-
-
-
-
-  
-
-  <header class="header-section ">
-    
-    <div class="intro-header no-img">
-      
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="post-heading">
-              <h1>Telephonist: State Machines for Twilio</h1>
-                
-                
-                  <span class="post-meta">
-  
-  
-  <i class="fa fa-calendar-o"></i>&nbsp;Posted on April 23, 2015
-  
-  
-  &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 2 minutes (306 words)
-  
-  
-</span>
-
-
-                
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <section id="wrapper">
+        
+        
+<article class="post">
+  <header>
+    <h1>Telephonist: State Machines for Twilio</h1>
+    <h2 class="subtitle"></h2>
+    <h2 class="headline">
+      April 23, 2015
+      <br>   
+      <a href="https://blog.danielberkompas.com/%20tags/elixir%20">elixir</a>
+        
+    </h2>
   </header>
-
-
-    
-<div class="container" role="main">
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <article role="main" class="blog-post">
-        <p>After a couple months of work, I&rsquo;ve finally got the library I&rsquo;ve been working toward for Twilio, and I&rsquo;m calling it &ldquo;<a href="https://github.com/danielberkompas/telephonist">Telephonist</a>&rdquo;. You can read all about it <a href="https://github.com/danielberkompas/telephonist">over on Github</a>, but here&rsquo;s a taste:</p>
+  <section id="post-body">
+    <p>After a couple months of work, I&rsquo;ve finally got the library I&rsquo;ve been working toward for Twilio, and I&rsquo;m calling it &ldquo;<a href="https://github.com/danielberkompas/telephonist">Telephonist</a>&rdquo;. You can read all about it <a href="https://github.com/danielberkompas/telephonist">over on Github</a>, but here&rsquo;s a taste:</p>
 
 <p></p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">CustomCallFlow</span> <span class="n">do</span>
-  <span class="n">use</span> <span class="p"></span><span class="nc">Telephonist.StateMachine</span><span class="p">,</span> <span class="ss">initial_state</span><span class="p">:</span> <span class="ss">:choose_language</span>
 
-  <span class="n">state</span> <span class="ss">:choose_language</span><span class="p">,</span> <span class="n">twilio</span><span class="p">,</span> <span class="n">options</span> <span class="n">do</span>
-    <span class="n">say</span> <span class="s2">&#34;</span><span class="si">#{</span><span class="n">options</span><span class="p">[</span><span class="ss">:error</span><span class="p">]</span><span class="si">}</span><span class="s2">&#34;</span> <span class="c1"># say any error, if present</span>
-    <span class="n">gather</span> <span class="ss">timeout</span><span class="p">:</span> <span class="mi">10</span> <span class="n">do</span>
-      <span class="n">say</span> <span class="s2">&#34;For English, press 1&#34;</span>
-      <span class="n">say</span> <span class="s2">&#34;Para español, presione 2&#34;</span>
-    <span class="n">end</span>
-  <span class="n">end</span>
+<pre><code class="language-elixir">defmodule CustomCallFlow do
+  use Telephonist.StateMachine, initial_state: :choose_language
 
-  <span class="n">state</span> <span class="ss">:english</span><span class="p">,</span> <span class="n">twilio</span><span class="p">,</span> <span class="n">options</span> <span class="n">do</span>
-    <span class="n">say</span> <span class="s2">&#34;Proceeding in English...&#34;</span>
-  <span class="n">end</span>
+  state :choose_language, twilio, options do
+    say &quot;#{options[:error]}&quot; # say any error, if present
+    gather timeout: 10 do
+      say &quot;For English, press 1&quot;
+      say &quot;Para español, presione 2&quot;
+    end
+  end
 
-  <span class="n">state</span> <span class="ss">:spanish</span><span class="p">,</span> <span class="n">twilio</span><span class="p">,</span> <span class="n">options</span> <span class="n">do</span>
-    <span class="n">say</span> <span class="s2">&#34;Procediendo en español...&#34;</span>
-  <span class="n">end</span>
+  state :english, twilio, options do
+    say &quot;Proceeding in English...&quot;
+  end
 
-  <span class="c1"># If the user pressed &#34;1&#34; on their keypad, transition to English state</span>
-  <span class="n">def</span> <span class="n">transition</span><span class="p">(</span><span class="ss">:choose_language</span><span class="p">,</span> <span class="p">%{</span><span class="ss">Digits</span><span class="p">:</span> <span class="s2">&#34;1&#34;</span><span class="p">}</span> <span class="o">=</span> <span class="n">twilio</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="n">do</span>
-    <span class="n">state</span> <span class="ss">:english</span><span class="p">,</span> <span class="n">twilio</span><span class="p">,</span> <span class="n">options</span>
-  <span class="n">end</span>
+  state :spanish, twilio, options do
+    say &quot;Procediendo en español...&quot;
+  end
 
-  <span class="c1"># If the user pressed &#34;2&#34; on their keypad, transition to Spanish state</span>
-  <span class="n">def</span> <span class="n">transition</span><span class="p">(</span><span class="ss">:choose_language</span><span class="p">,</span> <span class="p">%{</span><span class="ss">Digits</span><span class="p">:</span> <span class="s2">&#34;2&#34;</span><span class="p">}</span> <span class="o">=</span> <span class="n">twilio</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="n">do</span>
-    <span class="n">state</span> <span class="ss">:spanish</span><span class="p">,</span> <span class="n">twilio</span><span class="p">,</span> <span class="n">options</span>
-  <span class="n">end</span>
+  # If the user pressed &quot;1&quot; on their keypad, transition to English state
+  def transition(:choose_language, %{Digits: &quot;1&quot;} = twilio, options) do
+    state :english, twilio, options
+  end
 
-  <span class="c1"># If neither of the above are true, append an error to the options and</span>
-  <span class="c1"># remain on the current state</span>
-  <span class="n">def</span> <span class="n">transition</span><span class="p">(</span><span class="ss">:choose_language</span><span class="p">,</span> <span class="n">twilio</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="n">do</span>
-    <span class="n">options</span> <span class="o">=</span> <span class="p"></span><span class="nc">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="ss">:error</span><span class="p">,</span> <span class="s2">&#34;You pressed an invalid digit. Please try again.&#34;</span><span class="p">)</span>
-    <span class="n">state</span> <span class="ss">:choose_language</span><span class="p">,</span> <span class="n">twilio</span><span class="p">,</span> <span class="n">options</span>
-  <span class="n">end</span>
-<span class="n">end</span></code></pre></div>
+  # If the user pressed &quot;2&quot; on their keypad, transition to Spanish state
+  def transition(:choose_language, %{Digits: &quot;2&quot;} = twilio, options) do
+    state :spanish, twilio, options
+  end
+
+  # If neither of the above are true, append an error to the options and
+  # remain on the current state
+  def transition(:choose_language, twilio, options) do
+    options = Map.put(options, :error, &quot;You pressed an invalid digit. Please try again.&quot;)
+    state :choose_language, twilio, options
+  end
+end
+</code></pre>
+
 <p>Use the state machine from your web framework like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="c1"># The web framework shown here is pseudo-code</span>
-<span class="n">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">twilio</span><span class="p">)</span> <span class="n">do</span>
-  <span class="n">options</span> <span class="o">=</span> <span class="p">%{}</span> <span class="c1"># Whatever I want to be able to use in my states and transitions</span>
-  <span class="n">state</span> <span class="o">=</span> <span class="p"></span><span class="nc">Telephonist.CallProcessor</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="nc">CustomCallFlow</span><span class="p">,</span> <span class="n">twilio</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
-  <span class="n">render</span> <span class="n">conn</span><span class="p">,</span> <span class="ss">xml</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">twiml</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir"># The web framework shown here is pseudo-code
+def index(conn, twilio) do
+  options = %{} # Whatever I want to be able to use in my states and transitions
+  state = Telephonist.CallProcessor.process(CustomCallFlow, twilio, options)
+  render conn, xml: state.twiml
+end
+</code></pre>
+
 <p>Which will render some nice TwiML:</p>
-<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
-<span class="nt">&lt;Response&gt;</span>
-  <span class="nt">&lt;Gather</span> <span class="na">timeout=</span><span class="s">&#34;10&#34;</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;Say&gt;</span>For English, press 1<span class="nt">&lt;/Say&gt;</span>
-    <span class="nt">&lt;Say&gt;</span>Para español, presione 2<span class="nt">&lt;/Say&gt;</span>
-  <span class="nt">&lt;/Gather&gt;</span>
-<span class="nt">&lt;/Response&gt;</span></code></pre></div>
+
+<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;Response&gt;
+  &lt;Gather timeout=&quot;10&quot;&gt;
+    &lt;Say&gt;For English, press 1&lt;/Say&gt;
+    &lt;Say&gt;Para español, presione 2&lt;/Say&gt;
+  &lt;/Gather&gt;
+&lt;/Response&gt;
+</code></pre>
+
 <p>Unlike my <a href="https://github.com/danielberkompas/twiliomenu">previous attempt at this</a>, Telephonist has <em>no dependency</em> on any ORM layer, is very concurrent, and produces code that is easy to maintain.</p>
 
 <p>Telephonist will be released on <a href="http://hex.pm">Hex</a> soon, (once I get the documentation finished) and in the future, I may create a Ruby version.</p>
-      </article>
+  </section>
+</article>
 
-      
-        <ul class="pager blog-pager">
-          
-            <li class="previous">
-              <a href="https://blog.danielberkompas.com/2015/04/17/keep-your-ets-tables-alive/" data-toggle="tooltip" data-placement="top" title="On Keeping Your ETS Tables Alive">&larr; Previous Post</a>
-            </li>
-          
-          
-            <li class="next">
-              <a href="https://blog.danielberkompas.com/2015/04/28/why-a-static-blog-is-a-good-idea/" data-toggle="tooltip" data-placement="top" title="Why a Static Blog is a Good Idea">Next Post &rarr;</a>
-            </li>
-          
-        </ul>
-      
+<footer id="post-meta" class="clearfix">
+  <a href="https://twitter.com/dberkom">
+    <img class="avatar" src="/img/avatar.png">
+    <div>
+      <span class="dark">Daniel Berkompas</span>
+      <span>Full-stack software engineer at <a href="https://infinite.red">Infinite Red</a></span>
+    </div>
+    </a>
+  <section id="sharing">
+    <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fblog.danielberkompas.com%2f2015%2f04%2f23%2ftelephonist-on-github%2f - Telephonist%3a%20State%20Machines%20for%20Twilio by @dberkom"><span class="icon-twitter"> tweet</span></a>
 
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
 
-      
-        
-          <div class="disqus-comments">
-            <div id="disqus_thread"></div>
-<script>
+  </section>
+</footer>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -303,98 +199,103 @@ ga('send', 'pageview');
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-          </div>
-        
-        
-      
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
 
-    </div>
-  </div>
+    
+    
+    
+        <li>
+            <a href="/2018/03/17/flexible-design-with-adapters/">Flexible Design with Adapters<aside class="dates">Mar 17 2018</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/09/30/why-your-software-projects-fail/">Why Your Software Projects Fail<aside class="dates">Sep 30 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/01/17/reusable-templates-in-phoenix/">Reusable Templates in Phoenix<aside class="dates">Jan 17 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/09/27/ecto-multi-services/">Replace Callbacks with Ecto.Multi<aside class="dates">Sep 27 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/23/multidimensional-arrays-in-elixir/">Multidimensional Arrays in Elixir<aside class="dates">Apr 23 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/05/background-jobs-in-phoenix/">Background Jobs in Phoenix<aside class="dates">Apr 5 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/01/28/seo-tags-in-phoenix/">SEO Tags In Phoenix<aside class="dates">Jan 28 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/12/08/use-gen-event-with-ecto-callbacks/">Using GenEvent With Ecto Callbacks<aside class="dates">Dec 8 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/10/15/why-im-checking-out-graphql/">Why I&#39;m Checking Out GraphQL<aside class="dates">Oct 15 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/09/25/announcing-learn-elixir-tv/">Announcing LearnElixir.tv<aside class="dates">Sep 25 2015</aside></a>
+        </li>
+    
+</ul>
+ 
+
+        <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.github.com/danielberkompas">
+        <i class="fa fa-github"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.twitter.com/dberkom">
+        <i class="fa fa-twitter"></i>
+    </a>
+    
+
+
 </div>
 
-    <footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <ul class="list-inline text-center footer-links">
-          
-              <li>
-                <a href="https://github.com/danielberkompas" title="GitHub">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/dberkom" title="Twitter">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-          
-          <li>
-            
-            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
-            
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          
-        </ul>
-        <p class="credits copyright text-muted">
-          
-            
-              <a href="danielberkompas.com">Daniel Berkompas</a>
-            
-          
-
-          &nbsp;&bull;&nbsp;
-          2018
-
-          
-            &nbsp;&bull;&nbsp;
-            <a href="https://blog.danielberkompas.com/">Random Bits</a>
-          
-        </p>
-        
-        <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
-          
-        </p>
-      </div>
-    </div>
-  </div>
+    
+    <p class="small">
+    
+        © Copyright 2018 Daniel Berkompas
+    
+    </p>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+    </section>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script>
+<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-23392891-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
 
 
-  </body>
+</body>
 </html>
-

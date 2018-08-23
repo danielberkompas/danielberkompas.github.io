@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Pages on Random Bits</title>
+    <title>Pages on Bits &amp; Sundry</title>
     <link>https://blog.danielberkompas.com/page/</link>
-    <description>Recent content in Pages on Random Bits</description>
+    <description>Recent content in Pages on Bits &amp; Sundry</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
@@ -16,8 +16,9 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://blog.danielberkompas.com/about/</guid>
-      <description>I was born in 1991 in the Pacific Northwest of the USA, which is also where I currently live. I&amp;rsquo;m a Christian, married to a wonderful woman, and have 3 crazy little kids.
-Occupation I create software for a living, with a focus on backend servers. About 4 years ago, I discovered Elixir and mainly write in and about that, though I do have experience with Ruby on Rails and modern Javascript.</description>
+      <description>I&amp;rsquo;m a Christian, married to a wonderful woman, and have 3 crazy little kids.
+Professionally, I&amp;rsquo;m a full-stack engineer at Infinite Red. Definitely check us out if you need to build some software, especially if it has to do with mobile or web.
+But please bear in mind that everything on this site is my own, and is not endorsed by any of my employers, past or present.</description>
     </item>
     
     <item>
@@ -26,16 +27,13 @@ Occupation I create software for a living, with a focus on backend servers. Abou
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://blog.danielberkompas.com/projects/</guid>
-      <description>Courses I&amp;rsquo;m passionate about teaching programming, so I created the following courses:
-LearnElixir.tv Teaches Elixir with step-by-step video tutorials.
- LearnPhoenix.tv Teaches Elixir with step-by-step video tutorials.
+      <description>Programming Courses I&amp;rsquo;m passionate about teaching programming, so I created the following courses:
+ LearnElixir.tv Teaches Elixir with step-by-step video tutorials.
+  LearnPhoenix.tv Teaches Phoenix, a popular Elixir web framework with step-by-step video tutorials.
   
-Open Source Software I built and maintain several libraries on my own:
-Number Number formatting for Elixir
- ExTwilio API client for Twilio
-  Cloak Encrypts database fields
- Immortal Helpers for OTP applications
-  Destructure Javascript destructuring for Elixir</description>
+Open Source Software  Number Number formatting for Elixir   ExTwilio Elixir API client for Twilio
+  Cloak Elixir encryption library, compatible with Ecto
+  Immortal Helpers for OTP applications</description>
     </item>
     
   </channel>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Scm on Random Bits</title>
+    <title>Scm on Bits &amp; Sundry</title>
     <link>https://blog.danielberkompas.com/tags/scm/</link>
-    <description>Recent content in Scm on Random Bits</description>
+    <description>Recent content in Scm on Bits &amp; Sundry</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 28 Jul 2015 00:00:00 +0000</lastBuildDate>
@@ -29,7 +29,7 @@
       
       <guid>https://blog.danielberkompas.com/2015/02/19/undo-git-commit/</guid>
       <description>I keep forgetting how to do this, so I thought I&amp;rsquo;d post this for my own future benefit:
-// Completely deletes the most recent commit $ git reset --hard HEAD~1 // Removes the most recent commit, but leaves changes intact. Useful if you // might want to make a new commit. $ git reset --soft HEAD~1</description>
+// Completely deletes the most recent commit $ git reset --hard HEAD~1 // Removes the most recent commit, but leaves changes intact. Useful if you // might want to make a new commit. $ git reset --soft HEAD~1  </description>
     </item>
     
   </channel>

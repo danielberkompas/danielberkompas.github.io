@@ -1,222 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<html lang="en-us">
+	<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Daniel Berkompas">
+<meta name="description" content="Describe your website">
+<meta name="generator" content="Hugo 0.47.1" />
+<title>Changing Your Ecto Encryption Key</title>
+<link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
 
-  <title>Changing Your Ecto Encryption Key</title>
-  <meta property="og:title" content="Changing Your Ecto Encryption Key" />
-  <meta name="twitter:title" content="Changing Your Ecto Encryption Key" />
-  <meta name="description" content="Author&rsquo;s Note: I&rsquo;ve released an open-source Hex package that implements the approach to encryption I describe in this post. Read the announcement post here.
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+
+
+<link href="https://blog.danielberkompas.com/index.xml" rel="alternate" type="application/rss+xml" title="Bits &amp; Sundry" />
+
+
+<meta property="og:title" content="Changing Your Ecto Encryption Key" />
+<meta property="og:description" content="Author&rsquo;s Note: I&rsquo;ve released an open-source Hex package that implements the approach to encryption I describe in this post. Read the announcement post here.
+
+READ THIS FIRST: Encrypting Data with Ecto
+
+In an earlier post, I wrote about how to encrypt data with Ecto, Elixir&rsquo;s database library. However, I didn&rsquo;t cover how to change your encryption key, which you&rsquo;ll definitely want to do periodically. I want to show how do that in this post.
+
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.danielberkompas.com/2015/07/09/changing-your-ecto-encryption-key/" /><meta property="article:published_time" content="2015-07-09T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2015-07-09T00:00:00&#43;00:00"/>
+
+
+<meta itemprop="name" content="Changing Your Ecto Encryption Key">
+<meta itemprop="description" content="Author&rsquo;s Note: I&rsquo;ve released an open-source Hex package that implements the approach to encryption I describe in this post. Read the announcement post here.
 
 READ THIS FIRST: Encrypting Data with Ecto
 
 In an earlier post, I wrote about how to encrypt data with Ecto, Elixir&rsquo;s database library. However, I didn&rsquo;t cover how to change your encryption key, which you&rsquo;ll definitely want to do periodically. I want to show how do that in this post.
 
 ">
-  <meta property="og:description" content="Author&rsquo;s Note: I&rsquo;ve released an open-source Hex package that implements the approach to encryption I describe in this post. Read the announcement post here.
+
+
+<meta itemprop="datePublished" content="2015-07-09T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2015-07-09T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1256">
+
+
+
+<meta itemprop="keywords" content="elixir," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Changing Your Ecto Encryption Key"/>
+<meta name="twitter:description" content="Author&rsquo;s Note: I&rsquo;ve released an open-source Hex package that implements the approach to encryption I describe in this post. Read the announcement post here.
 
 READ THIS FIRST: Encrypting Data with Ecto
 
 In an earlier post, I wrote about how to encrypt data with Ecto, Elixir&rsquo;s database library. However, I didn&rsquo;t cover how to change your encryption key, which you&rsquo;ll definitely want to do periodically. I want to show how do that in this post.
 
-">
-  <meta name="twitter:description" content="Author&rsquo;s Note: I&rsquo;ve released an open-source Hex package that implements the approach to encryption I describe in this post. Read the announcement post here.
-
-READ THIS FIRST: Encrypting …">
-  <meta name="author" content="Daniel Berkompas"/>
-  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
-  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@dberkom" />
-  <meta name="twitter:creator" content="@dberkom" />
-  <meta property="og:url" content="https://blog.danielberkompas.com/2015/07/09/changing-your-ecto-encryption-key/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Random Bits" />
-
-  <meta name="generator" content="Hugo 0.36.1" />
-  <link rel="canonical" href="https://blog.danielberkompas.com/2015/07/09/changing-your-ecto-encryption-key/" />
-  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/project.css" />
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+"/>
+<meta name="twitter:site" content="@https://www.twitter.com/dberkom"/>
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+    </head>
+<body>
+    <nav class="main-nav">
+	
+		<a href='https://blog.danielberkompas.com'> <span class="arrow">←</span>Home</a>
+	
 
+	
+ 		<a href='/projects'>Projects</a>
+  	
+ 		<a href='/about'>About</a>
+  	
+ 		<a href='/tags'>Tags</a>
+  	
 
-
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
-
-<div class="pswp__bg"></div>
-
-<div class="pswp__scroll-wrap">
-    
-    <div class="pswp__container">
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-    </div>
-    
-    <div class="pswp__ui pswp__ui--hidden">
-    <div class="pswp__top-bar">
-      
-      <div class="pswp__counter"></div>
-      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-      <button class="pswp__button pswp__button--share" title="Share"></button>
-      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-      
-      
-      <div class="pswp__preloader">
-        <div class="pswp__preloader__icn">
-          <div class="pswp__preloader__cut">
-            <div class="pswp__preloader__donut"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-      <div class="pswp__share-tooltip"></div>
-    </div>
-    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-    </button>
-    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-    </button>
-    <div class="pswp__caption">
-      <div class="pswp__caption__center"></div>
-    </div>
-    </div>
-    </div>
-</div>
-
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-23392891-3', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-</head>
-
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav navbar-right">
-        
-          
-            <li>
-              <a title="Blog" href="/">Blog</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Projects" href="/projects">Projects</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="About" href="/about">About</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Tags" href="/tags">Tags</a>
-            </li>
-          
-        
-
-        
-
-        
-      </ul>
-    </div>
-
-    <div class="avatar-container">
-      <div class="avatar-img-border">
-        
-          <a title="Random Bits" href="https://blog.danielberkompas.com/">
-            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar-blue.jpg" alt="Random Bits" />
-          </a>
-        
-      </div>
-    </div>
-
-  </div>
+	
+		<a class="cta" href="https://blog.danielberkompas.com/index.xml">Subscribe</a>
+	
 </nav>
 
-
-
-
-    
-  
-  
-  
-
-
-
-
-  
-
-  <header class="header-section ">
-    
-    <div class="intro-header no-img">
-      
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="post-heading">
-              <h1>Changing Your Ecto Encryption Key</h1>
-                
-                
-                  <span class="post-meta">
-  
-  
-  <i class="fa fa-calendar-o"></i>&nbsp;Posted on July 9, 2015
-  
-  
-  &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 6 minutes (1254 words)
-  
-  
-</span>
-
-
-                
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <section id="wrapper">
+        
+        
+<article class="post">
+  <header>
+    <h1>Changing Your Ecto Encryption Key</h1>
+    <h2 class="subtitle"></h2>
+    <h2 class="headline">
+      July 9, 2015
+      <br>   
+      <a href="https://blog.danielberkompas.com/%20tags/elixir%20">elixir</a>
+        
+    </h2>
   </header>
-
-
-    
-<div class="container" role="main">
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <article role="main" class="blog-post">
-        <p><strong>Author&rsquo;s Note: I&rsquo;ve released an open-source Hex package that implements the approach to encryption I describe in this post. <a href="/2015/09/22/cloak-your-ecto-data.html">Read the announcement post here</a></strong>.</p>
+  <section id="post-body">
+    <p><strong>Author&rsquo;s Note: I&rsquo;ve released an open-source Hex package that implements the approach to encryption I describe in this post. <a href="/2015/09/22/cloak-your-ecto-data.html">Read the announcement post here</a></strong>.</p>
 
 <p>READ THIS FIRST: <a href="/elixir/security/2015/07/03/encrypting-data-with-ecto.html">Encrypting Data with Ecto</a></p>
 
@@ -227,8 +112,11 @@ ga('send', 'pageview');
 <h2 id="tag-your-ciphertext">Tag Your Ciphertext</h2>
 
 <p>In order to migrate to a new key, you&rsquo;re going to need to be able to distinguish which key was used to encrypt any given text. This can be done very simply by prepending a single byte to every encrypted binary:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">key_id</span> <span class="o">=</span> <span class="p">&lt;&lt;</span><span class="mi">1</span><span class="p">&gt;&gt;</span>
-<span class="n">key_id</span> <span class="o">&lt;&gt;</span> <span class="p">&lt;&lt;</span><span class="mi">5</span><span class="p">,</span> <span class="mi">138</span><span class="p">,</span> <span class="n">...</span><span class="o">&gt;</span></code></pre></div>
+
+<pre><code class="language-elixir">key_id = &lt;&lt;1&gt;&gt;
+key_id &lt;&gt; &lt;&lt;5, 138, ...&gt;
+</code></pre>
+
 <p>This byte is the ID of the key that was used, and the decryptor can easily use it to find the correct key.</p>
 
 <p>If you&rsquo;re not looking to migrate to a new key right now, this is really all you need to do. If all your ciphertext includes a key ID, you&rsquo;ll be able to distinguish between ciphertexts, and you&rsquo;ll be able to follow the rest of these steps later when you want to migrate to a new key.</p>
@@ -236,44 +124,56 @@ ga('send', 'pageview');
 <h2 id="change-config">Change Config</h2>
 
 <p>We need to change our <code>config.exs</code> to support multiple keys:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">config</span> <span class="ss">:my_app</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.AES</span><span class="p">,</span>
-  <span class="ss">keys</span><span class="p">:</span> <span class="p">%{</span>
-    <span class="p">&lt;&lt;</span><span class="mi">1</span><span class="p">&gt;&gt;</span> <span class="o">=&gt;</span> <span class="ss">:base64</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&#34;...&#34;</span><span class="p">),</span> <span class="c1"># assuming you store keys in base64</span>
-    <span class="p">&lt;&lt;</span><span class="mi">2</span><span class="p">&gt;&gt;</span> <span class="o">=&gt;</span> <span class="ss">:base64</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&#34;...&#34;</span><span class="p">)</span>  <span class="c1"># otherwise, straight binary will do</span>
-  <span class="p">},</span>
-  <span class="ss">default</span><span class="p">:</span> <span class="p">&lt;&lt;</span><span class="mi">1</span><span class="p">&gt;&gt;</span> <span class="c1"># The ID of the key we want to use</span></code></pre></div>
+
+<pre><code class="language-elixir">config :my_app, MyApp.AES,
+  keys: %{
+    &lt;&lt;1&gt;&gt; =&gt; :base64.decode(&quot;...&quot;), # assuming you store keys in base64
+    &lt;&lt;2&gt;&gt; =&gt; :base64.decode(&quot;...&quot;)  # otherwise, straight binary will do
+  },
+  default: &lt;&lt;1&gt;&gt; # The ID of the key we want to use
+</code></pre>
+
 <p>The first key, <code>&lt;&lt;1&gt;&gt;</code>, is the legacy key we&rsquo;re migrating away from. <code>&lt;&lt;2&gt;&gt;</code> is the key we are migrating to. We&rsquo;ll leave the <code>:default</code> as key <code>&lt;&lt;1&gt;&gt;</code> until we are ready to make the switch.</p>
 
 <h2 id="change-encryptor">Change Encryptor</h2>
 
 <p>Now, we need to upgrade the <code>encrypt/1</code> function to prepend the key ID of the key that was used for the encryption:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="c1"># Store config in module attributes for slightly faster lookup at runtime,</span>
-<span class="c1"># and the ability to use them as function parameter defaults</span>
-<span class="na">@config</span>  <span class="p"></span><span class="nc">Application</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="ss">:my_app</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.AES</span><span class="p">)</span>
-<span class="na">@keys</span>    <span class="na">@config</span><span class="p">[</span><span class="ss">:keys</span><span class="p">]</span>
-<span class="na">@default</span> <span class="na">@config</span><span class="p">[</span><span class="ss">:default</span><span class="p">]</span>
 
-<span class="c1"># Add another parameter, to allow encrypting with a specific key</span>
-<span class="n">def</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key_id</span> <span class="p">\\</span> <span class="na">@default</span><span class="p">)</span> <span class="n">do</span>
-  <span class="n">iv</span>    <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">strong_rand_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
-  <span class="n">state</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_init</span><span class="p">(</span><span class="ss">:aes_ctr</span><span class="p">,</span> <span class="na">@keys</span><span class="p">[</span><span class="n">key_id</span><span class="p">],</span> <span class="n">iv</span><span class="p">)</span> <span class="c1"># use specified key</span>
-  <span class="p">{</span><span class="n">_state</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_encrypt</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">to_string</span><span class="p">(</span><span class="n">plaintext</span><span class="p">))</span>
-  <span class="n">key_id</span> <span class="o">&lt;&gt;</span> <span class="n">iv</span> <span class="o">&lt;&gt;</span> <span class="n">ciphertext</span> <span class="c1"># prepend key byte to iv and ciphertext</span>
-<span class="n">end</span></code></pre></div>
+<pre><code class="language-elixir"># Store config in module attributes for slightly faster lookup at runtime,
+# and the ability to use them as function parameter defaults
+@config  Application.get_env(:my_app, MyApp.AES)
+@keys    @config[:keys]
+@default @config[:default]
+
+# Add another parameter, to allow encrypting with a specific key
+def encrypt(ciphertext, key_id \\ @default) do
+  iv    = :crypto.strong_rand_bytes(16)
+  state = :crypto.stream_init(:aes_ctr, @keys[key_id], iv) # use specified key
+  {_state, ciphertext} = :crypto.stream_encrypt(state, to_string(plaintext))
+  key_id &lt;&gt; iv &lt;&gt; ciphertext # prepend key byte to iv and ciphertext
+end
+</code></pre>
+
 <p>The key ID will now be included in every ciphertext. We now just have to update the <code>decrypt/1</code> function to find this key ID properly:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span> <span class="n">do</span>
-  <span class="c1"># The first byte is the key ID</span>
-  <span class="p">&lt;&lt;</span><span class="n">key_id</span><span class="o">::</span><span class="n">binary</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">iv</span><span class="o">::</span><span class="n">binary</span><span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="n">ciphertext</span><span class="o">::</span><span class="n">binary</span><span class="p">&gt;&gt;</span> <span class="o">=</span> <span class="n">ciphertext</span>
-  <span class="n">state</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_init</span><span class="p">(</span><span class="ss">:aes_ctr</span><span class="p">,</span> <span class="na">@keys</span><span class="p">[</span><span class="n">key_id</span><span class="p">],</span> <span class="n">iv</span><span class="p">)</span> <span class="c1"># use specified key</span>
-  <span class="p">{</span><span class="n">_state</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_decrypt</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">)</span>
-  <span class="n">plaintext</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">def decrypt(ciphertext) do
+  # The first byte is the key ID
+  &lt;&lt;key_id::binary-1, iv::binary-16, ciphertext::binary&gt;&gt; = ciphertext
+  state = :crypto.stream_init(:aes_ctr, @keys[key_id], iv) # use specified key
+  {_state, plaintext} = :crypto.stream_decrypt(state, ciphertext)
+  plaintext
+end
+</code></pre>
+
 <p>With that, our encryptor can encrypt and decrypt values generated by any of our keys. By extension, this means that Ecto can read encrypted data from the database, no matter which key was used to generate it.</p>
 
 <p>It&rsquo;s also a good idea to add a simple function to the encryptor so that other modules can access the current default key ID without having to know where it is stored in <code>config.exs</code></p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">key_id</span> <span class="n">do</span>
-  <span class="na">@default</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">def key_id do
+  @default
+end
+</code></pre>
+
 <h2 id="change-model-s">Change Model(s)</h2>
 
 <p>There isn&rsquo;t actually a lot that we <em>have</em> to change on our model to get things basically working. If we switch to a new key at this point, nothing will break, and records will be gradually upgraded to the new key. This is how that works:</p>
@@ -292,84 +192,93 @@ with key <code>&lt;&lt;1&gt;&gt;</code> and successfully decrypt it using that k
 
 <p>In the likely event that you want to re-encrypt your data with the new key more quickly, you&rsquo;ll need to make some changes to your <code>User</code> model.
 First off, you want to track which rows have been migrated and which have not. Add an indexed binary field called <code>:encryption_key_id</code> to the model.</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">schema</span> <span class="s2">&#34;users&#34;</span> <span class="n">do</span>
-  <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.EncryptedField</span>
-  <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.EncryptedField</span>
-  <span class="n">field</span> <span class="ss">:email_hash</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.HashField</span>
-  <span class="n">field</span> <span class="ss">:encryption_key_id</span><span class="p">,</span> <span class="ss">:binary</span>
-<span class="n">end</span></code></pre></div>
-<p>Then, set this field with a callback. I&rsquo;ve renamed the <code>set_hashed_fields</code> callback to <code>set_defaults</code> for this example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">before_insert</span> <span class="ss">:set_defaults</span>
-<span class="n">before_update</span> <span class="ss">:set_defaults</span>
 
-<span class="n">defp</span> <span class="n">set_defaults</span><span class="p">(</span><span class="n">changeset</span><span class="p">)</span> <span class="n">do</span>
-  <span class="n">changeset</span>
-  <span class="o">|&gt;</span> <span class="n">put_change</span><span class="p">(</span><span class="ss">:encryption_key_id</span><span class="p">,</span> <span class="p"></span><span class="nc">MyApp.AES</span><span class="o">.</span><span class="n">key_id</span><span class="p">)</span>
-  <span class="o">|&gt;</span> <span class="n">put_change</span><span class="p">(</span><span class="ss">:email_hash</span><span class="p">,</span> <span class="n">get_field</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:email</span><span class="p">))</span>
-<span class="n">end</span></code></pre></div>
+<pre><code class="language-elixir">schema &quot;users&quot; do
+  field :name, MyApp.EncryptedField
+  field :email, MyApp.EncryptedField
+  field :email_hash, MyApp.HashField
+  field :encryption_key_id, :binary
+end
+</code></pre>
+
+<p>Then, set this field with a callback. I&rsquo;ve renamed the <code>set_hashed_fields</code> callback to <code>set_defaults</code> for this example:</p>
+
+<pre><code class="language-elixir">before_insert :set_defaults
+before_update :set_defaults
+
+defp set_defaults(changeset) do
+  changeset
+  |&gt; put_change(:encryption_key_id, MyApp.AES.key_id)
+  |&gt; put_change(:email_hash, get_field(changeset, :email))
+end
+</code></pre>
+
 <p>The <code>:encryption_key_id</code> field will now contain the key ID which was used to encrypt the row. This will help us find rows which haven&rsquo;t been upgraded yet.</p>
 
 <h2 id="mix-task">Mix Task</h2>
 
 <p>We&rsquo;ve come to the final step, creating a mix task to proactively migrate up all of our data to the new key. Here&rsquo;s what it could look like:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="c1"># lib/mix/tasks/encryption.migrate.ex</span>
-<span class="n">defmodule</span> <span class="p"></span><span class="nc">Mix.Tasks.Encryption.Migrate</span> <span class="n">do</span>
-  <span class="n">use</span> <span class="p"></span><span class="nc">Mix.Task</span>
 
-  <span class="n">import</span> <span class="p"></span><span class="nc">Ecto.Query</span>
-  <span class="n">import</span> <span class="p"></span><span class="nc">Logger</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">info</span><span class="p">:</span> <span class="mi">1</span><span class="p">]</span>
+<pre><code class="language-elixir"># lib/mix/tasks/encryption.migrate.ex
+defmodule Mix.Tasks.Encryption.Migrate do
+  use Mix.Task
 
-  <span class="n">alias</span> <span class="p"></span><span class="nc">MyApp.Repo</span>
+  import Ecto.Query
+  import Logger, only: [info: 1]
 
-  <span class="c1"># Store the current key ID in a module attribute. This is the key that we are</span>
-  <span class="c1"># going to migrate to, controlled by `:default` in `config.exs`.</span>
-  <span class="c1">#</span>
-  <span class="c1"># I&#39;m doing it this way rather than calling the function directly so we can</span>
-  <span class="c1"># use it in pattern matching below.</span>
-  <span class="na">@key_id</span> <span class="p"></span><span class="nc">MyApp.AES</span><span class="o">.</span><span class="n">key_id</span>
+  alias MyApp.Repo
 
-  <span class="n">def</span> <span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="n">do</span>
-    <span class="c1"># Ensure that MyApp.Repo is started and available for use</span>
-    <span class="p"></span><span class="nc">Mix.Task</span><span class="o">.</span><span class="n">run</span> <span class="s2">&#34;app.start&#34;</span><span class="p">,</span> <span class="n">args</span>
+  # Store the current key ID in a module attribute. This is the key that we are
+  # going to migrate to, controlled by `:default` in `config.exs`.
+  #
+  # I'm doing it this way rather than calling the function directly so we can
+  # use it in pattern matching below.
+  @key_id MyApp.AES.key_id
 
-    <span class="c1"># Migrate our User model</span>
-    <span class="c1"># You could migrate any other models that use encryption here.</span>
-    <span class="n">migrate</span> <span class="p"></span><span class="nc">MyApp.User</span>
-  <span class="n">end</span>
+  def run(args) do
+    # Ensure that MyApp.Repo is started and available for use
+    Mix.Task.run &quot;app.start&quot;, args
 
-  <span class="n">defp</span> <span class="n">migrate</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="n">do</span>
-    <span class="n">info</span> <span class="s2">&#34;=== Migrating </span><span class="si">#{</span><span class="n">model</span><span class="si">}</span><span class="s2"> Model ===&#34;</span>
-    <span class="n">ids</span> <span class="o">=</span> <span class="n">ids_for</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-    <span class="n">info</span> <span class="s2">&#34;</span><span class="si">#{</span><span class="n">length</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> records found needing migration&#34;</span>
+    # Migrate our User model
+    # You could migrate any other models that use encryption here.
+    migrate MyApp.User
+  end
 
-    <span class="c1"># Migrate all the records found</span>
-    <span class="n">for</span> <span class="n">id</span> <span class="o">&lt;-</span> <span class="n">ids</span> <span class="n">do</span>
-      <span class="c1"># Records are fetched individually to ensure that they haven&#39;t changed</span>
-      <span class="c1"># between being loaded and saved. We don&#39;t want to overwrite any changes</span>
-      <span class="c1"># that occur while this task is running.</span>
-      <span class="p"></span><span class="nc">Repo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">id</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">migrate_record</span>
-    <span class="n">end</span>
+  defp migrate(model) do
+    info &quot;=== Migrating #{model} Model ===&quot;
+    ids = ids_for(model)
+    info &quot;#{length(ids)} records found needing migration&quot;
 
-    <span class="n">info</span> <span class="s2">&#34;=== Migration Complete ===&#34;</span>
-  <span class="n">end</span>
+    # Migrate all the records found
+    for id &lt;- ids do
+      # Records are fetched individually to ensure that they haven't changed
+      # between being loaded and saved. We don't want to overwrite any changes
+      # that occur while this task is running.
+      Repo.get(model, id) |&gt; migrate_record
+    end
 
-  <span class="c1"># Returns all the IDs of records which, according to :encryption_key_id, have</span>
-  <span class="c1"># not yet migrated to @key_id.</span>
-  <span class="n">defp</span> <span class="n">ids_for</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="n">do</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="n">from</span> <span class="n">m</span> <span class="n">in</span> <span class="n">model</span><span class="p">,</span> <span class="ss">where</span><span class="p">:</span>  <span class="n">m</span><span class="o">.</span><span class="n">encryption_key_id</span> <span class="o">!=</span> <span class="o">^</span><span class="na">@key_id</span><span class="p">,</span>
-                             <span class="ss">select</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">id</span>
-    <span class="p"></span><span class="nc">Repo</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-  <span class="n">end</span>
+    info &quot;=== Migration Complete ===&quot;
+  end
 
-  <span class="c1"># Do nothing if the record has been automagically migrated by app usage since</span>
-  <span class="c1"># we queried for IDs at the start of this task.</span>
-  <span class="n">defp</span> <span class="n">migrate_record</span><span class="p">(%{</span><span class="ss">encryption_key_id</span><span class="p">:</span> <span class="na">@key_id</span><span class="p">}),</span> <span class="ss">do</span><span class="p">:</span> <span class="n">nil</span>
+  # Returns all the IDs of records which, according to :encryption_key_id, have
+  # not yet migrated to @key_id.
+  defp ids_for(model) do
+    query = from m in model, where:  m.encryption_key_id != ^@key_id,
+                             select: m.id
+    Repo.all(query)
+  end
 
-  <span class="c1"># If the record doesn&#39;t match the above definition, and therefore has not been</span>
-  <span class="c1"># migrated, then simply save it back to the database. This will trigger</span>
-  <span class="c1"># MyApp.AES.encrypt, which will save the data encrypted with the new key.</span>
-  <span class="n">defp</span> <span class="n">migrate_record</span><span class="p">(</span><span class="n">record</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="p"></span><span class="nc">Repo</span><span class="o">.</span><span class="n">update!</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
-<span class="n">end</span></code></pre></div>
+  # Do nothing if the record has been automagically migrated by app usage since
+  # we queried for IDs at the start of this task.
+  defp migrate_record(%{encryption_key_id: @key_id}), do: nil
+
+  # If the record doesn't match the above definition, and therefore has not been
+  # migrated, then simply save it back to the database. This will trigger
+  # MyApp.AES.encrypt, which will save the data encrypted with the new key.
+  defp migrate_record(record), do: Repo.update!(record)
+end
+</code></pre>
+
 <h2 id="the-great-migration">The Great Migration</h2>
 
 <p>We&rsquo;re ready to migrate! We can just change the <code>:default</code> in <code>config.exs</code> from <code>&lt;&lt;1&gt;&gt;</code> to <code>&lt;&lt;2&gt;&gt;</code>, and then run our mix task:</p>
@@ -399,29 +308,33 @@ First off, you want to track which rows have been migrated and which have not. A
 </ul>
 
 <p>If you want to see all the code, I&rsquo;ve <a href="https://github.com/danielberkompas/phoenix_ecto_encryption_sample/commit/629f4f4de6987a0d9106cbe7280201595cbb79a5">posted it on Github</a>. Hope this helps someone out there!</p>
-      </article>
+  </section>
+</article>
 
-      
-        <ul class="pager blog-pager">
-          
-            <li class="previous">
-              <a href="https://blog.danielberkompas.com/2015/07/03/encrypting-data-with-ecto/" data-toggle="tooltip" data-placement="top" title="Encrypting Data With Ecto">&larr; Previous Post</a>
-            </li>
-          
-          
-            <li class="next">
-              <a href="https://blog.danielberkompas.com/2015/07/16/fixtures-for-ecto/" data-toggle="tooltip" data-placement="top" title="Fixtures for Ecto">Next Post &rarr;</a>
-            </li>
-          
-        </ul>
-      
+<footer id="post-meta" class="clearfix">
+  <a href="https://twitter.com/dberkom">
+    <img class="avatar" src="/img/avatar.png">
+    <div>
+      <span class="dark">Daniel Berkompas</span>
+      <span>Full-stack software engineer at <a href="https://infinite.red">Infinite Red</a></span>
+    </div>
+    </a>
+  <section id="sharing">
+    <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fblog.danielberkompas.com%2f2015%2f07%2f09%2fchanging-your-ecto-encryption-key%2f - Changing%20Your%20Ecto%20Encryption%20Key by @dberkom"><span class="icon-twitter"> tweet</span></a>
 
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
 
-      
-        
-          <div class="disqus-comments">
-            <div id="disqus_thread"></div>
-<script>
+  </section>
+</footer>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -439,98 +352,103 @@ First off, you want to track which rows have been migrated and which have not. A
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-          </div>
-        
-        
-      
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
 
-    </div>
-  </div>
+    
+    
+    
+        <li>
+            <a href="/2018/03/17/flexible-design-with-adapters/">Flexible Design with Adapters<aside class="dates">Mar 17 2018</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/09/30/why-your-software-projects-fail/">Why Your Software Projects Fail<aside class="dates">Sep 30 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/01/17/reusable-templates-in-phoenix/">Reusable Templates in Phoenix<aside class="dates">Jan 17 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/09/27/ecto-multi-services/">Replace Callbacks with Ecto.Multi<aside class="dates">Sep 27 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/23/multidimensional-arrays-in-elixir/">Multidimensional Arrays in Elixir<aside class="dates">Apr 23 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/05/background-jobs-in-phoenix/">Background Jobs in Phoenix<aside class="dates">Apr 5 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/01/28/seo-tags-in-phoenix/">SEO Tags In Phoenix<aside class="dates">Jan 28 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/12/08/use-gen-event-with-ecto-callbacks/">Using GenEvent With Ecto Callbacks<aside class="dates">Dec 8 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/10/15/why-im-checking-out-graphql/">Why I&#39;m Checking Out GraphQL<aside class="dates">Oct 15 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/09/25/announcing-learn-elixir-tv/">Announcing LearnElixir.tv<aside class="dates">Sep 25 2015</aside></a>
+        </li>
+    
+</ul>
+ 
+
+        <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.github.com/danielberkompas">
+        <i class="fa fa-github"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.twitter.com/dberkom">
+        <i class="fa fa-twitter"></i>
+    </a>
+    
+
+
 </div>
 
-    <footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <ul class="list-inline text-center footer-links">
-          
-              <li>
-                <a href="https://github.com/danielberkompas" title="GitHub">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/dberkom" title="Twitter">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-          
-          <li>
-            
-            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
-            
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          
-        </ul>
-        <p class="credits copyright text-muted">
-          
-            
-              <a href="danielberkompas.com">Daniel Berkompas</a>
-            
-          
-
-          &nbsp;&bull;&nbsp;
-          2018
-
-          
-            &nbsp;&bull;&nbsp;
-            <a href="https://blog.danielberkompas.com/">Random Bits</a>
-          
-        </p>
-        
-        <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
-          
-        </p>
-      </div>
-    </div>
-  </div>
+    
+    <p class="small">
+    
+        © Copyright 2018 Daniel Berkompas
+    
+    </p>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+    </section>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script>
+<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-23392891-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
 
 
-  </body>
+</body>
 </html>
-

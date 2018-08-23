@@ -1,212 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<html lang="en-us">
+	<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Daniel Berkompas">
+<meta name="description" content="Describe your website">
+<meta name="generator" content="Hugo 0.47.1" />
+<title>Moving Beyond Ruby</title>
+<link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
 
-  <title>Moving Beyond Ruby</title>
-  <meta property="og:title" content="Moving Beyond Ruby" />
-  <meta name="twitter:title" content="Moving Beyond Ruby" />
-  <meta name="description" content="I&rsquo;ve been a Ruby developer for the last 4 years of my career. It&rsquo;s served me very well, I still like it, and I expect that I&rsquo;ll still be writing it for my career for years to come. However, there are some things that Ruby (and Rails) don&rsquo;t do so well out of the box, and these things are causing me to look elsewhere.
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+
+
+<link href="https://blog.danielberkompas.com/index.xml" rel="alternate" type="application/rss+xml" title="Bits &amp; Sundry" />
+
+
+<meta property="og:title" content="Moving Beyond Ruby" />
+<meta property="og:description" content="I&rsquo;ve been a Ruby developer for the last 4 years of my career. It&rsquo;s served me very well, I still like it, and I expect that I&rsquo;ll still be writing it for my career for years to come. However, there are some things that Ruby (and Rails) don&rsquo;t do so well out of the box, and these things are causing me to look elsewhere.
+
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.danielberkompas.com/2015/02/09/moving-beyond-ruby/" /><meta property="article:published_time" content="2015-02-09T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2015-02-09T00:00:00&#43;00:00"/>
+
+
+<meta itemprop="name" content="Moving Beyond Ruby">
+<meta itemprop="description" content="I&rsquo;ve been a Ruby developer for the last 4 years of my career. It&rsquo;s served me very well, I still like it, and I expect that I&rsquo;ll still be writing it for my career for years to come. However, there are some things that Ruby (and Rails) don&rsquo;t do so well out of the box, and these things are causing me to look elsewhere.
 
 ">
-  <meta property="og:description" content="I&rsquo;ve been a Ruby developer for the last 4 years of my career. It&rsquo;s served me very well, I still like it, and I expect that I&rsquo;ll still be writing it for my career for years to come. However, there are some things that Ruby (and Rails) don&rsquo;t do so well out of the box, and these things are causing me to look elsewhere.
-
-">
-  <meta name="twitter:description" content="I&rsquo;ve been a Ruby developer for the last 4 years of my career. It&rsquo;s served me very well, I still like it, and I expect that I&rsquo;ll still be writing it for my career for years to come. …">
-  <meta name="author" content="Daniel Berkompas"/>
-  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
-  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@dberkom" />
-  <meta name="twitter:creator" content="@dberkom" />
-  <meta property="og:url" content="https://blog.danielberkompas.com/2015/02/09/moving-beyond-ruby/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Random Bits" />
-
-  <meta name="generator" content="Hugo 0.36.1" />
-  <link rel="canonical" href="https://blog.danielberkompas.com/2015/02/09/moving-beyond-ruby/" />
-  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/project.css" />
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+<meta itemprop="datePublished" content="2015-02-09T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2015-02-09T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="507">
 
 
 
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+<meta itemprop="keywords" content="ruby,elixir," />
 
-<div class="pswp__bg"></div>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Moving Beyond Ruby"/>
+<meta name="twitter:description" content="I&rsquo;ve been a Ruby developer for the last 4 years of my career. It&rsquo;s served me very well, I still like it, and I expect that I&rsquo;ll still be writing it for my career for years to come. However, there are some things that Ruby (and Rails) don&rsquo;t do so well out of the box, and these things are causing me to look elsewhere.
 
-<div class="pswp__scroll-wrap">
-    
-    <div class="pswp__container">
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-    </div>
-    
-    <div class="pswp__ui pswp__ui--hidden">
-    <div class="pswp__top-bar">
-      
-      <div class="pswp__counter"></div>
-      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-      <button class="pswp__button pswp__button--share" title="Share"></button>
-      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-      
-      
-      <div class="pswp__preloader">
-        <div class="pswp__preloader__icn">
-          <div class="pswp__preloader__cut">
-            <div class="pswp__preloader__donut"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-      <div class="pswp__share-tooltip"></div>
-    </div>
-    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-    </button>
-    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-    </button>
-    <div class="pswp__caption">
-      <div class="pswp__caption__center"></div>
-    </div>
-    </div>
-    </div>
-</div>
+"/>
+<meta name="twitter:site" content="@https://www.twitter.com/dberkom"/>
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-23392891-3', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
 
-</head>
+    </head>
+<body>
+    <nav class="main-nav">
+	
+		<a href='https://blog.danielberkompas.com'> <span class="arrow">←</span>Home</a>
+	
 
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
-    </div>
+	
+ 		<a href='/projects'>Projects</a>
+  	
+ 		<a href='/about'>About</a>
+  	
+ 		<a href='/tags'>Tags</a>
+  	
 
-    <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav navbar-right">
-        
-          
-            <li>
-              <a title="Blog" href="/">Blog</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Projects" href="/projects">Projects</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="About" href="/about">About</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Tags" href="/tags">Tags</a>
-            </li>
-          
-        
-
-        
-
-        
-      </ul>
-    </div>
-
-    <div class="avatar-container">
-      <div class="avatar-img-border">
-        
-          <a title="Random Bits" href="https://blog.danielberkompas.com/">
-            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar-blue.jpg" alt="Random Bits" />
-          </a>
-        
-      </div>
-    </div>
-
-  </div>
+	
+		<a class="cta" href="https://blog.danielberkompas.com/index.xml">Subscribe</a>
+	
 </nav>
 
-
-
-
-    
-  
-  
-  
-
-
-
-
-  
-
-  <header class="header-section ">
-    
-    <div class="intro-header no-img">
+    <section id="wrapper">
+        
+        
+<article class="post">
+  <header>
+    <h1>Moving Beyond Ruby</h1>
+    <h2 class="subtitle"></h2>
+    <h2 class="headline">
+      February 9, 2015
+      <br>   
+      <a href="https://blog.danielberkompas.com/%20tags/ruby%20">ruby</a>
       
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="post-heading">
-              <h1>Moving Beyond Ruby</h1>
-                
-                
-                  <span class="post-meta">
-  
-  
-  <i class="fa fa-calendar-o"></i>&nbsp;Posted on February 9, 2015
-  
-  
-  &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 3 minutes (507 words)
-  
-  
-</span>
-
-
-                
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <a href="https://blog.danielberkompas.com/%20tags/elixir%20">elixir</a>
+        
+    </h2>
   </header>
-
-
-    
-<div class="container" role="main">
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <article role="main" class="blog-post">
-        <p>I&rsquo;ve been a Ruby developer for the last 4 years of my career. It&rsquo;s served me very well, I still like it, and I expect that I&rsquo;ll still be writing it for my career for years to come. However, there are some things that Ruby (and Rails) don&rsquo;t do so well out of the box, and these things are causing me to look elsewhere.</p>
+  <section id="post-body">
+    <p>I&rsquo;ve been a Ruby developer for the last 4 years of my career. It&rsquo;s served me very well, I still like it, and I expect that I&rsquo;ll still be writing it for my career for years to come. However, there are some things that Ruby (and Rails) don&rsquo;t do so well out of the box, and these things are causing me to look elsewhere.</p>
 
 <p></p>
 
@@ -235,19 +120,22 @@ ga('send', 'pageview');
 <p>See for yourself:</p>
 
 <h4 id="ruby">Ruby</h4>
-<div class="highlight"><pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">PagesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
 
-  <span class="k">def</span> <span class="nc"></span><span class="o"></span><span class="nf">index</span>
-    <span class="vi">@title</span> <span class="o">=</span> <span class="n">params</span><span class="o">[</span><span class="ss">:title</span><span class="o">]</span>
-    <span class="vi">@members</span> <span class="o">=</span> <span class="o">[</span>
-      <span class="p">{</span><span class="nb">name</span><span class="p">:</span> <span class="s2">&#34;Chris McCord&#34;</span><span class="p">},</span>
-      <span class="p">{</span><span class="nb">name</span><span class="p">:</span> <span class="s2">&#34;Matt Sears&#34;</span><span class="p">},</span>
-      <span class="p">{</span><span class="nb">name</span><span class="p">:</span> <span class="s2">&#34;David Stump&#34;</span><span class="p">},</span>
-      <span class="p">{</span><span class="nb">name</span><span class="p">:</span> <span class="s2">&#34;Ricardo Thompson&#34;</span><span class="p">}</span>
-    <span class="o">]</span>
-    <span class="n">render</span> <span class="s2">&#34;index&#34;</span>
-  <span class="k">end</span>
-<span class="k">end</span></code></pre></div>
+<pre><code class="language-ruby">class PagesController &lt; ApplicationController
+
+  def index
+    @title = params[:title]
+    @members = [
+      {name: &quot;Chris McCord&quot;},
+      {name: &quot;Matt Sears&quot;},
+      {name: &quot;David Stump&quot;},
+      {name: &quot;Ricardo Thompson&quot;}
+    ]
+    render &quot;index&quot;
+  end
+end
+</code></pre>
+
 <h4 id="elixir-1">Elixir</h4>
 
 <p>```elixir
@@ -268,29 +156,33 @@ end
 <p>Elixir runs on the Erlang VM, which is battle tested and has excellent support for concurrency. Also, it has <a href="http://elixir-lang.org/blog/2013/05/02/elixir-on-xen/">support for unikernels</a>, something I&rsquo;m interested in from a security perspective.</p>
 
 <p>I intend to post more about my experiences with Elixir, so stay tuned. In the future, I also intend to take a look at Rust and Go.</p>
-      </article>
+  </section>
+</article>
 
-      
-        <ul class="pager blog-pager">
-          
-            <li class="previous">
-              <a href="https://blog.danielberkompas.com/2015/02/07/the-spark-notebook/" data-toggle="tooltip" data-placement="top" title="The Spark Notebook">&larr; Previous Post</a>
-            </li>
-          
-          
-            <li class="next">
-              <a href="https://blog.danielberkompas.com/2015/02/15/think-about-the-next-guy/" data-toggle="tooltip" data-placement="top" title="Think About the Next Guy">Next Post &rarr;</a>
-            </li>
-          
-        </ul>
-      
+<footer id="post-meta" class="clearfix">
+  <a href="https://twitter.com/dberkom">
+    <img class="avatar" src="/img/avatar.png">
+    <div>
+      <span class="dark">Daniel Berkompas</span>
+      <span>Full-stack software engineer at <a href="https://infinite.red">Infinite Red</a></span>
+    </div>
+    </a>
+  <section id="sharing">
+    <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fblog.danielberkompas.com%2f2015%2f02%2f09%2fmoving-beyond-ruby%2f - Moving%20Beyond%20Ruby by @dberkom"><span class="icon-twitter"> tweet</span></a>
 
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
 
-      
-        
-          <div class="disqus-comments">
-            <div id="disqus_thread"></div>
-<script>
+  </section>
+</footer>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -308,98 +200,103 @@ end
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-          </div>
-        
-        
-      
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
 
-    </div>
-  </div>
+    
+    
+    
+        <li>
+            <a href="/2018/03/17/flexible-design-with-adapters/">Flexible Design with Adapters<aside class="dates">Mar 17 2018</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/09/30/why-your-software-projects-fail/">Why Your Software Projects Fail<aside class="dates">Sep 30 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/01/17/reusable-templates-in-phoenix/">Reusable Templates in Phoenix<aside class="dates">Jan 17 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/09/27/ecto-multi-services/">Replace Callbacks with Ecto.Multi<aside class="dates">Sep 27 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/23/multidimensional-arrays-in-elixir/">Multidimensional Arrays in Elixir<aside class="dates">Apr 23 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/05/background-jobs-in-phoenix/">Background Jobs in Phoenix<aside class="dates">Apr 5 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/01/28/seo-tags-in-phoenix/">SEO Tags In Phoenix<aside class="dates">Jan 28 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/12/08/use-gen-event-with-ecto-callbacks/">Using GenEvent With Ecto Callbacks<aside class="dates">Dec 8 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/10/15/why-im-checking-out-graphql/">Why I&#39;m Checking Out GraphQL<aside class="dates">Oct 15 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/09/25/announcing-learn-elixir-tv/">Announcing LearnElixir.tv<aside class="dates">Sep 25 2015</aside></a>
+        </li>
+    
+</ul>
+ 
+
+        <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.github.com/danielberkompas">
+        <i class="fa fa-github"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.twitter.com/dberkom">
+        <i class="fa fa-twitter"></i>
+    </a>
+    
+
+
 </div>
 
-    <footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <ul class="list-inline text-center footer-links">
-          
-              <li>
-                <a href="https://github.com/danielberkompas" title="GitHub">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/dberkom" title="Twitter">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-          
-          <li>
-            
-            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
-            
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          
-        </ul>
-        <p class="credits copyright text-muted">
-          
-            
-              <a href="danielberkompas.com">Daniel Berkompas</a>
-            
-          
-
-          &nbsp;&bull;&nbsp;
-          2018
-
-          
-            &nbsp;&bull;&nbsp;
-            <a href="https://blog.danielberkompas.com/">Random Bits</a>
-          
-        </p>
-        
-        <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
-          
-        </p>
-      </div>
-    </div>
-  </div>
+    
+    <p class="small">
+    
+        © Copyright 2018 Daniel Berkompas
+    
+    </p>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+    </section>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script>
+<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-23392891-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
 
 
-  </body>
+</body>
 </html>
-

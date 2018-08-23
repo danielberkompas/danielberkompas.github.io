@@ -1,238 +1,128 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<html lang="en-us">
+	<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Daniel Berkompas">
+<meta name="description" content="Describe your website">
+<meta name="generator" content="Hugo 0.47.1" />
+<title>SEO Tags In Phoenix</title>
+<link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
 
-  <title>SEO Tags In Phoenix</title>
-  <meta property="og:title" content="SEO Tags In Phoenix" />
-  <meta name="twitter:title" content="SEO Tags In Phoenix" />
-  <meta name="description" content="Public facing websites need to have some basic search engine optimization (SEO) tags, such as &lt;title&gt; and &lt;meta name=&quot;description&quot;&gt;. In Rails, you could achieve this pretty simply by putting a yield :head tag in the appropriate layout.
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+
+
+<link href="https://blog.danielberkompas.com/index.xml" rel="alternate" type="application/rss+xml" title="Bits &amp; Sundry" />
+
+
+<meta property="og:title" content="SEO Tags In Phoenix" />
+<meta property="og:description" content="Public facing websites need to have some basic search engine optimization (SEO) tags, such as &lt;title&gt; and &lt;meta name=&quot;description&quot;&gt;. In Rails, you could achieve this pretty simply by putting a yield :head tag in the appropriate layout.
+
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.danielberkompas.com/2016/01/28/seo-tags-in-phoenix/" /><meta property="article:published_time" content="2016-01-28T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2016-01-28T00:00:00&#43;00:00"/>
+
+
+<meta itemprop="name" content="SEO Tags In Phoenix">
+<meta itemprop="description" content="Public facing websites need to have some basic search engine optimization (SEO) tags, such as &lt;title&gt; and &lt;meta name=&quot;description&quot;&gt;. In Rails, you could achieve this pretty simply by putting a yield :head tag in the appropriate layout.
 
 ">
-  <meta property="og:description" content="Public facing websites need to have some basic search engine optimization (SEO) tags, such as &lt;title&gt; and &lt;meta name=&quot;description&quot;&gt;. In Rails, you could achieve this pretty simply by putting a yield :head tag in the appropriate layout.
-
-">
-  <meta name="twitter:description" content="Public facing websites need to have some basic search engine optimization (SEO) tags, such as &lt;title&gt; and &lt;meta name=&quot;description&quot;&gt;. In Rails, you could achieve this pretty …">
-  <meta name="author" content="Daniel Berkompas"/>
-  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
-  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@dberkom" />
-  <meta name="twitter:creator" content="@dberkom" />
-  <meta property="og:url" content="https://blog.danielberkompas.com/2016/01/28/seo-tags-in-phoenix/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Random Bits" />
-
-  <meta name="generator" content="Hugo 0.36.1" />
-  <link rel="canonical" href="https://blog.danielberkompas.com/2016/01/28/seo-tags-in-phoenix/" />
-  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/project.css" />
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+<meta itemprop="datePublished" content="2016-01-28T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2016-01-28T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1172">
 
 
 
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+<meta itemprop="keywords" content="" />
 
-<div class="pswp__bg"></div>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="SEO Tags In Phoenix"/>
+<meta name="twitter:description" content="Public facing websites need to have some basic search engine optimization (SEO) tags, such as &lt;title&gt; and &lt;meta name=&quot;description&quot;&gt;. In Rails, you could achieve this pretty simply by putting a yield :head tag in the appropriate layout.
 
-<div class="pswp__scroll-wrap">
-    
-    <div class="pswp__container">
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-    </div>
-    
-    <div class="pswp__ui pswp__ui--hidden">
-    <div class="pswp__top-bar">
-      
-      <div class="pswp__counter"></div>
-      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-      <button class="pswp__button pswp__button--share" title="Share"></button>
-      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-      
-      
-      <div class="pswp__preloader">
-        <div class="pswp__preloader__icn">
-          <div class="pswp__preloader__cut">
-            <div class="pswp__preloader__donut"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-      <div class="pswp__share-tooltip"></div>
-    </div>
-    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-    </button>
-    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-    </button>
-    <div class="pswp__caption">
-      <div class="pswp__caption__center"></div>
-    </div>
-    </div>
-    </div>
-</div>
+"/>
+<meta name="twitter:site" content="@https://www.twitter.com/dberkom"/>
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-23392891-3', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
 
-</head>
+    </head>
+<body>
+    <nav class="main-nav">
+	
+		<a href='https://blog.danielberkompas.com'> <span class="arrow">←</span>Home</a>
+	
 
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
-    </div>
+	
+ 		<a href='/projects'>Projects</a>
+  	
+ 		<a href='/about'>About</a>
+  	
+ 		<a href='/tags'>Tags</a>
+  	
 
-    <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav navbar-right">
-        
-          
-            <li>
-              <a title="Blog" href="/">Blog</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Projects" href="/projects">Projects</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="About" href="/about">About</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Tags" href="/tags">Tags</a>
-            </li>
-          
-        
-
-        
-
-        
-      </ul>
-    </div>
-
-    <div class="avatar-container">
-      <div class="avatar-img-border">
-        
-          <a title="Random Bits" href="https://blog.danielberkompas.com/">
-            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar-blue.jpg" alt="Random Bits" />
-          </a>
-        
-      </div>
-    </div>
-
-  </div>
+	
+		<a class="cta" href="https://blog.danielberkompas.com/index.xml">Subscribe</a>
+	
 </nav>
 
-
-
-
-    
-  
-  
-  
-
-
-
-
-  
-
-  <header class="header-section ">
-    
-    <div class="intro-header no-img">
-      
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="post-heading">
-              <h1>SEO Tags In Phoenix</h1>
-                
-                
-                  <span class="post-meta">
-  
-  
-  <i class="fa fa-calendar-o"></i>&nbsp;Posted on January 28, 2016
-  
-  
-  &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 6 minutes (1172 words)
-  
-  
-</span>
-
-
-                
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <section id="wrapper">
+        
+        
+<article class="post">
+  <header>
+    <h1>SEO Tags In Phoenix</h1>
+    <h2 class="subtitle"></h2>
+    <h2 class="headline">
+      January 28, 2016
+      <br> 
+    </h2>
   </header>
-
-
-    
-<div class="container" role="main">
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <article role="main" class="blog-post">
-        <p>Public facing websites need to have some basic search engine optimization (SEO) tags, such as <code>&lt;title&gt;</code> and <code>&lt;meta name=&quot;description&quot;&gt;</code>. In Rails, you could achieve this pretty simply by putting a <code>yield :head</code> tag in the appropriate layout.</p>
+  <section id="post-body">
+    <p>Public facing websites need to have some basic search engine optimization (SEO) tags, such as <code>&lt;title&gt;</code> and <code>&lt;meta name=&quot;description&quot;&gt;</code>. In Rails, you could achieve this pretty simply by putting a <code>yield :head</code> tag in the appropriate layout.</p>
 
 <p></p>
-<div class="highlight"><pre class="chroma"><code class="language-erb" data-lang="erb">&lt;head&gt;
+
+<pre><code class="language-erb">&lt;head&gt;
   &lt;%= yield :head %&gt;
-&lt;/head&gt;</code></pre></div>
+&lt;/head&gt;
+</code></pre>
+
 <p>Inside any of your views, you could then use <code>content_for</code> to populate this section:</p>
-<div class="highlight"><pre class="chroma"><code class="language-erb" data-lang="erb">&lt;% content_for :head do %&gt;
+
+<pre><code class="language-erb">&lt;% content_for :head do %&gt;
   &lt;title&gt;My Awesome Site&lt;/title&gt;
-  &lt;meta name=&#34;description&#34; content=&#34;...&#34; /&gt;
+  &lt;meta name=&quot;description&quot; content=&quot;...&quot; /&gt;
 &lt;% end %&gt;
 
-&lt;!-- More view content here... ---&gt;</code></pre></div>
+&lt;!-- More view content here... ---&gt;
+</code></pre>
+
 <p>This is nice, in that it keeps the HTML all together in more or less the same place. In <a href="https://phoenixframework.org">Phoenix</a>, this has to be done differently.</p>
 
 <h2 id="how-phoenix-is-different">How Phoenix is Different</h2>
 
 <p>In Phoenix, your layout is rendered <em>before</em> your page template is rendered. Take this layout, for example:</p>
-<div class="highlight"><pre class="chroma"><code class="language-erb" data-lang="erb">&lt;html&gt;
+
+<pre><code class="language-erb">&lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;&lt;/title&gt;
-    &lt;meta name=&#34;description&#34; content=&#34;&#34; /&gt;
+    &lt;meta name=&quot;description&quot; content=&quot;&quot; /&gt;
   &lt;/head&gt;
   &lt;body&gt;
     &lt;%= render @view_module, @view_template, assigns %&gt;
   &lt;/body&gt;
-&lt;/html&gt;</code></pre></div>
+&lt;/html&gt;
+</code></pre>
+
 <p>Because Phoenix renders templates as functions, by the time your <code>@view_template</code> is rendered, the <code>&lt;head&gt;</code> is already rendered. So, there&rsquo;s nothing that your view template can do to inject content back up into <code>&lt;head&gt;</code>. The <code>content_for</code> approach won&rsquo;t work.</p>
 
 <p>I think there are at least four approaches to dealing with this.</p>
@@ -242,15 +132,18 @@ ga('send', 'pageview');
 <p>Both Chris McCord and José Valim mentioned <code>render_existing/2</code> when they saw this post. I knew about it, (I believe it was one of my questions on IRC that prompted its creation, actually) and while I don&rsquo;t necessarily prefer it, it really should be mentioned here.</p>
 
 <p>To use <code>render_existing</code> for your meta tags, you&rsquo;d change your layout to look like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-erb" data-lang="erb">&lt;html&gt;
+
+<pre><code class="language-erb">&lt;html&gt;
   &lt;head&gt;
-    &lt;%= render_existing(@view_module, &#34;meta.&#34; &lt;&gt; @view_template, assigns) ||
-        render(MyApp.LayoutView, &#34;meta.html&#34;, assigns) %&gt;
+    &lt;%= render_existing(@view_module, &quot;meta.&quot; &lt;&gt; @view_template, assigns) ||
+        render(MyApp.LayoutView, &quot;meta.html&quot;, assigns) %&gt;
   &lt;/head&gt;
   &lt;body&gt;
     &lt;%= render @view_module, @view_template, assigns %&gt;
   &lt;/body&gt;
-&lt;/html&gt;</code></pre></div>
+&lt;/html&gt;
+</code></pre>
+
 <p>The <code>render_existing</code> function will silently render nothing if the given template doesn&rsquo;t exist. The alternate <code>render</code> call will take over if you don&rsquo;t specify a meta file for your view/action, and will render the defaults.</p>
 
 <p>Anyway, after modifying your layout, you could then create a <code>meta.index.html.eex</code> file in your view&rsquo;s template folder that contains whatever content you want:</p>
@@ -270,12 +163,15 @@ new.html.eex
 </code></pre>
 
 <p>You can avoid this by defining these templates as functions in your view rather than template files:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">render</span><span class="p">(</span><span class="s2">&#34;meta.index.html&#34;</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">)</span> <span class="n">do</span>
-  <span class="sx">~E{
-</span><span class="sx">    &lt;title&gt;My Awesome App&lt;/title&gt;
-</span><span class="sx">    &lt;meta type=&#34;description&#34; content=&#34;...&#34; /&gt;
-</span><span class="sx">  }</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">def render(&quot;meta.index.html&quot;, _assigns) do
+  ~E{
+    &lt;title&gt;My Awesome App&lt;/title&gt;
+    &lt;meta type=&quot;description&quot; content=&quot;...&quot; /&gt;
+  }
+end
+</code></pre>
+
 <p>The <code>~E</code> sigil allows you to write EEX code inline in your view. This is fine, but it still can get a little messy looking with long meta descriptions, and you end up with a lot of function definitions.</p>
 
 <p>I personally think this is likely to confuse the other devs on the projects I work on, so I&rsquo;ve chosen not to establish it as the &ldquo;standard&rdquo; way at <a href="http://infinite.red">Infinite Red</a>. It is definitely a valid option though, and seems to be the &ldquo;official&rdquo; way.</p>
@@ -283,137 +179,170 @@ new.html.eex
 <h2 id="2-assigns-in-each-controller-action">2. Assigns in Each Controller Action</h2>
 
 <p>The second approach modifies the layout to look like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-erb" data-lang="erb">&lt;html&gt;
+
+<pre><code class="language-erb">&lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;&lt;%= @title %&gt;&lt;/title&gt;
-    &lt;meta name=&#34;description&#34; content=&#34;&lt;%= @meta %&gt;&#34; /&gt;
+    &lt;meta name=&quot;description&quot; content=&quot;&lt;%= @meta %&gt;&quot; /&gt;
   &lt;/head&gt;
   &lt;body&gt;
     &lt;%= render @view_module, @view_template, assigns %&gt;
   &lt;/body&gt;
-&lt;/html&gt;</code></pre></div>
+&lt;/html&gt;
+</code></pre>
+
 <p>Then, in each controller action in the app, the developer must specify <code>title</code> and <code>meta</code> assigns:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="n">do</span>
-  <span class="n">conn</span>
-  <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="s2">&#34;My Awesome App&#34;</span><span class="p">)</span>
-  <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:meta</span><span class="p">,</span> <span class="s2">&#34;...&#34;</span><span class="p">)</span>
-  <span class="o">|&gt;</span> <span class="n">render</span><span class="p">(</span><span class="s2">&#34;index.html&#34;</span><span class="p">)</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">def index(conn, _params) do
+  conn
+  |&gt; assign(:title, &quot;My Awesome App&quot;)
+  |&gt; assign(:meta, &quot;...&quot;)
+  |&gt; render(&quot;index.html&quot;)
+end
+</code></pre>
+
 <p>There are a few downsides to this. First, the title and meta description can dominate the controller action, making it harder to see the business logic. Second, it can easily end up being pretty ugly if you don&rsquo;t put it all on one line:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="n">do</span>
-  <span class="n">conn</span>
-  <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="s2">&#34;My Awesome App&#34;</span><span class="p">)</span>
-  <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:meta</span><span class="p">,</span> <span class="sh">&#34;&#34;&#34;
-</span><span class="sh">     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam feugiat 
-</span><span class="sh">     nibh ligula. Maecenas egestas nibh cursus erat sodales, vitae congue nisi
-</span><span class="sh">     tempus. Nam mattis et velit eu lacinia.
-</span><span class="sh">     &#34;&#34;&#34;</span><span class="p">)</span>
-  <span class="o">|&gt;</span> <span class="n">render</span><span class="p">(</span><span class="s2">&#34;index.html&#34;</span><span class="p">)</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">def index(conn, _params) do
+  conn
+  |&gt; assign(:title, &quot;My Awesome App&quot;)
+  |&gt; assign(:meta, &quot;&quot;&quot;
+     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam feugiat 
+     nibh ligula. Maecenas egestas nibh cursus erat sodales, vitae congue nisi
+     tempus. Nam mattis et velit eu lacinia.
+     &quot;&quot;&quot;)
+  |&gt; render(&quot;index.html&quot;)
+end
+</code></pre>
+
 <p>I think we can do better.</p>
 
 <h2 id="3-delegated-functions">3. Delegated Functions</h2>
 
 <p>Another alternative I&rsquo;ve seen is to delegate to functions on your view module, like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-erb" data-lang="erb">&lt;html&gt;
+
+<pre><code class="language-erb">&lt;html&gt;
   &lt;head&gt;
     &lt;title&gt;&lt;%= @view_module.title(@view_template, assigns) %&gt;&lt;/title&gt;
-    &lt;meta name=&#34;description&#34; content=&#34;&lt;%= @view_module.meta(@view_template, assigns) %&gt;&#34; /&gt;
+    &lt;meta name=&quot;description&quot; content=&quot;&lt;%= @view_module.meta(@view_template, assigns) %&gt;&quot; /&gt;
   &lt;/head&gt;
   &lt;body&gt;
     &lt;%= render @view_module, @view_template, assigns %&gt;
   &lt;/body&gt;
-&lt;/html&gt;</code></pre></div>
+&lt;/html&gt;
+</code></pre>
+
 <p>Then, in your view module, you can define different titles or meta descriptions for different layouts, or set a default.</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.PageView</span> <span class="n">do</span>
-  <span class="n">use</span> <span class="p"></span><span class="nc">MyApp.Web</span><span class="p">,</span> <span class="ss">:view</span>
+
+<pre><code class="language-elixir">defmodule MyApp.PageView do
+  use MyApp.Web, :view
   
-  <span class="n">def</span> <span class="n">title</span><span class="p">(</span><span class="s2">&#34;index.html&#34;</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&#34;My Awesome App&#34;</span>
-  <span class="n">def</span> <span class="n">title</span><span class="p">(</span><span class="n">_other</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&#34;Default Title&#34;</span>
+  def title(&quot;index.html&quot;, _assigns), do: &quot;My Awesome App&quot;
+  def title(_other, _assigns), do: &quot;Default Title&quot;
   
-  <span class="n">def</span> <span class="n">meta</span><span class="p">(</span><span class="s2">&#34;index.html&#34;</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&#34;...&#34;</span>
-  <span class="n">def</span> <span class="n">meta</span><span class="p">(</span><span class="n">_other</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&#34;Default Meta&#34;</span>
-<span class="n">end</span></code></pre></div>
+  def meta(&quot;index.html&quot;, _assigns), do: &quot;...&quot;
+  def meta(_other, _assigns), do: &quot;Default Meta&quot;
+end
+</code></pre>
+
 <p>This is pretty similar to the first approach outlined above.</p>
 
 <p>If you didn&rsquo;t want to have to define these functions on every view, you could create a mixin that would define default implementations of these <code>title</code> and <code>meta</code> functions.</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.SEO.Defaults</span> <span class="n">do</span>
-  <span class="n">defmacro</span> <span class="n">__using__</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="n">do</span>
-    <span class="n">quote</span> <span class="n">do</span>
-      <span class="n">def</span> <span class="n">title</span><span class="p">(</span><span class="n">_other</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&#34;Default Title&#34;</span>
-      <span class="n">def</span> <span class="n">meta</span><span class="p">(</span><span class="n">_other</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&#34;Default Meta&#34;</span>
+
+<pre><code class="language-elixir">defmodule MyApp.SEO.Defaults do
+  defmacro __using__(_) do
+    quote do
+      def title(_other, _assigns), do: &quot;Default Title&quot;
+      def meta(_other, _assigns), do: &quot;Default Meta&quot;
       
-      <span class="n">defoverridable</span> <span class="p">[</span><span class="ss">title</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="ss">meta</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
-    <span class="n">end</span>
-  <span class="n">end</span>
-<span class="n">end</span></code></pre></div>
+      defoverridable [title: 2, meta: 2]
+    end
+  end
+end
+</code></pre>
+
 <p>Then, <code>use</code> this module in your <code>web/web.ex</code> to make it affect all views.</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">view</span> <span class="n">do</span>
-  <span class="n">quote</span> <span class="n">do</span>
-    <span class="c1"># ...</span>
-    <span class="n">use</span> <span class="p"></span><span class="nc">MyApp.SEO.Defaults</span>
-  <span class="n">end</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">def view do
+  quote do
+    # ...
+    use MyApp.SEO.Defaults
+  end
+end
+</code></pre>
+
 <p>This approach has the advantage of cleaning up the controller, but I think it&rsquo;s a bit less clear where the titles and meta descriptions are being generated, and it&rsquo;s not clearly better than the <code>render_existing</code> approach.</p>
 
 <h2 id="4-use-a-plug">4. Use a Plug</h2>
 
 <p>A huge number of problems can be solved with Plug, so today, I thought I would try to use it to solve this problem. It&rsquo;s pretty simple to create a custom plug for this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.SEO.Plug</span> <span class="n">do</span>
-  <span class="n">def</span> <span class="n">put_seo</span><span class="p">(%{</span><span class="ss">private</span><span class="p">:</span> <span class="p">%{</span><span class="ss">phoenix_action</span><span class="p">:</span> <span class="n">action</span><span class="p">}}</span> <span class="o">=</span> <span class="n">conn</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span> <span class="n">do</span>
-    <span class="n">settings</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">||</span> <span class="p">[]</span>
 
-    <span class="n">conn</span>
-    <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="ss">:title</span><span class="p">])</span>
-    <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:meta</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="ss">:meta</span><span class="p">])</span>
-  <span class="n">end</span>
-<span class="n">end</span></code></pre></div>
+<pre><code class="language-elixir">defmodule MyApp.SEO.Plug do
+  def put_seo(%{private: %{phoenix_action: action}} = conn, settings) do
+    settings = settings[action] || []
+
+    conn
+    |&gt; assign(:title, settings[:title])
+    |&gt; assign(:meta, settings[:meta])
+  end
+end
+</code></pre>
+
 <p>The plug takes a &ldquo;settings&rdquo; argument, which we read from to determine what the <code>title</code> and <code>meta</code> assigns should be. I just include it in the <code>controller</code> section of <code>web/web.ex</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">controller</span> <span class="n">do</span>
-  <span class="n">quote</span> <span class="n">do</span>
-    <span class="c1"># ...</span>
-    <span class="n">import</span> <span class="p"></span><span class="nc">MyApp.SEO.Plug</span>
-  <span class="n">end</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">def controller do
+  quote do
+    # ...
+    import MyApp.SEO.Plug
+  end
+end
+</code></pre>
+
 <p>And then I can use it in my controllers, like so:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">defmodule</span> <span class="p"></span><span class="nc">MyApp.PageController</span> <span class="n">do</span>
-  <span class="n">use</span> <span class="p"></span><span class="nc">MyApp.Web</span><span class="p">,</span> <span class="ss">:controller</span>
+
+<pre><code class="language-elixir">defmodule MyApp.PageController do
+  use MyApp.Web, :controller
   
-  <span class="na">@meta</span> <span class="p">%{</span>
-    <span class="ss">index</span><span class="p">:</span> <span class="p">%{</span>
-      <span class="ss">title</span><span class="p">:</span> <span class="s2">&#34;My Awesome App&#34;</span><span class="p">,</span>
-      <span class="ss">meta</span><span class="p">:</span> <span class="sh">&#34;&#34;&#34;
-</span><span class="sh">      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam feugiat 
-</span><span class="sh">      nibh ligula. Maecenas egestas nibh cursus erat sodales, vitae congue nisi
-</span><span class="sh">      tempus. Nam mattis et velit eu lacinia.
-</span><span class="sh">      &#34;&#34;&#34;</span>
-    <span class="p">},</span>
-    <span class="ss">contact</span><span class="p">:</span> <span class="p">%{</span>
-      <span class="ss">title</span><span class="p">:</span> <span class="s2">&#34;Contact Us&#34;</span>
-      <span class="ss">meta</span><span class="p">:</span> <span class="s2">&#34;...&#34;</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
+  @meta %{
+    index: %{
+      title: &quot;My Awesome App&quot;,
+      meta: &quot;&quot;&quot;
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam feugiat 
+      nibh ligula. Maecenas egestas nibh cursus erat sodales, vitae congue nisi
+      tempus. Nam mattis et velit eu lacinia.
+      &quot;&quot;&quot;
+    },
+    contact: %{
+      title: &quot;Contact Us&quot;
+      meta: &quot;...&quot;
+    }
+  }
   
-  <span class="n">plug</span> <span class="ss">:put_seo</span><span class="p">,</span> <span class="na">@meta</span>
+  plug :put_seo, @meta
   
-  <span class="n">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="n">do</span>
-    <span class="c1"># ...</span>
-  <span class="n">end</span>
+  def index(conn, _params) do
+    # ...
+  end
   
-  <span class="n">def</span> <span class="n">contact</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="n">do</span>
-    <span class="c1"># ...</span>
-  <span class="n">end</span>
-<span class="n">end</span></code></pre></div>
+  def contact(conn, _params) do
+    # ...
+  end
+end
+</code></pre>
+
 <p>And my layout looks like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-erb" data-lang="erb">&lt;html&gt;
+
+<pre><code class="language-erb">&lt;html&gt;
   &lt;head&gt;
-    &lt;title&gt;&lt;%= assigns[:title] || &#34;Default&#34; %&gt;&lt;/title&gt;
-    &lt;meta name=&#34;description&#34; content=&#34;&lt;%= assigns[:meta] || &#34;Default&#34; %&gt;&#34; /&gt;
+    &lt;title&gt;&lt;%= assigns[:title] || &quot;Default&quot; %&gt;&lt;/title&gt;
+    &lt;meta name=&quot;description&quot; content=&quot;&lt;%= assigns[:meta] || &quot;Default&quot; %&gt;&quot; /&gt;
   &lt;/head&gt;
   &lt;body&gt;
     &lt;%= render @view_module, @view_template, assigns %&gt;
   &lt;/body&gt;
-&lt;/html&gt;</code></pre></div>
+&lt;/html&gt;
+</code></pre>
+
 <p>While I&rsquo;m not completely happy with it, (it would be nice to get all that text out of the controller), I think this is pretty clear. The controller actions are also uncluttered, which is a plus.</p>
 
 <h2 id="other-approaches">Other Approaches</h2>
@@ -421,29 +350,33 @@ new.html.eex
 <p>I&rsquo;m pretty sure you could create a plug that used the <a href="http://hexdocs.pm/gettext/Gettext.html">Gettext</a> API to extract all the strings out to .po files. I&rsquo;m just not sure that&rsquo;s worth the added complexity and explaining to new developers.</p>
 
 <p>I hope you found this helpful!</p>
-      </article>
+  </section>
+</article>
 
-      
-        <ul class="pager blog-pager">
-          
-            <li class="previous">
-              <a href="https://blog.danielberkompas.com/2015/12/08/use-gen-event-with-ecto-callbacks/" data-toggle="tooltip" data-placement="top" title="Using GenEvent With Ecto Callbacks">&larr; Previous Post</a>
-            </li>
-          
-          
-            <li class="next">
-              <a href="https://blog.danielberkompas.com/2016/04/05/background-jobs-in-phoenix/" data-toggle="tooltip" data-placement="top" title="Background Jobs in Phoenix">Next Post &rarr;</a>
-            </li>
-          
-        </ul>
-      
+<footer id="post-meta" class="clearfix">
+  <a href="https://twitter.com/dberkom">
+    <img class="avatar" src="/img/avatar.png">
+    <div>
+      <span class="dark">Daniel Berkompas</span>
+      <span>Full-stack software engineer at <a href="https://infinite.red">Infinite Red</a></span>
+    </div>
+    </a>
+  <section id="sharing">
+    <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fblog.danielberkompas.com%2f2016%2f01%2f28%2fseo-tags-in-phoenix%2f - SEO%20Tags%20In%20Phoenix by @dberkom"><span class="icon-twitter"> tweet</span></a>
 
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
 
-      
-        
-          <div class="disqus-comments">
-            <div id="disqus_thread"></div>
-<script>
+  </section>
+</footer>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -461,98 +394,103 @@ new.html.eex
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-          </div>
-        
-        
-      
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
 
-    </div>
-  </div>
+    
+    
+    
+        <li>
+            <a href="/2018/03/17/flexible-design-with-adapters/">Flexible Design with Adapters<aside class="dates">Mar 17 2018</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/09/30/why-your-software-projects-fail/">Why Your Software Projects Fail<aside class="dates">Sep 30 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/01/17/reusable-templates-in-phoenix/">Reusable Templates in Phoenix<aside class="dates">Jan 17 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/09/27/ecto-multi-services/">Replace Callbacks with Ecto.Multi<aside class="dates">Sep 27 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/23/multidimensional-arrays-in-elixir/">Multidimensional Arrays in Elixir<aside class="dates">Apr 23 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/05/background-jobs-in-phoenix/">Background Jobs in Phoenix<aside class="dates">Apr 5 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/12/08/use-gen-event-with-ecto-callbacks/">Using GenEvent With Ecto Callbacks<aside class="dates">Dec 8 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/10/15/why-im-checking-out-graphql/">Why I&#39;m Checking Out GraphQL<aside class="dates">Oct 15 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/09/25/announcing-learn-elixir-tv/">Announcing LearnElixir.tv<aside class="dates">Sep 25 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/09/22/cloak-your-ecto-data/">Cloak Your Ecto Data<aside class="dates">Sep 22 2015</aside></a>
+        </li>
+    
+</ul>
+ 
+
+        <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.github.com/danielberkompas">
+        <i class="fa fa-github"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.twitter.com/dberkom">
+        <i class="fa fa-twitter"></i>
+    </a>
+    
+
+
 </div>
 
-    <footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <ul class="list-inline text-center footer-links">
-          
-              <li>
-                <a href="https://github.com/danielberkompas" title="GitHub">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/dberkom" title="Twitter">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-          
-          <li>
-            
-            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
-            
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          
-        </ul>
-        <p class="credits copyright text-muted">
-          
-            
-              <a href="danielberkompas.com">Daniel Berkompas</a>
-            
-          
-
-          &nbsp;&bull;&nbsp;
-          2018
-
-          
-            &nbsp;&bull;&nbsp;
-            <a href="https://blog.danielberkompas.com/">Random Bits</a>
-          
-        </p>
-        
-        <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
-          
-        </p>
-      </div>
-    </div>
-  </div>
+    
+    <p class="small">
+    
+        © Copyright 2018 Daniel Berkompas
+    
+    </p>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+    </section>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script>
+<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-23392891-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
 
 
-  </body>
+</body>
 </html>
-

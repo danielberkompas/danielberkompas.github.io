@@ -1,242 +1,150 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<html lang="en-us">
+	<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Daniel Berkompas">
+<meta name="description" content="Describe your website">
+<meta name="generator" content="Hugo 0.47.1" />
+<title>Stream Paginated APIs in Elixir</title>
+<link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
 
-  <title>Stream Paginated APIs in Elixir</title>
-  <meta property="og:title" content="Stream Paginated APIs in Elixir" />
-  <meta name="twitter:title" content="Stream Paginated APIs in Elixir" />
-  <meta name="description" content="_This article was recently featured in Elixir Radar. Since it was written, I&rsquo;ve found a simpler way to implement this kind of Stream. I&rsquo;ll be writing an updated tutorial in the future, but if you&rsquo;re interested, you should also check out the current state of ExTwilio.ResultStream._
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+
+
+<link href="https://blog.danielberkompas.com/index.xml" rel="alternate" type="application/rss+xml" title="Bits &amp; Sundry" />
+
+
+<meta property="og:title" content="Stream Paginated APIs in Elixir" />
+<meta property="og:description" content="_This article was recently featured in Elixir Radar. Since it was written, I&rsquo;ve found a simpler way to implement this kind of Stream. I&rsquo;ll be writing an updated tutorial in the future, but if you&rsquo;re interested, you should also check out the current state of ExTwilio.ResultStream._
 
 This past week, as I worked on my new ExTwilio API library for Twilio, I ran into a snag dealing with Twilio&rsquo;s API pagination.
 
 Twilio paginates its &ldquo;list&rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch all of a resource and perform operations on it, like this:
+
 calls = ExTwilio.Call.all
 Enum.each calls, fn(call) -&gt;
   # perform some operation
 end
+
+
+Users won&rsquo;t want to mess with the details of pagination. They want to get a collection containing everything and then operate on it.
+
+I find that there are two basic ways to achieve this, a blocking way and a non-blocking way.
+
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/" /><meta property="article:published_time" content="2015-03-28T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2015-03-28T00:00:00&#43;00:00"/>
+
+
+<meta itemprop="name" content="Stream Paginated APIs in Elixir">
+<meta itemprop="description" content="_This article was recently featured in Elixir Radar. Since it was written, I&rsquo;ve found a simpler way to implement this kind of Stream. I&rsquo;ll be writing an updated tutorial in the future, but if you&rsquo;re interested, you should also check out the current state of ExTwilio.ResultStream._
+
+This past week, as I worked on my new ExTwilio API library for Twilio, I ran into a snag dealing with Twilio&rsquo;s API pagination.
+
+Twilio paginates its &ldquo;list&rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch all of a resource and perform operations on it, like this:
+
+calls = ExTwilio.Call.all
+Enum.each calls, fn(call) -&gt;
+  # perform some operation
+end
+
+
 Users won&rsquo;t want to mess with the details of pagination. They want to get a collection containing everything and then operate on it.
 
 I find that there are two basic ways to achieve this, a blocking way and a non-blocking way.
 
 ">
-  <meta property="og:description" content="_This article was recently featured in Elixir Radar. Since it was written, I&rsquo;ve found a simpler way to implement this kind of Stream. I&rsquo;ll be writing an updated tutorial in the future, but if you&rsquo;re interested, you should also check out the current state of ExTwilio.ResultStream._
+
+
+<meta itemprop="datePublished" content="2015-03-28T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2015-03-28T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1314">
+
+
+
+<meta itemprop="keywords" content="elixir,twilio," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Stream Paginated APIs in Elixir"/>
+<meta name="twitter:description" content="_This article was recently featured in Elixir Radar. Since it was written, I&rsquo;ve found a simpler way to implement this kind of Stream. I&rsquo;ll be writing an updated tutorial in the future, but if you&rsquo;re interested, you should also check out the current state of ExTwilio.ResultStream._
 
 This past week, as I worked on my new ExTwilio API library for Twilio, I ran into a snag dealing with Twilio&rsquo;s API pagination.
 
 Twilio paginates its &ldquo;list&rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch all of a resource and perform operations on it, like this:
+
 calls = ExTwilio.Call.all
 Enum.each calls, fn(call) -&gt;
   # perform some operation
 end
+
+
 Users won&rsquo;t want to mess with the details of pagination. They want to get a collection containing everything and then operate on it.
 
 I find that there are two basic ways to achieve this, a blocking way and a non-blocking way.
 
-">
-  <meta name="twitter:description" content="_This article was recently featured in Elixir Radar. Since it was written, I&rsquo;ve found a simpler way to implement this kind of Stream. I&rsquo;ll be writing an updated tutorial in the future, but …">
-  <meta name="author" content="Daniel Berkompas"/>
-  <link href='https://blog.danielberkompas.com/img/favicon-96x96.png' rel='icon' type='image/x-icon'/>
-  <meta property="og:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:image" content="https://blog.danielberkompas.com/img/avatar-blue.jpg" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:site" content="@dberkom" />
-  <meta name="twitter:creator" content="@dberkom" />
-  <meta property="og:url" content="https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Random Bits" />
-
-  <meta name="generator" content="Hugo 0.36.1" />
-  <link rel="canonical" href="https://blog.danielberkompas.com/2015/03/28/stream-paginated-apis-in-elixir/" />
-  <link rel="alternate" href="https://blog.danielberkompas.com/index.xml" type="application/rss+xml" title="Random Bits">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://blog.danielberkompas.com/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/codeblock.css" /><link rel="stylesheet" href="https://blog.danielberkompas.com/css/project.css" />
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css" />
+"/>
+<meta name="twitter:site" content="@https://www.twitter.com/dberkom"/>
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+    </head>
+<body>
+    <nav class="main-nav">
+	
+		<a href='https://blog.danielberkompas.com'> <span class="arrow">←</span>Home</a>
+	
 
+	
+ 		<a href='/projects'>Projects</a>
+  	
+ 		<a href='/about'>About</a>
+  	
+ 		<a href='/tags'>Tags</a>
+  	
 
-
-<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
-
-<div class="pswp__bg"></div>
-
-<div class="pswp__scroll-wrap">
-    
-    <div class="pswp__container">
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-      <div class="pswp__item"></div>
-    </div>
-    
-    <div class="pswp__ui pswp__ui--hidden">
-    <div class="pswp__top-bar">
-      
-      <div class="pswp__counter"></div>
-      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-      <button class="pswp__button pswp__button--share" title="Share"></button>
-      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-      
-      
-      <div class="pswp__preloader">
-        <div class="pswp__preloader__icn">
-          <div class="pswp__preloader__cut">
-            <div class="pswp__preloader__donut"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-      <div class="pswp__share-tooltip"></div>
-    </div>
-    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
-    </button>
-    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
-    </button>
-    <div class="pswp__caption">
-      <div class="pswp__caption__center"></div>
-    </div>
-    </div>
-    </div>
-</div>
-
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-23392891-3', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
-
-</head>
-
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="https://blog.danielberkompas.com/">Random Bits</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav navbar-right">
-        
-          
-            <li>
-              <a title="Blog" href="/">Blog</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Projects" href="/projects">Projects</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="About" href="/about">About</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="Tags" href="/tags">Tags</a>
-            </li>
-          
-        
-
-        
-
-        
-      </ul>
-    </div>
-
-    <div class="avatar-container">
-      <div class="avatar-img-border">
-        
-          <a title="Random Bits" href="https://blog.danielberkompas.com/">
-            <img class="avatar-img" src="https://blog.danielberkompas.com/img/avatar-blue.jpg" alt="Random Bits" />
-          </a>
-        
-      </div>
-    </div>
-
-  </div>
+	
+		<a class="cta" href="https://blog.danielberkompas.com/index.xml">Subscribe</a>
+	
 </nav>
 
-
-
-
-    
-  
-  
-  
-
-
-
-
-  
-
-  <header class="header-section ">
-    
-    <div class="intro-header no-img">
+    <section id="wrapper">
+        
+        
+<article class="post">
+  <header>
+    <h1>Stream Paginated APIs in Elixir</h1>
+    <h2 class="subtitle"></h2>
+    <h2 class="headline">
+      March 28, 2015
+      <br>   
+      <a href="https://blog.danielberkompas.com/%20tags/elixir%20">elixir</a>
       
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="post-heading">
-              <h1>Stream Paginated APIs in Elixir</h1>
-                
-                
-                  <span class="post-meta">
-  
-  
-  <i class="fa fa-calendar-o"></i>&nbsp;Posted on March 28, 2015
-  
-  
-  &nbsp;|&nbsp;
-  <i class="fa fa-clock-o"></i> 7 minutes (1314 words)
-  
-  
-</span>
-
-
-                
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <a href="https://blog.danielberkompas.com/%20tags/twilio%20">twilio</a>
+        
+    </h2>
   </header>
-
-
-    
-<div class="container" role="main">
-  <div class="row">
-    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      <article role="main" class="blog-post">
-        <h2 id="this-article-was-recently-featured-in-elixir-radar-http-plataformatec-com-br-elixir-radar-since-it-was-written-i-ve-found-a-simpler-way-to-implement-this-kind-of-stream-i-ll-be-writing-an-updated-tutorial-in-the-future-but-if-you-re-interested-you-should-also-check-out-the-current-state-of-extwilio-resultstream-https-github-com-danielberkompas-ex-twilio-blob-371f2b263d763d1459b467d1fbe8783fce825c0e-lib-ex-twilio-result-stream-ex">_This article was recently featured in <a href="http://plataformatec.com.br/elixir-radar">Elixir Radar</a>. Since it was written, I&rsquo;ve found a simpler way to implement this kind of Stream. I&rsquo;ll be writing an updated tutorial in the future, but if you&rsquo;re interested, you should also check out the current state of <a href="https://github.com/danielberkompas/ex_twilio/blob/371f2b263d763d1459b467d1fbe8783fce825c0e/lib/ex_twilio/result_stream.ex">ExTwilio.ResultStream</a>._</h2>
+  <section id="post-body">
+    <h2 id="this-article-was-recently-featured-in-elixir-radar-http-plataformatec-com-br-elixir-radar-since-it-was-written-i-ve-found-a-simpler-way-to-implement-this-kind-of-stream-i-ll-be-writing-an-updated-tutorial-in-the-future-but-if-you-re-interested-you-should-also-check-out-the-current-state-of-extwilio-resultstream-https-github-com-danielberkompas-ex-twilio-blob-371f2b263d763d1459b467d1fbe8783fce825c0e-lib-ex-twilio-result-stream-ex">_This article was recently featured in <a href="http://plataformatec.com.br/elixir-radar">Elixir Radar</a>. Since it was written, I&rsquo;ve found a simpler way to implement this kind of Stream. I&rsquo;ll be writing an updated tutorial in the future, but if you&rsquo;re interested, you should also check out the current state of <a href="https://github.com/danielberkompas/ex_twilio/blob/371f2b263d763d1459b467d1fbe8783fce825c0e/lib/ex_twilio/result_stream.ex">ExTwilio.ResultStream</a>._</h2>
 
 <p>This past week, as I worked on my new <a href="https://github.com/danielberkompas/ex_twilio">ExTwilio</a> API library for <a href="https://www.twilio.com">Twilio</a>, I ran into a snag dealing with <a href="https://www.twilio.com/docs/api/rest/response#response-formats-list">Twilio&rsquo;s API pagination</a>.</p>
 
 <p>Twilio paginates its &ldquo;list&rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch <em>all</em> of a resource and perform operations on it, like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">calls</span> <span class="o">=</span> <span class="p"></span><span class="nc">ExTwilio.Call</span><span class="o">.</span><span class="n">all</span>
-<span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">each</span> <span class="n">calls</span><span class="p">,</span> <span class="n">fn</span><span class="p">(</span><span class="n">call</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="c1"># perform some operation</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">calls = ExTwilio.Call.all
+Enum.each calls, fn(call) -&gt;
+  # perform some operation
+end
+</code></pre>
+
 <p>Users won&rsquo;t want to mess with the details of pagination. They want to get a collection containing everything and then operate on it.</p>
 
 <p>I find that there are two basic ways to achieve this, a <em>blocking</em> way and a <em>non-blocking</em> way.</p>
@@ -274,13 +182,16 @@ ga('send', 'pageview');
 <p>Results from the well can be processed as each &ldquo;bucket&rdquo; arrives, and the bucket will be refilled as long as there are still results left.</p>
 
 <p>How do we implement this in Elixir? We start by defining a <code>stream</code> function.</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">stream</span>
-  <span class="n">start</span> <span class="o">=</span> <span class="n">fn</span> <span class="o">-&gt;</span> <span class="n">end</span>
-  <span class="n">next_item</span> <span class="o">=</span> <span class="n">fn</span> <span class="o">-&gt;</span> <span class="n">end</span>
-  <span class="n">stop</span> <span class="o">=</span> <span class="n">fn</span> <span class="o">-&gt;</span> <span class="n">end</span>
 
-  <span class="p"></span><span class="nc">Stream</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">next_item</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
-<span class="n">end</span></code></pre></div>
+<pre><code class="language-elixir">def stream
+  start = fn -&gt; end
+  next_item = fn -&gt; end
+  stop = fn -&gt; end
+
+  Stream.resource(start, next_item, stop)
+end
+</code></pre>
+
 <p>The <a href="http://elixir-lang.org/docs/stable/elixir/Stream.html#resource/3">Stream.resource/3</a> method takes three funs.</p>
 
 <ul>
@@ -292,14 +203,17 @@ ga('send', 'pageview');
 <p>We&rsquo;ll look at each of these in order.</p>
 
 <h2 id="start">start</h2>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">start</span> <span class="o">=</span> <span class="n">fn</span> <span class="o">-&gt;</span>
-  <span class="c1"># Assumes there is a list/0 method that will fetch the first page</span>
-  <span class="c1"># of the API, in the format {status, items, paging_metadata}</span>
-  <span class="n">case</span> <span class="n">list</span> <span class="n">do</span>
-    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&#34;next_page_uri&#34;</span><span class="p">]}</span>
-    <span class="n">_error</span>             <span class="o">-&gt;</span> <span class="p">{[],</span> <span class="n">nil</span><span class="p">}</span>
-  <span class="n">end</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">start = fn -&gt;
+  # Assumes there is a list/0 method that will fetch the first page
+  # of the API, in the format {status, items, paging_metadata}
+  case list do
+    {:ok, items, meta} -&gt; {items, meta[&quot;next_page_uri&quot;]}
+    _error             -&gt; {[], nil}
+  end
+end
+</code></pre>
+
 <p>We will store our state for the Stream in a two-element tuple, in this format: <code>{items, next_page_url}</code>. If our <code>list/0</code> method returns the first page successfully, we&rsquo;ll fill the state with that first page of items.</p>
 
 <p>If, on the other hand, the first page doesn&rsquo;t load, we&rsquo;ll start with an empty state which we&rsquo;ll make cause the Stream to finish instantly.</p>
@@ -307,10 +221,13 @@ ga('send', 'pageview');
 <h2 id="next-item">next_item</h2>
 
 <p>This is where things get interesting.</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">next_item</span> <span class="o">=</span> <span class="n">fn</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="n">nil</span><span class="p">}</span>  <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:halt</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
-               <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="n">next</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">fetch_next_page</span><span class="o">.</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-               <span class="n">state</span>              <span class="o">-&gt;</span> <span class="n">pop_item</span><span class="o">.</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">next_item = fn state = {[], nil}  -&gt; {:halt, state}
+               state = {[], next} -&gt; fetch_next_page.(state)
+               state              -&gt; pop_item.(state)
+end
+</code></pre>
+
 <p>The logic is pretty simple:</p>
 
 <ul>
@@ -320,89 +237,104 @@ ga('send', 'pageview');
 </ul>
 
 <p>You&rsquo;ll notice there are two new funs here, <code>fetch_next_page</code> and <code>pop_item</code>. They look like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="c1"># Use pattern matching to pop the top item off the list of items, passing the</span>
-<span class="c1"># tail as the new state.</span>
-<span class="n">pop_item</span> <span class="o">=</span> <span class="n">fn</span> <span class="p">{[</span><span class="n">head</span><span class="o">|</span><span class="n">tail</span><span class="p">],</span> <span class="n">next</span><span class="p">}</span> <span class="o">-&gt;</span>
-  <span class="n">new_state</span> <span class="o">=</span> <span class="p">{</span><span class="n">tail</span><span class="p">,</span> <span class="n">next</span><span class="p">}</span>
-  <span class="p">{[</span><span class="n">head</span><span class="p">],</span> <span class="n">new_state</span><span class="p">}</span>
-<span class="n">end</span>
 
-<span class="c1"># Get the next page, and use pop_item to both set the new state and return the</span>
-<span class="c1"># first item of the new page.</span>
-<span class="n">fetch_next_page</span> <span class="o">=</span> <span class="n">fn</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="n">next_page</span><span class="p">}</span> <span class="o">-&gt;</span>
-  <span class="c1"># Assumes you have a method called `fetch_page` which will take a page URL and</span>
-  <span class="c1"># get that page of results.</span>
-  <span class="n">case</span> <span class="n">fetch_page</span><span class="p">(</span><span class="n">next_page</span><span class="p">)</span> <span class="n">do</span>
-    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">pop_item</span><span class="o">.</span><span class="p">({</span><span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&#34;next_page_uri&#34;</span><span class="p">]})</span>
-    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_msg</span><span class="p">}</span>     <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:halt</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
-  <span class="n">end</span>
-<span class="n">end</span></code></pre></div>
+<pre><code class="language-elixir"># Use pattern matching to pop the top item off the list of items, passing the
+# tail as the new state.
+pop_item = fn {[head|tail], next} -&gt;
+  new_state = {tail, next}
+  {[head], new_state}
+end
+
+# Get the next page, and use pop_item to both set the new state and return the
+# first item of the new page.
+fetch_next_page = fn state = {[], next_page} -&gt;
+  # Assumes you have a method called `fetch_page` which will take a page URL and
+  # get that page of results.
+  case fetch_page(next_page) do
+    {:ok, items, meta} -&gt; pop_item.({items, meta[&quot;next_page_uri&quot;]})
+    {:error, _msg}     -&gt; {:halt, state}
+  end
+end
+</code></pre>
+
 <h2 id="stop">stop</h2>
 
 <p>The simplest function of all! We don&rsquo;t really have anything to clean up.</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">stop</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">_state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">stop = fn(_state) -&gt; end
+</code></pre>
+
 <h2 id="putting-it-all-together">Putting It All Together</h2>
 
 <p>Our complete <code>stream/0</code> method looks like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">stream</span>
-  <span class="n">start</span> <span class="o">=</span> <span class="n">fn</span> <span class="o">-&gt;</span>
-    <span class="c1"># Assumes there is a list/0 method that will fetch the first page</span>
-    <span class="c1"># of the API, in the format {status, items, paging_metadata}</span>
-    <span class="n">case</span> <span class="n">list</span> <span class="n">do</span>
-      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&#34;next_page_uri&#34;</span><span class="p">]}</span>
-      <span class="n">_error</span>             <span class="o">-&gt;</span> <span class="p">{[],</span> <span class="n">nil</span><span class="p">}</span>
-    <span class="n">end</span>
-  <span class="n">end</span>
 
-  <span class="c1"># Use pattern matching to pop the top item off the list of items, passing the</span>
-  <span class="c1"># tail as the new state.</span>
-  <span class="n">pop_item</span> <span class="o">=</span> <span class="n">fn</span> <span class="p">{[</span><span class="n">head</span><span class="o">|</span><span class="n">tail</span><span class="p">],</span> <span class="n">next</span><span class="p">}</span> <span class="o">-&gt;</span>
-    <span class="n">new_state</span> <span class="o">=</span> <span class="p">{</span><span class="n">tail</span><span class="p">,</span> <span class="n">next</span><span class="p">}</span>
-    <span class="p">{[</span><span class="n">head</span><span class="p">],</span> <span class="n">new_state</span><span class="p">}</span>
-  <span class="n">end</span>
+<pre><code class="language-elixir">def stream
+  start = fn -&gt;
+    # Assumes there is a list/0 method that will fetch the first page
+    # of the API, in the format {status, items, paging_metadata}
+    case list do
+      {:ok, items, meta} -&gt; {items, meta[&quot;next_page_uri&quot;]}
+      _error             -&gt; {[], nil}
+    end
+  end
 
-  <span class="c1"># Get the next page, and use pop_item to both set the new state and return the</span>
-  <span class="c1"># first item of the new page.</span>
-  <span class="n">fetch_next_page</span> <span class="o">=</span> <span class="n">fn</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="n">next_page</span><span class="p">}</span> <span class="o">-&gt;</span>
-    <span class="c1"># Assumes you have a method called `fetch_page` which will take a page URL and</span>
-    <span class="c1"># get that page of results.</span>
-    <span class="n">case</span> <span class="n">fetch_page</span><span class="p">(</span><span class="n">next_page</span><span class="p">)</span> <span class="n">do</span>
-      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">pop_item</span><span class="o">.</span><span class="p">({</span><span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&#34;next_page_uri&#34;</span><span class="p">]})</span>
-      <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_msg</span><span class="p">}</span>     <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:halt</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
-    <span class="n">end</span>
-  <span class="n">end</span>
+  # Use pattern matching to pop the top item off the list of items, passing the
+  # tail as the new state.
+  pop_item = fn {[head|tail], next} -&gt;
+    new_state = {tail, next}
+    {[head], new_state}
+  end
 
-  <span class="n">next_item</span> <span class="o">=</span> <span class="n">fn</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="n">nil</span><span class="p">}</span>  <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:halt</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
-                 <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="n">next</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">fetch_next_page</span><span class="o">.</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-                 <span class="n">state</span>              <span class="o">-&gt;</span> <span class="n">pop_item</span><span class="o">.</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
-  <span class="n">end</span>
+  # Get the next page, and use pop_item to both set the new state and return the
+  # first item of the new page.
+  fetch_next_page = fn state = {[], next_page} -&gt;
+    # Assumes you have a method called `fetch_page` which will take a page URL and
+    # get that page of results.
+    case fetch_page(next_page) do
+      {:ok, items, meta} -&gt; pop_item.({items, meta[&quot;next_page_uri&quot;]})
+      {:error, _msg}     -&gt; {:halt, state}
+    end
+  end
 
-  <span class="n">stop</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">_state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">end</span>
+  next_item = fn state = {[], nil}  -&gt; {:halt, state}
+                 state = {[], next} -&gt; fetch_next_page.(state)
+                 state              -&gt; pop_item.(state)
+  end
 
-  <span class="p"></span><span class="nc">Stream</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">next_item</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
-<span class="n">end</span></code></pre></div>
+  stop = fn(_state) -&gt; end
+
+  Stream.resource(start, next_item, stop)
+end
+</code></pre>
+
 <p>You can now stream through resources to your heart&rsquo;s content! For example, you can process all of your Twilio Calls like this:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">each</span> <span class="p"></span><span class="nc">ExTwilio.Call</span><span class="o">.</span><span class="n">stream</span><span class="p">,</span> <span class="n">fn</span><span class="p">(</span><span class="n">call</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="p"></span><span class="nc">IO</span><span class="o">.</span><span class="n">puts</span> <span class="n">call</span><span class="o">.</span><span class="n">sid</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">Enum.each ExTwilio.Call.stream, fn(call) -&gt;
+  IO.puts call.sid
+end
+</code></pre>
+
 <p>Since it&rsquo;s just a Stream, you can also <em>stack operations</em> on the stream which will be lazily executed whenever you want!</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="c1"># Find calls that were longer than 2 minutes (160 seconds)</span>
-<span class="c1"># &#34;stream&#34; is returned instantly</span>
-<span class="n">stream</span> <span class="o">=</span> <span class="p"></span><span class="nc">Stream</span><span class="o">.</span><span class="n">filter</span> <span class="p"></span><span class="nc">ExTwilio.Call</span><span class="o">.</span><span class="n">stream</span><span class="p">,</span> <span class="n">fn</span><span class="p">(</span><span class="n">call</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="n">call</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">120</span>
-<span class="n">end</span>
 
-<span class="c1"># Append another operation to get just the call SIDs. Only calls that got</span>
-<span class="c1"># through the filter above will be mapped.</span>
-<span class="n">stream</span> <span class="o">=</span> <span class="p"></span><span class="nc">Stream</span><span class="o">.</span><span class="n">map</span> <span class="n">stream</span><span class="p">,</span> <span class="n">fn</span><span class="p">(</span><span class="n">call</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">call</span><span class="o">.</span><span class="n">sid</span> <span class="n">end</span>
+<pre><code class="language-elixir"># Find calls that were longer than 2 minutes (160 seconds)
+# &quot;stream&quot; is returned instantly
+stream = Stream.filter ExTwilio.Call.stream, fn(call) -&gt;
+  call.duration &gt; 120
+end
 
-<span class="c1"># Execute all the operations and return a collection:</span>
-<span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">into</span> <span class="n">stream</span><span class="p">,</span> <span class="p">[]</span> <span class="c1"># =&gt; [&#34;CN234098123....&#34;, &#34;CN123098123...&#34;]</span>
+# Append another operation to get just the call SIDs. Only calls that got
+# through the filter above will be mapped.
+stream = Stream.map stream, fn(call) -&gt; call.sid end
 
-<span class="c1"># Or, just put out all the sids</span>
-<span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">each</span> <span class="n">stream</span><span class="p">,</span> <span class="n">fn</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span> <span class="o">-&gt;</span>
-  <span class="p"></span><span class="nc">IO</span><span class="o">.</span><span class="n">puts</span> <span class="n">sid</span>
-<span class="n">end</span></code></pre></div>
+# Execute all the operations and return a collection:
+Enum.into stream, [] # =&gt; [&quot;CN234098123....&quot;, &quot;CN123098123...&quot;]
+
+# Or, just put out all the sids
+Enum.each stream, fn(sid) -&gt;
+  IO.puts sid
+end
+</code></pre>
+
 <p>Using this technique, you can programmatically build up filters on your remote paged resources, knowing that all those filters will only be executed when you need the final data. (Aside: this is very similar to ActiveRecord::Relation)</p>
 
 <p>In short, this is very cool. But you knew that.</p>
@@ -410,9 +342,12 @@ ga('send', 'pageview');
 <h2 id="wrapping-up">Wrapping Up</h2>
 
 <p><a href="https://github.com/danielberkompas/ex_twilio">ExTwilio</a> supports streaming for all Twilio endpoints that have a paged API. For those masochistic users who still want a blocking method, I&rsquo;ve given them an <code>all</code> method as well. Internally, it just delegates to <code>stream</code>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-elixir" data-lang="elixir"><span class="n">def</span> <span class="n">all</span> <span class="n">do</span>
-  <span class="p"></span><span class="nc">Enum</span><span class="o">.</span><span class="n">into</span> <span class="n">stream</span><span class="p">,</span> <span class="p">[]</span>
-<span class="n">end</span></code></pre></div>
+
+<pre><code class="language-elixir">def all do
+  Enum.into stream, []
+end
+</code></pre>
+
 <p>Writing this code was a lot of fun, and I hope this walkthrough was helpful to you! If you want to learn more about Elixir&rsquo;s Stream API, check out the following:</p>
 
 <ul>
@@ -421,29 +356,33 @@ ga('send', 'pageview');
 </ul>
 
 <p>If you want to keep up with my progress building full-featured Elixir libraries for Twilio, stay tuned to this blog, or check out <a href="https://github.com/danielberkompas/ex_twilio">ExTwilio</a> and <a href="https://github.com/danielberkompas/ex_twiml">ExTwiml</a>.</p>
-      </article>
+  </section>
+</article>
 
-      
-        <ul class="pager blog-pager">
-          
-            <li class="previous">
-              <a href="https://blog.danielberkompas.com/2015/03/21/manage-env-vars-in-elixir/" data-toggle="tooltip" data-placement="top" title="Manage Environment Variables in Elixir">&larr; Previous Post</a>
-            </li>
-          
-          
-            <li class="next">
-              <a href="https://blog.danielberkompas.com/2015/04/01/contracts-gem/" data-toggle="tooltip" data-placement="top" title="Contracts: Type Checking for Ruby">Next Post &rarr;</a>
-            </li>
-          
-        </ul>
-      
+<footer id="post-meta" class="clearfix">
+  <a href="https://twitter.com/dberkom">
+    <img class="avatar" src="/img/avatar.png">
+    <div>
+      <span class="dark">Daniel Berkompas</span>
+      <span>Full-stack software engineer at <a href="https://infinite.red">Infinite Red</a></span>
+    </div>
+    </a>
+  <section id="sharing">
+    <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fblog.danielberkompas.com%2f2015%2f03%2f28%2fstream-paginated-apis-in-elixir%2f - Stream%20Paginated%20APIs%20in%20Elixir by @dberkom"><span class="icon-twitter"> tweet</span></a>
 
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
 
-      
-        
-          <div class="disqus-comments">
-            <div id="disqus_thread"></div>
-<script>
+  </section>
+</footer>
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -461,98 +400,103 @@ ga('send', 'pageview');
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-          </div>
-        
-        
-      
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a> <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
 
-    </div>
-  </div>
+    
+    
+    
+        <li>
+            <a href="/2018/03/17/flexible-design-with-adapters/">Flexible Design with Adapters<aside class="dates">Mar 17 2018</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/09/30/why-your-software-projects-fail/">Why Your Software Projects Fail<aside class="dates">Sep 30 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/01/17/reusable-templates-in-phoenix/">Reusable Templates in Phoenix<aside class="dates">Jan 17 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/09/27/ecto-multi-services/">Replace Callbacks with Ecto.Multi<aside class="dates">Sep 27 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/23/multidimensional-arrays-in-elixir/">Multidimensional Arrays in Elixir<aside class="dates">Apr 23 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/05/background-jobs-in-phoenix/">Background Jobs in Phoenix<aside class="dates">Apr 5 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/01/28/seo-tags-in-phoenix/">SEO Tags In Phoenix<aside class="dates">Jan 28 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/12/08/use-gen-event-with-ecto-callbacks/">Using GenEvent With Ecto Callbacks<aside class="dates">Dec 8 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/10/15/why-im-checking-out-graphql/">Why I&#39;m Checking Out GraphQL<aside class="dates">Oct 15 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/09/25/announcing-learn-elixir-tv/">Announcing LearnElixir.tv<aside class="dates">Sep 25 2015</aside></a>
+        </li>
+    
+</ul>
+ 
+
+        <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.github.com/danielberkompas">
+        <i class="fa fa-github"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.twitter.com/dberkom">
+        <i class="fa fa-twitter"></i>
+    </a>
+    
+
+
 </div>
 
-    <footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <ul class="list-inline text-center footer-links">
-          
-              <li>
-                <a href="https://github.com/danielberkompas" title="GitHub">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://twitter.com/dberkom" title="Twitter">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="https://linkedin.com/in/danielberkompas" title="LinkedIn">
-                  <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                  </span>
-                </a>
-              </li>
-          
-          <li>
-            
-            <a href="https://blog.danielberkompas.com/index.xml" title="RSS">
-            
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
-          
-        </ul>
-        <p class="credits copyright text-muted">
-          
-            
-              <a href="danielberkompas.com">Daniel Berkompas</a>
-            
-          
-
-          &nbsp;&bull;&nbsp;
-          2018
-
-          
-            &nbsp;&bull;&nbsp;
-            <a href="https://blog.danielberkompas.com/">Random Bits</a>
-          
-        </p>
-        
-        <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.36.1</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
-          
-        </p>
-      </div>
-    </div>
-  </div>
+    
+    <p class="small">
+    
+        © Copyright 2018 Daniel Berkompas
+    
+    </p>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/main.js"></script><script> renderMathInElement(document.body); </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script>
-<script src="https://blog.danielberkompas.com/js/load-photoswipe.js"></script>
+    </section>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script>
+<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 
 
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-23392891-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
 
 
-  </body>
+</body>
 </html>
-
