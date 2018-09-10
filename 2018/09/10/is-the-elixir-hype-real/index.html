@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="Daniel Berkompas">
+<meta name="description" content="Describe your website">
+<meta name="generator" content="Hugo 0.47.1" />
+<title>Is the Elixir Hype Real?</title>
+<link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
+
+
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+
+
+
+<link href="https://blog.danielberkompas.com/index.xml" rel="alternate" type="application/rss+xml" title="Bits &amp; Sundry" />
+
+
+<meta property="og:title" content="Is the Elixir Hype Real?" />
+<meta property="og:description" content="As I have written previously, I had a burning question I wanted to answer while attending this year&rsquo;s ElixirConf: &ldquo;Is Elixir good enough to demand mainstream adoption?&rdquo; Now that ElixirConf 2018 is behind us, I think the answer is definitely yes. But it&rsquo;s not for the reasons I expected.
+My Expectations vs. Reality I adopted Elixir very early on in 2014, because I was bored at my day job and I saw its potential." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.danielberkompas.com/2018/09/10/is-the-elixir-hype-real/" /><meta property="article:published_time" content="2018-09-10T11:33:12-07:00"/>
+<meta property="article:modified_time" content="2018-09-10T11:33:12-07:00"/>
+
+
+<meta itemprop="name" content="Is the Elixir Hype Real?">
+<meta itemprop="description" content="As I have written previously, I had a burning question I wanted to answer while attending this year&rsquo;s ElixirConf: &ldquo;Is Elixir good enough to demand mainstream adoption?&rdquo; Now that ElixirConf 2018 is behind us, I think the answer is definitely yes. But it&rsquo;s not for the reasons I expected.
+My Expectations vs. Reality I adopted Elixir very early on in 2014, because I was bored at my day job and I saw its potential.">
+
+
+<meta itemprop="datePublished" content="2018-09-10T11:33:12-07:00" />
+<meta itemprop="dateModified" content="2018-09-10T11:33:12-07:00" />
+<meta itemprop="wordCount" content="697">
+
+
+
+<meta itemprop="keywords" content="elixir," />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Is the Elixir Hype Real?"/>
+<meta name="twitter:description" content="As I have written previously, I had a burning question I wanted to answer while attending this year&rsquo;s ElixirConf: &ldquo;Is Elixir good enough to demand mainstream adoption?&rdquo; Now that ElixirConf 2018 is behind us, I think the answer is definitely yes. But it&rsquo;s not for the reasons I expected.
+My Expectations vs. Reality I adopted Elixir very early on in 2014, because I was bored at my day job and I saw its potential."/>
+<meta name="twitter:site" content="@https://www.twitter.com/dberkom"/>
+
+
+    </head>
+<body>
+    <nav class="main-nav">
+	
+		<a href='https://blog.danielberkompas.com'> <span class="arrow">←</span>Home</a>
+	
+
+	
+ 		<a href='/projects'>Projects</a>
+  	
+ 		<a href='/about'>About</a>
+  	
+ 		<a href='/tags'>Tags</a>
+  	
+
+	
+		<a class="cta" href="https://blog.danielberkompas.com/index.xml">Subscribe</a>
+	
+</nav>
+
+    <section id="wrapper">
+        
+        
+<article class="post">
+  <header>
+    <h1>Is the Elixir Hype Real?</h1>
+    <h2 class="subtitle"></h2>
+    <h2 class="headline">
+      September 10, 2018
+      <br>   
+      <a href="https://blog.danielberkompas.com/%20tags/elixir%20">elixir</a>
+        
+    </h2>
+  </header>
+  <section id="post-body">
+    
+
+<p>As I have <a href="/">written previously</a>, I had a burning question I wanted to answer while attending this year&rsquo;s ElixirConf: &ldquo;<em>Is Elixir good enough to demand mainstream adoption?</em>&rdquo; Now that ElixirConf 2018 is behind us, I think the answer is <em>definitely yes</em>. But it&rsquo;s not for the reasons I expected.</p>
+
+<h3 id="my-expectations-vs-reality">My Expectations vs. Reality</h3>
+
+<p>I adopted Elixir very early on in 2014, because I was bored at my day job and I saw its potential. From the beginning, I hoped that it would be a magical elixir (heh) that would make everything hard easier. As both I, the language, and the community have matured, those expectations have been tested.</p>
+
+<table>
+<thead>
+<tr>
+<th>My Expectation</th>
+<th>Reality</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Elixir/OTP fixes distributed computing</td>
+<td>No. Distributed computing is unavoidably hard.</td>
+</tr>
+
+<tr>
+<td>Elixir makes distributed state easy</td>
+<td>No. It&rsquo;s still hard and most people should build stateless apps.</td>
+</tr>
+
+<tr>
+<td>Distributed Elixir solves microservices</td>
+<td>No. Most still use HTTP/JSON, and this is reasonable.</td>
+</tr>
+
+<tr>
+<td>Elixir apps scale without rewrites</td>
+<td>No. You will always need to change at scale.</td>
+</tr>
+</tbody>
+</table>
+
+<p>Few people at the conference were using distributed Elixir. Many were running Elixir on a single node. Nobody had a silver bullet for how to distribute your computing or your state. Those who had microservices were communicating using standard protocols like gRPC or JSON over HTTP. Elixir may have tools that will help with these problems, but they aren&rsquo;t mature and few people seem to be using them.</p>
+
+<h3 id="reality-is-good-enough">Reality is Good Enough</h3>
+
+<p>Yet, people appear to be very happy with Elixir and are adopting it at a rapid pace. ElixirConf was well attended, and half the attendees were new. Many Elixir jobs were advertised, and the community seems very healthy and growing.</p>
+
+<p>It seems that for many people, a high performance, concurrent, simple language with familiar syntax is just what the doctor ordered. Elixir doesn&rsquo;t need to fix distributed computing to be interesting, it just needs to offer a productive, fast, concurrent runtime.</p>
+
+<p>Other languages may offer higher performance, or be able to hold their own in the microservice space, but none offer the unique blend of productivity and performance that Elixir offers, especially when you are developing fatter services. Despite the microservice hype, most of us are building fat services or monoliths, because that&rsquo;s all our problem space requires.</p>
+
+<p>In particular, most other languages lack one or more of the following important features, while Elixir has them all:</p>
+
+<ul>
+<li>High quality frameworks for fatter apps</li>
+<li>Sane package manager</li>
+<li>Simple, clear syntax with minimal ceremony</li>
+<li>Actor-based concurrency with fault tolerance</li>
+<li>Excellent documentation tools</li>
+<li>Code formatter</li>
+<li>Metaprogramming (when you need it)</li>
+<li>Development via REPL</li>
+<li>Active, helpful community</li>
+</ul>
+
+<p>These things matter less when you are writing tiny microservices, but they are invaluable when working on a fat service or monolith. Since this is what many people are building, I expect that this advantage will produce slow, steady growth in the community.</p>
+
+<h3 id="one-more-thing">One More Thing&hellip;</h3>
+
+<p>ElixirConf ended with a bang as Chris McCord dropped a demo of <code>Phoenix.LiveView</code>, an upcoming Phoenix feature. Think of it as server-rendered React components, powered by Phoenix channels.</p>
+
+<iframe width="100%" height="400px" src="https://www.youtube.com/embed/Z2DU0qLfPIY" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+<p>If this works as advertised, I think it will launch Elixir and Phoenix into the mainstream. Imagine if you could have a high performance, realtime, interactive web app without writing Javascript or JSON APIs, maintaining two codebases, or two developer teams. Imagine the time and money you could save!</p>
+
+<p>This will be a powerful draw for startups and anyone doing greenfield development, particularly Rails developers. They really don&rsquo;t want to write Javascript. Chris describes here and in other talks why this technique can&rsquo;t work in Ruby. I suspect it will be difficult to copy in many other runtimes, because you need isolated, high performance processes to do this. Elixir has a real advantage here.</p>
+
+<p>Phoenix has a real opportunity to advance the state of the art by making realtime views this easy. If it succeeds, the browser refresh button will soon seem like a thing of the past, which is exactly the kind of leap that Rails gave us in 2004.</p>
+
+<p>So yes, Elixir is good enough. The past few years have built Elixir&rsquo;s critical mass, and with this kind of innovation pushing forward, it seems to me that Elixir&rsquo;s time is almost here.</p>
+
+  </section>
+</article>
+
+<footer id="post-meta" class="clearfix">
+  <a href="https://twitter.com/dberkom">
+    <img class="avatar" src="/img/avatar.png">
+    <div>
+      <span class="dark">Daniel Berkompas</span>
+      <span>Full-stack software engineer at <a href="https://infinite.red">Infinite Red</a></span>
+    </div>
+    </a>
+  <section id="sharing">
+    <a class="twitter" href="https://twitter.com/intent/tweet?text=https%3a%2f%2fblog.danielberkompas.com%2f2018%2f09%2f10%2fis-the-elixir-hype-real%2f - Is%20the%20Elixir%20Hype%20Real%3f by @dberkom"><span class="icon-twitter"> tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+
+  </section>
+</footer>
+
+ <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "dberkomcodeblog" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>  <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
+
+    
+    
+    
+        <li>
+            <a href="/2018/08/22/elixirconf-2018-talk-picks/">ElixirConf 2018 Talk Picks<aside class="dates">Aug 22 2018</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2018/03/17/flexible-design-with-adapters/">Flexible Design with Adapters<aside class="dates">Mar 17 2018</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/09/30/why-your-software-projects-fail/">Why Your Software Projects Fail<aside class="dates">Sep 30 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2017/01/17/reusable-templates-in-phoenix/">Reusable Templates in Phoenix<aside class="dates">Jan 17 2017</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/09/27/ecto-multi-services/">Replace Callbacks with Ecto.Multi<aside class="dates">Sep 27 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/23/multidimensional-arrays-in-elixir/">Multidimensional Arrays in Elixir<aside class="dates">Apr 23 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/04/05/background-jobs-in-phoenix/">Background Jobs in Phoenix<aside class="dates">Apr 5 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2016/01/28/seo-tags-in-phoenix/">SEO Tags In Phoenix<aside class="dates">Jan 28 2016</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/12/08/use-gen-event-with-ecto-callbacks/">Using GenEvent With Ecto Callbacks<aside class="dates">Dec 8 2015</aside></a>
+        </li>
+    
+        <li>
+            <a href="/2015/10/15/why-im-checking-out-graphql/">Why I&#39;m Checking Out GraphQL<aside class="dates">Oct 15 2015</aside></a>
+        </li>
+    
+</ul>
+ 
+
+        <footer id="footer">
+    
+        <div id="social">
+
+	
+	
+    <a class="symbol" href="https://www.github.com/danielberkompas">
+        <i class="fa fa-github"></i>
+    </a>
+    
+    <a class="symbol" href="https://www.twitter.com/dberkom">
+        <i class="fa fa-twitter"></i>
+    </a>
+    
+
+
+</div>
+
+    
+    <p class="small">
+    
+        © Copyright 2018 Daniel Berkompas
+    
+    </p>
+</footer>
+
+    </section>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://blog.danielberkompas.com/js/main.js"></script>
+<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-23392891-3', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+
+</body>
+</html>

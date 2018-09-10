@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://blog.danielberkompas.com/2018/09/10/is-the-elixir-hype-real/</loc>
+    <lastmod>2018-09-10T11:33:12-07:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://blog.danielberkompas.com/2018/08/22/elixirconf-2018-talk-picks/</loc>
     <lastmod>2018-08-22T20:05:17-07:00</lastmod>
   </url>
@@ -218,7 +223,7 @@
   
   <url>
     <loc>https://blog.danielberkompas.com/</loc>
-    <lastmod>2018-08-22T20:05:17-07:00</lastmod>
+    <lastmod>2018-09-10T11:33:12-07:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -241,7 +246,7 @@
   
   <url>
     <loc>https://blog.danielberkompas.com/tags/elixir/</loc>
-    <lastmod>2018-08-22T20:05:17-07:00</lastmod>
+    <lastmod>2018-09-10T11:33:12-07:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -276,7 +281,7 @@
   
   <url>
     <loc>https://blog.danielberkompas.com/post/</loc>
-    <lastmod>2018-08-22T20:05:17-07:00</lastmod>
+    <lastmod>2018-09-10T11:33:12-07:00</lastmod>
     <priority>0</priority>
   </url>
   

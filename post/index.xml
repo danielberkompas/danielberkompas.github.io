@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Bits &amp; Sundry</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 22 Aug 2018 20:05:17 -0700</lastBuildDate>
+    <lastBuildDate>Mon, 10 Sep 2018 11:33:12 -0700</lastBuildDate>
     
 	<atom:link href="https://blog.danielberkompas.com/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Is the Elixir Hype Real?</title>
+      <link>https://blog.danielberkompas.com/2018/09/10/is-the-elixir-hype-real/</link>
+      <pubDate>Mon, 10 Sep 2018 11:33:12 -0700</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2018/09/10/is-the-elixir-hype-real/</guid>
+      <description>As I have written previously, I had a burning question I wanted to answer while attending this year&amp;rsquo;s ElixirConf: &amp;ldquo;Is Elixir good enough to demand mainstream adoption?&amp;rdquo; Now that ElixirConf 2018 is behind us, I think the answer is definitely yes. But it&amp;rsquo;s not for the reasons I expected.
+My Expectations vs. Reality I adopted Elixir very early on in 2014, because I was bored at my day job and I saw its potential.</description>
+    </item>
     
     <item>
       <title>ElixirConf 2018 Talk Picks</title>
