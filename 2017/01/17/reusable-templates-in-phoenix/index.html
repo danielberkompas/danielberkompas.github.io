@@ -11,6 +11,8 @@
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
 
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
+
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
@@ -41,7 +43,7 @@
 
 <meta itemprop="datePublished" content="2017-01-17T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2017-01-17T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="371">
+<meta itemprop="wordCount" content="369">
 
 
 
@@ -110,13 +112,13 @@
 </code></pre></div>
 
 <p>2) Define templates for each component you want to have. For example:</p>
-<div class="highlight"><pre><code class="language-html" data-lang="html"><span></span><span class="c">&lt;!-- templates/component/tabs.html --&gt;</span>
+<div class="highlight"><pre><code class="language-jsx" data-lang="jsx"><span></span><span class="c1">// templates/component/tabs.html</span>
 <span class="p">&lt;</span><span class="nt">ul</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;tabs&quot;</span><span class="p">&gt;</span>
-  <span class="err">&lt;</span>%= assigns[:do] %&gt;
+  <span class="o">&lt;%=</span> <span class="nx">assigns</span><span class="p">[</span><span class="o">:</span><span class="k">do</span><span class="p">]</span> <span class="o">%&gt;</span>
 <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
 
-<span class="c">&lt;!-- templates/component/tab.html --&gt;</span>
-<span class="p">&lt;</span><span class="nt">li</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;tab&quot;</span><span class="p">&gt;</span><span class="err">&lt;</span>%= assigns[:name] %&gt;<span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+<span class="c1">// templates/component/tab.html</span>
+<span class="p">&lt;</span><span class="nt">li</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;tab&quot;</span><span class="p">&gt;</span><span class="o">&lt;%=</span> <span class="nx">assigns</span><span class="p">[</span><span class="o">:</span><span class="nx">name</span><span class="p">]</span> <span class="o">%&gt;</span><span class="p">&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
 </code></pre></div>
 
 <p>3) Use these templates whenever you want tabs:</p>
