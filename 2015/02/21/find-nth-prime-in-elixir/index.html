@@ -10,7 +10,8 @@
 <title>Find the Nth Prime in Elixir</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -126,33 +127,30 @@ This is a perfect use case for Elixir&rsquo;s Stream module, because we want to 
 <p></p>
 
 <p>Stream contains a function called <code>iterate</code>, which takes a starting value, and then lazily generates new value based on the previous value. To create a Stream for primes, therefore, we can write something like this:</p>
-
-<pre><code class="language-elixir"># Starting at 2, create new values using the next_prime/1 function
-Stream.iterate(2, &amp;next_prime/1)
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="c1"># Starting at 2, create new values using the next_prime/1 function</span>
+<span class="nc">Stream</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">next_prime</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
 
 <p>We can then chain a couple of other functions to generate only up to the number of primes requested, and return the last one.</p>
-
-<pre><code class="language-elixir">def nth(count) do
-  Stream.iterate(2, &amp;next_prime/1)
-    |&gt; Enum.take(count)
-    |&gt; List.last
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">nth</span><span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nc">Stream</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">next_prime</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="nc">List</span><span class="o">.</span><span class="n">last</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Finally, we must define the <code>next_prime/1</code> function. Given a starting point, it should iterate until it reaches another prime number.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">next_prime</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">num</span> <span class="o">=</span> <span class="n">num</span> <span class="o">+</span> <span class="mi">1</span>
 
-<pre><code class="language-elixir">def next_prime(num) do
-  num = num + 1
-
-  # If the factors only include this number, it's prime
-  if factors_for(num) == [num] do
-    num
-  else
-    next_prime(num)
-  end
-end
-</code></pre>
+  <span class="c1"># If the factors only include this number, it&#39;s prime</span>
+  <span class="k">if</span> <span class="n">factors_for</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="k">do</span>
+    <span class="n">num</span>
+  <span class="k">else</span>
+    <span class="n">next_prime</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p><code>factors_for/1</code> is also a function I defined, but I&rsquo;ll leave it as an exercise for the reader.</p>
 
@@ -279,8 +277,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

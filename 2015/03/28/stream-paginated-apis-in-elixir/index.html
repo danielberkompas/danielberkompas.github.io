@@ -10,7 +10,8 @@
 <title>Stream Paginated APIs in Elixir</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -29,7 +30,6 @@
 This past week, as I worked on my new ExTwilio API library for Twilio, I ran into a snag dealing with Twilio&rsquo;s API pagination.
 
 Twilio paginates its &ldquo;list&rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch all of a resource and perform operations on it, like this:
-
 calls = ExTwilio.Call.all
 Enum.each calls, fn(call) -&gt;
   # perform some operation
@@ -52,7 +52,6 @@ I find that there are two basic ways to achieve this, a blocking way and a non-b
 This past week, as I worked on my new ExTwilio API library for Twilio, I ran into a snag dealing with Twilio&rsquo;s API pagination.
 
 Twilio paginates its &ldquo;list&rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch all of a resource and perform operations on it, like this:
-
 calls = ExTwilio.Call.all
 Enum.each calls, fn(call) -&gt;
   # perform some operation
@@ -81,7 +80,6 @@ I find that there are two basic ways to achieve this, a blocking way and a non-b
 This past week, as I worked on my new ExTwilio API library for Twilio, I ran into a snag dealing with Twilio&rsquo;s API pagination.
 
 Twilio paginates its &ldquo;list&rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch all of a resource and perform operations on it, like this:
-
 calls = ExTwilio.Call.all
 Enum.each calls, fn(call) -&gt;
   # perform some operation
@@ -138,12 +136,11 @@ I find that there are two basic ways to achieve this, a blocking way and a non-b
 <p>This past week, as I worked on my new <a href="https://github.com/danielberkompas/ex_twilio">ExTwilio</a> API library for <a href="https://www.twilio.com">Twilio</a>, I ran into a snag dealing with <a href="https://www.twilio.com/docs/api/rest/response#response-formats-list">Twilio&rsquo;s API pagination</a>.</p>
 
 <p>Twilio paginates its &ldquo;list&rdquo; APIs, requiring multiple requests to fetch all of a given resource. However, users of my API library will expect to be able to fetch <em>all</em> of a resource and perform operations on it, like this:</p>
-
-<pre><code class="language-elixir">calls = ExTwilio.Call.all
-Enum.each calls, fn(call) -&gt;
-  # perform some operation
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">calls</span> <span class="o">=</span> <span class="nc">ExTwilio.Call</span><span class="o">.</span><span class="n">all</span>
+<span class="nc">Enum</span><span class="o">.</span><span class="n">each</span> <span class="n">calls</span><span class="p">,</span> <span class="k">fn</span><span class="p">(</span><span class="n">call</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="c1"># perform some operation</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Users won&rsquo;t want to mess with the details of pagination. They want to get a collection containing everything and then operate on it.</p>
 
@@ -182,15 +179,14 @@ end
 <p>Results from the well can be processed as each &ldquo;bucket&rdquo; arrives, and the bucket will be refilled as long as there are still results left.</p>
 
 <p>How do we implement this in Elixir? We start by defining a <code>stream</code> function.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">stream</span>
+  <span class="n">start</span> <span class="o">=</span> <span class="k">fn</span> <span class="o">-&gt;</span> <span class="k">end</span>
+  <span class="n">next_item</span> <span class="o">=</span> <span class="k">fn</span> <span class="o">-&gt;</span> <span class="k">end</span>
+  <span class="n">stop</span> <span class="o">=</span> <span class="k">fn</span> <span class="o">-&gt;</span> <span class="k">end</span>
 
-<pre><code class="language-elixir">def stream
-  start = fn -&gt; end
-  next_item = fn -&gt; end
-  stop = fn -&gt; end
-
-  Stream.resource(start, next_item, stop)
-end
-</code></pre>
+  <span class="nc">Stream</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">next_item</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The <a href="http://elixir-lang.org/docs/stable/elixir/Stream.html#resource/3">Stream.resource/3</a> method takes three funs.</p>
 
@@ -203,16 +199,15 @@ end
 <p>We&rsquo;ll look at each of these in order.</p>
 
 <h2 id="start">start</h2>
-
-<pre><code class="language-elixir">start = fn -&gt;
-  # Assumes there is a list/0 method that will fetch the first page
-  # of the API, in the format {status, items, paging_metadata}
-  case list do
-    {:ok, items, meta} -&gt; {items, meta[&quot;next_page_uri&quot;]}
-    _error             -&gt; {[], nil}
-  end
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">start</span> <span class="o">=</span> <span class="k">fn</span> <span class="o">-&gt;</span>
+  <span class="c1"># Assumes there is a list/0 method that will fetch the first page</span>
+  <span class="c1"># of the API, in the format {status, items, paging_metadata}</span>
+  <span class="k">case</span> <span class="n">list</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;next_page_uri&quot;</span><span class="p">]}</span>
+    <span class="n">_error</span>             <span class="o">-&gt;</span> <span class="p">{[],</span> <span class="no">nil</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>We will store our state for the Stream in a two-element tuple, in this format: <code>{items, next_page_url}</code>. If our <code>list/0</code> method returns the first page successfully, we&rsquo;ll fill the state with that first page of items.</p>
 
@@ -221,12 +216,11 @@ end
 <h2 id="next-item">next_item</h2>
 
 <p>This is where things get interesting.</p>
-
-<pre><code class="language-elixir">next_item = fn state = {[], nil}  -&gt; {:halt, state}
-               state = {[], next} -&gt; fetch_next_page.(state)
-               state              -&gt; pop_item.(state)
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">next_item</span> <span class="o">=</span> <span class="k">fn</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="no">nil</span><span class="p">}</span>  <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:halt</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
+               <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="n">next</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">fetch_next_page</span><span class="o">.</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+               <span class="n">state</span>              <span class="o">-&gt;</span> <span class="n">pop_item</span><span class="o">.</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The logic is pretty simple:</p>
 
@@ -237,103 +231,98 @@ end
 </ul>
 
 <p>You&rsquo;ll notice there are two new funs here, <code>fetch_next_page</code> and <code>pop_item</code>. They look like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="c1"># Use pattern matching to pop the top item off the list of items, passing the</span>
+<span class="c1"># tail as the new state.</span>
+<span class="n">pop_item</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">{[</span><span class="n">head</span><span class="o">|</span><span class="n">tail</span><span class="p">],</span> <span class="n">next</span><span class="p">}</span> <span class="o">-&gt;</span>
+  <span class="n">new_state</span> <span class="o">=</span> <span class="p">{</span><span class="n">tail</span><span class="p">,</span> <span class="n">next</span><span class="p">}</span>
+  <span class="p">{[</span><span class="n">head</span><span class="p">],</span> <span class="n">new_state</span><span class="p">}</span>
+<span class="k">end</span>
 
-<pre><code class="language-elixir"># Use pattern matching to pop the top item off the list of items, passing the
-# tail as the new state.
-pop_item = fn {[head|tail], next} -&gt;
-  new_state = {tail, next}
-  {[head], new_state}
-end
-
-# Get the next page, and use pop_item to both set the new state and return the
-# first item of the new page.
-fetch_next_page = fn state = {[], next_page} -&gt;
-  # Assumes you have a method called `fetch_page` which will take a page URL and
-  # get that page of results.
-  case fetch_page(next_page) do
-    {:ok, items, meta} -&gt; pop_item.({items, meta[&quot;next_page_uri&quot;]})
-    {:error, _msg}     -&gt; {:halt, state}
-  end
-end
-</code></pre>
+<span class="c1"># Get the next page, and use pop_item to both set the new state and return the</span>
+<span class="c1"># first item of the new page.</span>
+<span class="n">fetch_next_page</span> <span class="o">=</span> <span class="k">fn</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="n">next_page</span><span class="p">}</span> <span class="o">-&gt;</span>
+  <span class="c1"># Assumes you have a method called `fetch_page` which will take a page URL and</span>
+  <span class="c1"># get that page of results.</span>
+  <span class="k">case</span> <span class="n">fetch_page</span><span class="p">(</span><span class="n">next_page</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">pop_item</span><span class="o">.</span><span class="p">({</span><span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;next_page_uri&quot;</span><span class="p">]})</span>
+    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_msg</span><span class="p">}</span>     <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:halt</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <h2 id="stop">stop</h2>
 
 <p>The simplest function of all! We don&rsquo;t really have anything to clean up.</p>
-
-<pre><code class="language-elixir">stop = fn(_state) -&gt; end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">stop</span> <span class="o">=</span> <span class="k">fn</span><span class="p">(</span><span class="n">_state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">end</span>
+</code></pre></div>
 
 <h2 id="putting-it-all-together">Putting It All Together</h2>
 
 <p>Our complete <code>stream/0</code> method looks like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">stream</span>
+  <span class="n">start</span> <span class="o">=</span> <span class="k">fn</span> <span class="o">-&gt;</span>
+    <span class="c1"># Assumes there is a list/0 method that will fetch the first page</span>
+    <span class="c1"># of the API, in the format {status, items, paging_metadata}</span>
+    <span class="k">case</span> <span class="n">list</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;next_page_uri&quot;</span><span class="p">]}</span>
+      <span class="n">_error</span>             <span class="o">-&gt;</span> <span class="p">{[],</span> <span class="no">nil</span><span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 
-<pre><code class="language-elixir">def stream
-  start = fn -&gt;
-    # Assumes there is a list/0 method that will fetch the first page
-    # of the API, in the format {status, items, paging_metadata}
-    case list do
-      {:ok, items, meta} -&gt; {items, meta[&quot;next_page_uri&quot;]}
-      _error             -&gt; {[], nil}
-    end
-  end
+  <span class="c1"># Use pattern matching to pop the top item off the list of items, passing the</span>
+  <span class="c1"># tail as the new state.</span>
+  <span class="n">pop_item</span> <span class="o">=</span> <span class="k">fn</span> <span class="p">{[</span><span class="n">head</span><span class="o">|</span><span class="n">tail</span><span class="p">],</span> <span class="n">next</span><span class="p">}</span> <span class="o">-&gt;</span>
+    <span class="n">new_state</span> <span class="o">=</span> <span class="p">{</span><span class="n">tail</span><span class="p">,</span> <span class="n">next</span><span class="p">}</span>
+    <span class="p">{[</span><span class="n">head</span><span class="p">],</span> <span class="n">new_state</span><span class="p">}</span>
+  <span class="k">end</span>
 
-  # Use pattern matching to pop the top item off the list of items, passing the
-  # tail as the new state.
-  pop_item = fn {[head|tail], next} -&gt;
-    new_state = {tail, next}
-    {[head], new_state}
-  end
+  <span class="c1"># Get the next page, and use pop_item to both set the new state and return the</span>
+  <span class="c1"># first item of the new page.</span>
+  <span class="n">fetch_next_page</span> <span class="o">=</span> <span class="k">fn</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="n">next_page</span><span class="p">}</span> <span class="o">-&gt;</span>
+    <span class="c1"># Assumes you have a method called `fetch_page` which will take a page URL and</span>
+    <span class="c1"># get that page of results.</span>
+    <span class="k">case</span> <span class="n">fetch_page</span><span class="p">(</span><span class="n">next_page</span><span class="p">)</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">pop_item</span><span class="o">.</span><span class="p">({</span><span class="n">items</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s2">&quot;next_page_uri&quot;</span><span class="p">]})</span>
+      <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_msg</span><span class="p">}</span>     <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:halt</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 
-  # Get the next page, and use pop_item to both set the new state and return the
-  # first item of the new page.
-  fetch_next_page = fn state = {[], next_page} -&gt;
-    # Assumes you have a method called `fetch_page` which will take a page URL and
-    # get that page of results.
-    case fetch_page(next_page) do
-      {:ok, items, meta} -&gt; pop_item.({items, meta[&quot;next_page_uri&quot;]})
-      {:error, _msg}     -&gt; {:halt, state}
-    end
-  end
+  <span class="n">next_item</span> <span class="o">=</span> <span class="k">fn</span> <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="no">nil</span><span class="p">}</span>  <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:halt</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
+                 <span class="n">state</span> <span class="o">=</span> <span class="p">{[],</span> <span class="n">next</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">fetch_next_page</span><span class="o">.</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                 <span class="n">state</span>              <span class="o">-&gt;</span> <span class="n">pop_item</span><span class="o">.</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+  <span class="k">end</span>
 
-  next_item = fn state = {[], nil}  -&gt; {:halt, state}
-                 state = {[], next} -&gt; fetch_next_page.(state)
-                 state              -&gt; pop_item.(state)
-  end
+  <span class="n">stop</span> <span class="o">=</span> <span class="k">fn</span><span class="p">(</span><span class="n">_state</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">end</span>
 
-  stop = fn(_state) -&gt; end
-
-  Stream.resource(start, next_item, stop)
-end
-</code></pre>
+  <span class="nc">Stream</span><span class="o">.</span><span class="n">resource</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">next_item</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>You can now stream through resources to your heart&rsquo;s content! For example, you can process all of your Twilio Calls like this:</p>
-
-<pre><code class="language-elixir">Enum.each ExTwilio.Call.stream, fn(call) -&gt;
-  IO.puts call.sid
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="nc">Enum</span><span class="o">.</span><span class="n">each</span> <span class="nc">ExTwilio.Call</span><span class="o">.</span><span class="n">stream</span><span class="p">,</span> <span class="k">fn</span><span class="p">(</span><span class="n">call</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nc">IO</span><span class="o">.</span><span class="n">puts</span> <span class="n">call</span><span class="o">.</span><span class="n">sid</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Since it&rsquo;s just a Stream, you can also <em>stack operations</em> on the stream which will be lazily executed whenever you want!</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="c1"># Find calls that were longer than 2 minutes (160 seconds)</span>
+<span class="c1"># &quot;stream&quot; is returned instantly</span>
+<span class="n">stream</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="n">filter</span> <span class="nc">ExTwilio.Call</span><span class="o">.</span><span class="n">stream</span><span class="p">,</span> <span class="k">fn</span><span class="p">(</span><span class="n">call</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="n">call</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">120</span>
+<span class="k">end</span>
 
-<pre><code class="language-elixir"># Find calls that were longer than 2 minutes (160 seconds)
-# &quot;stream&quot; is returned instantly
-stream = Stream.filter ExTwilio.Call.stream, fn(call) -&gt;
-  call.duration &gt; 120
-end
+<span class="c1"># Append another operation to get just the call SIDs. Only calls that got</span>
+<span class="c1"># through the filter above will be mapped.</span>
+<span class="n">stream</span> <span class="o">=</span> <span class="nc">Stream</span><span class="o">.</span><span class="n">map</span> <span class="n">stream</span><span class="p">,</span> <span class="k">fn</span><span class="p">(</span><span class="n">call</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">call</span><span class="o">.</span><span class="n">sid</span> <span class="k">end</span>
 
-# Append another operation to get just the call SIDs. Only calls that got
-# through the filter above will be mapped.
-stream = Stream.map stream, fn(call) -&gt; call.sid end
+<span class="c1"># Execute all the operations and return a collection:</span>
+<span class="nc">Enum</span><span class="o">.</span><span class="n">into</span> <span class="n">stream</span><span class="p">,</span> <span class="p">[]</span> <span class="c1"># =&gt; [&quot;CN234098123....&quot;, &quot;CN123098123...&quot;]</span>
 
-# Execute all the operations and return a collection:
-Enum.into stream, [] # =&gt; [&quot;CN234098123....&quot;, &quot;CN123098123...&quot;]
-
-# Or, just put out all the sids
-Enum.each stream, fn(sid) -&gt;
-  IO.puts sid
-end
-</code></pre>
+<span class="c1"># Or, just put out all the sids</span>
+<span class="nc">Enum</span><span class="o">.</span><span class="n">each</span> <span class="n">stream</span><span class="p">,</span> <span class="k">fn</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nc">IO</span><span class="o">.</span><span class="n">puts</span> <span class="n">sid</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Using this technique, you can programmatically build up filters on your remote paged resources, knowing that all those filters will only be executed when you need the final data. (Aside: this is very similar to ActiveRecord::Relation)</p>
 
@@ -342,11 +331,10 @@ end
 <h2 id="wrapping-up">Wrapping Up</h2>
 
 <p><a href="https://github.com/danielberkompas/ex_twilio">ExTwilio</a> supports streaming for all Twilio endpoints that have a paged API. For those masochistic users who still want a blocking method, I&rsquo;ve given them an <code>all</code> method as well. Internally, it just delegates to <code>stream</code>:</p>
-
-<pre><code class="language-elixir">def all do
-  Enum.into stream, []
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">all</span> <span class="k">do</span>
+  <span class="nc">Enum</span><span class="o">.</span><span class="n">into</span> <span class="n">stream</span><span class="p">,</span> <span class="p">[]</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Writing this code was a lot of fun, and I hope this walkthrough was helpful to you! If you want to learn more about Elixir&rsquo;s Stream API, check out the following:</p>
 
@@ -478,8 +466,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

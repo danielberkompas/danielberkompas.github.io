@@ -10,7 +10,8 @@
 <title>Using GenEvent With Ecto Callbacks</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -98,19 +99,18 @@
 <p>The most obvious way to eliminate callbacks in your models is simply not to use them at all. Every time you need to perform an action <code>before_insert</code> or <code>after_update</code>, you simply do that action.</p>
 
 <p>So, in your controller, if you need to send an email after a user is created, you could do:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">create</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="p">%{</span><span class="s2">&quot;user&quot;</span> <span class="o">=&gt;</span> <span class="n">user_params</span><span class="p">})</span> <span class="k">do</span>
+  <span class="n">changeset</span> <span class="o">=</span> <span class="nc">User</span><span class="o">.</span><span class="n">changeset</span><span class="p">(%</span><span class="nc">User</span><span class="p">{},</span> <span class="n">user_params</span><span class="p">)</span>
 
-<pre><code class="language-elixir">def create(conn, %{&quot;user&quot; =&gt; user_params}) do
-  changeset = User.changeset(%User{}, user_params)
-
-  case Repo.insert(changeset) do
-    {:ok, user} -&gt;
-      send_email(user)
-      # ...
-    {:error, changeset} -&gt;
-      # ...
-  end
-end
-</code></pre>
+  <span class="k">case</span> <span class="nc">Repo</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">changeset</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">user</span><span class="p">}</span> <span class="o">-&gt;</span>
+      <span class="n">send_email</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+      <span class="c1"># ...</span>
+    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">changeset</span><span class="p">}</span> <span class="o">-&gt;</span>
+      <span class="c1"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>However, this can become fragile if you start creating users in <em>multiple</em> places. You have to remember to add the <code>send_email/1</code> call in each place. So, for this sort of thing, you really <em>need</em> an <code>after_insert</code> callback function to do it reliably after every user is inserted.</p>
 
@@ -121,101 +121,95 @@ end
 <p>The solution I came up with for this is very simple. We can think of the model&rsquo;s lifecycle as a series of events: <code>insert</code>, <code>update</code> and <code>delete</code>. Therefore, we could use OTP&rsquo;s built-in event management feature to handle this: <code>GenEvent</code>.</p>
 
 <p>First, set up an Event broadcaster, like so:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.Event</span> <span class="k">do</span>
+  <span class="na">@handlers</span> <span class="p">[</span>
+    <span class="c1"># Insert names of handler modules here</span>
+  <span class="p">]</span>
 
-<pre><code class="language-elixir">defmodule MyApp.Event do
-  @handlers [
-    # Insert names of handler modules here
-  ]
+  <span class="kd">def</span> <span class="n">start_link</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">manager</span><span class="p">}</span> <span class="o">=</span> <span class="nc">GenEvent</span><span class="o">.</span><span class="n">start_link</span><span class="p">(</span><span class="ss">name</span><span class="p">:</span> <span class="bp">__MODULE__</span><span class="p">)</span>
+    <span class="nc">Enum</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="na">@handlers</span><span class="p">,</span> <span class="o">&amp;</span><span class="nc">GenEvent</span><span class="o">.</span><span class="n">add_handler</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="ni">&amp;1</span><span class="p">,</span> <span class="p">[]))</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">manager</span><span class="p">}</span>
+  <span class="k">end</span>
 
-  def start_link do
-    {:ok, manager} = GenEvent.start_link(name: __MODULE__)
-    Enum.each(@handlers, &amp;GenEvent.add_handler(manager, &amp;1, []))
-    {:ok, manager}
-  end
-
-  def broadcast(event) do
-    GenEvent.notify(__MODULE__, event)
-  end
-end
-</code></pre>
+  <span class="kd">def</span> <span class="n">broadcast</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="k">do</span>
+    <span class="nc">GenEvent</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="bp">__MODULE__</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>We&rsquo;re setting up a publish/subscribe model, and so the <code>@handlers</code> attribute is a list of subscriber modules. <code>start_link/0</code> will be used to start the event broadcaster, and add register all of the subscribers. The <code>broadcast/1</code> function will notify all subscribers of a new event.</p>
 
 <p>We then add <code>MyApp.Event</code> to our supervisor to ensure it starts up:</p>
-
-<pre><code class="language-elixir">children = [
-  worker(MyApp.Event, [])
-]
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">children</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="n">worker</span><span class="p">(</span><span class="nc">MyApp.Event</span><span class="p">,</span> <span class="p">[])</span>
+<span class="p">]</span>
+</code></pre></div>
 
 <h3 id="broadcasting-all-lifecyle-events">Broadcasting All Lifecyle Events</h3>
 
 <p>We now will create a module which will automatically broadcast lifecyle events. It looks like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.ModelLifecycle</span> <span class="k">do</span>
+  <span class="kn">alias</span> <span class="nc">MyApp.Event</span>
 
-<pre><code class="language-elixir">defmodule MyApp.ModelLifecycle do
-  alias MyApp.Event
+  <span class="kd">defmacro</span> <span class="n">__using__</span><span class="p">(</span><span class="bp">_</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">quote</span> <span class="k">do</span>
+      <span class="kn">import</span> <span class="k">unquote</span><span class="p">(</span><span class="bp">__MODULE__</span><span class="p">)</span>
 
-  defmacro __using__(_) do
-    quote do
-      import unquote(__MODULE__)
+      <span class="n">after_insert</span> <span class="ss">:broadcast_event</span><span class="p">,</span> <span class="p">[</span><span class="ss">:insert</span><span class="p">]</span>
+      <span class="n">after_update</span> <span class="ss">:broadcast_event</span><span class="p">,</span> <span class="p">[</span><span class="ss">:update</span><span class="p">]</span>
+      <span class="n">after_delete</span> <span class="ss">:broadcast_event</span><span class="p">,</span> <span class="p">[</span><span class="ss">:delete</span><span class="p">]</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 
-      after_insert :broadcast_event, [:insert]
-      after_update :broadcast_event, [:update]
-      after_delete :broadcast_event, [:delete]
-    end
-  end
-
-  # Broadcasts events in this format:
-  # {:model, :update, changeset}
-  def broadcast_event(changeset, type) do
-    Event.broadcast({:model, type, changeset})
-    changeset
-  end
-end
-</code></pre>
+  <span class="c1"># Broadcasts events in this format:</span>
+  <span class="c1"># {:model, :update, changeset}</span>
+  <span class="kd">def</span> <span class="n">broadcast_event</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="n">type</span><span class="p">)</span> <span class="k">do</span>
+    <span class="nc">Event</span><span class="o">.</span><span class="n">broadcast</span><span class="p">({</span><span class="ss">:model</span><span class="p">,</span> <span class="n">type</span><span class="p">,</span> <span class="n">changeset</span><span class="p">})</span>
+    <span class="n">changeset</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The <code>__using__</code> macro imports the module and inserts all of the needed callbacks, pointing at <code>broadcast_event/2</code>, which then broadcasts that event on <code>MyApp.Event</code>, notifying all subscribers.</p>
 
 <p>We can then <code>use</code> this <code>ModelLifecyle</code> module in our model:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.User</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">Ecto.Model</span>
+  <span class="kn">use</span> <span class="nc">MyApp.ModelLifecyle</span>
 
-<pre><code class="language-elixir">defmodule MyApp.User do
-  use Ecto.Model
-  use MyApp.ModelLifecyle
-
-  # ...
-end
-</code></pre>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Now, our <code>User</code> model will automatically broadcast each lifecyle event after it occurs. Using the GenEvent API, we can <em>subscribe</em> to those notifications and do something with them.</p>
 
 <p>For example, we could write an <code>EmailSubscriber</code>, like so:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.EmailSubscriber</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">GenEvent</span>
 
-<pre><code class="language-elixir">defmodule MyApp.EmailSubscriber do
-  use GenEvent
+  <span class="kn">alias</span> <span class="nc">MyApp.User</span>
 
-  alias MyApp.User
-
-  def handle_event({:model, :insert, %{model: %User{}} = changeset}, state) do
-    send_email(changeset.model)
-    {:ok, state}
-  end
-end
-</code></pre>
+  <span class="kd">def</span> <span class="n">handle_event</span><span class="p">({</span><span class="ss">:model</span><span class="p">,</span> <span class="ss">:insert</span><span class="p">,</span> <span class="p">%{</span><span class="ss">model</span><span class="p">:</span> <span class="p">%</span><span class="nc">User</span><span class="p">{}}</span> <span class="o">=</span> <span class="n">changeset</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">send_email</span><span class="p">(</span><span class="n">changeset</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>With a little tender love and care, (not shown) we can pretty up this API to look like so:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.EmailSubscriber</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">GenEvent</span>
 
-<pre><code class="language-elixir">defmodule MyApp.EmailSubscriber do
-  use GenEvent
+  <span class="kn">alias</span> <span class="nc">MyApp.User</span>
 
-  alias MyApp.User
+  <span class="kd">def</span> <span class="n">handle_insert</span><span class="p">(%</span><span class="nc">User</span><span class="p">{}</span> <span class="o">=</span> <span class="n">user</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">send_email</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+  <span class="k">end</span>
 
-  def handle_insert(%User{} = user) do
-    send_email(user)
-  end
-
-  # ...
-end
-</code></pre>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <h2 id="benefits">Benefits</h2>
 
@@ -238,9 +232,8 @@ end
 </ul>
 
 <p>If either of these downsides is too much for you, you can also reference a foreign module in an Ecto callback, like so:</p>
-
-<pre><code class="language-elixir">after_insert OtherModule, :function_name
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">after_insert</span> <span class="nc">OtherModule</span><span class="p">,</span> <span class="ss">:function_name</span>
+</code></pre></div>
 
 <p>This allows you to delegate callback work to other modules, keeping your model clean, but requires you to change each model if you want to add another &ldquo;subscriber&rdquo;.</p>
 
@@ -369,8 +362,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

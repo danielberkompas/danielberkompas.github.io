@@ -10,7 +10,8 @@
 <title>SEO Tags In Phoenix</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -90,38 +91,35 @@
     <p>Public facing websites need to have some basic search engine optimization (SEO) tags, such as <code>&lt;title&gt;</code> and <code>&lt;meta name=&quot;description&quot;&gt;</code>. In Rails, you could achieve this pretty simply by putting a <code>yield :head</code> tag in the appropriate layout.</p>
 
 <p></p>
-
-<pre><code class="language-erb">&lt;head&gt;
-  &lt;%= yield :head %&gt;
-&lt;/head&gt;
-</code></pre>
+<div class="highlight"><pre><code class="language-erb" data-lang="erb"><span></span><span class="x">&lt;head&gt;</span>
+<span class="x">  </span><span class="cp">&lt;%=</span> <span class="k">yield</span> <span class="ss">:head</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="x">&lt;/head&gt;</span>
+</code></pre></div>
 
 <p>Inside any of your views, you could then use <code>content_for</code> to populate this section:</p>
+<div class="highlight"><pre><code class="language-erb" data-lang="erb"><span></span><span class="cp">&lt;%</span> <span class="n">content_for</span> <span class="ss">:head</span> <span class="k">do</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="x">  &lt;title&gt;My Awesome Site&lt;/title&gt;</span>
+<span class="x">  &lt;meta name=&quot;description&quot; content=&quot;...&quot; /&gt;</span>
+<span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span><span class="x"></span>
 
-<pre><code class="language-erb">&lt;% content_for :head do %&gt;
-  &lt;title&gt;My Awesome Site&lt;/title&gt;
-  &lt;meta name=&quot;description&quot; content=&quot;...&quot; /&gt;
-&lt;% end %&gt;
-
-&lt;!-- More view content here... ---&gt;
-</code></pre>
+<span class="x">&lt;!-- More view content here... ---&gt;</span>
+</code></pre></div>
 
 <p>This is nice, in that it keeps the HTML all together in more or less the same place. In <a href="https://phoenixframework.org">Phoenix</a>, this has to be done differently.</p>
 
 <h2 id="how-phoenix-is-different">How Phoenix is Different</h2>
 
 <p>In Phoenix, your layout is rendered <em>before</em> your page template is rendered. Take this layout, for example:</p>
-
-<pre><code class="language-erb">&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;&lt;/title&gt;
-    &lt;meta name=&quot;description&quot; content=&quot;&quot; /&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;%= render @view_module, @view_template, assigns %&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
+<div class="highlight"><pre><code class="language-erb" data-lang="erb"><span></span><span class="x">&lt;html&gt;</span>
+<span class="x">  &lt;head&gt;</span>
+<span class="x">    &lt;title&gt;&lt;/title&gt;</span>
+<span class="x">    &lt;meta name=&quot;description&quot; content=&quot;&quot; /&gt;</span>
+<span class="x">  &lt;/head&gt;</span>
+<span class="x">  &lt;body&gt;</span>
+<span class="x">    </span><span class="cp">&lt;%=</span> <span class="n">render</span> <span class="vi">@view_module</span><span class="p">,</span> <span class="vi">@view_template</span><span class="p">,</span> <span class="n">assigns</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="x">  &lt;/body&gt;</span>
+<span class="x">&lt;/html&gt;</span>
+</code></pre></div>
 
 <p>Because Phoenix renders templates as functions, by the time your <code>@view_template</code> is rendered, the <code>&lt;head&gt;</code> is already rendered. So, there&rsquo;s nothing that your view template can do to inject content back up into <code>&lt;head&gt;</code>. The <code>content_for</code> approach won&rsquo;t work.</p>
 
@@ -132,17 +130,16 @@
 <p>Both Chris McCord and José Valim mentioned <code>render_existing/2</code> when they saw this post. I knew about it, (I believe it was one of my questions on IRC that prompted its creation, actually) and while I don&rsquo;t necessarily prefer it, it really should be mentioned here.</p>
 
 <p>To use <code>render_existing</code> for your meta tags, you&rsquo;d change your layout to look like this:</p>
-
-<pre><code class="language-erb">&lt;html&gt;
-  &lt;head&gt;
-    &lt;%= render_existing(@view_module, &quot;meta.&quot; &lt;&gt; @view_template, assigns) ||
-        render(MyApp.LayoutView, &quot;meta.html&quot;, assigns) %&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;%= render @view_module, @view_template, assigns %&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
+<div class="highlight"><pre><code class="language-erb" data-lang="erb"><span></span><span class="x">&lt;html&gt;</span>
+<span class="x">  &lt;head&gt;</span>
+<span class="x">    </span><span class="cp">&lt;%=</span> <span class="n">render_existing</span><span class="p">(</span><span class="vi">@view_module</span><span class="p">,</span> <span class="s2">&quot;meta.&quot;</span> <span class="o">&lt;&gt;</span> <span class="vi">@view_template</span><span class="p">,</span> <span class="n">assigns</span><span class="p">)</span> <span class="o">||</span>
+        <span class="n">render</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="n">LayoutView</span><span class="p">,</span> <span class="s2">&quot;meta.html&quot;</span><span class="p">,</span> <span class="n">assigns</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="x">  &lt;/head&gt;</span>
+<span class="x">  &lt;body&gt;</span>
+<span class="x">    </span><span class="cp">&lt;%=</span> <span class="n">render</span> <span class="vi">@view_module</span><span class="p">,</span> <span class="vi">@view_template</span><span class="p">,</span> <span class="n">assigns</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="x">  &lt;/body&gt;</span>
+<span class="x">&lt;/html&gt;</span>
+</code></pre></div>
 
 <p>The <code>render_existing</code> function will silently render nothing if the given template doesn&rsquo;t exist. The alternate <code>render</code> call will take over if you don&rsquo;t specify a meta file for your view/action, and will render the defaults.</p>
 
@@ -163,14 +160,13 @@ new.html.eex
 </code></pre>
 
 <p>You can avoid this by defining these templates as functions in your view rather than template files:</p>
-
-<pre><code class="language-elixir">def render(&quot;meta.index.html&quot;, _assigns) do
-  ~E{
-    &lt;title&gt;My Awesome App&lt;/title&gt;
-    &lt;meta type=&quot;description&quot; content=&quot;...&quot; /&gt;
-  }
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">render</span><span class="p">(</span><span class="s2">&quot;meta.index.html&quot;</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">)</span> <span class="k">do</span>
+  <span class="sx">~E{</span>
+<span class="sx">    &lt;title&gt;My Awesome App&lt;/title&gt;</span>
+<span class="sx">    &lt;meta type=&quot;description&quot; content=&quot;...&quot; /&gt;</span>
+<span class="sx">  }</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The <code>~E</code> sigil allows you to write EEX code inline in your view. This is fine, but it still can get a little messy looking with long meta descriptions, and you end up with a lot of function definitions.</p>
 
@@ -179,169 +175,158 @@ end
 <h2 id="2-assigns-in-each-controller-action">2. Assigns in Each Controller Action</h2>
 
 <p>The second approach modifies the layout to look like this:</p>
-
-<pre><code class="language-erb">&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;&lt;%= @title %&gt;&lt;/title&gt;
-    &lt;meta name=&quot;description&quot; content=&quot;&lt;%= @meta %&gt;&quot; /&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;%= render @view_module, @view_template, assigns %&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
+<div class="highlight"><pre><code class="language-erb" data-lang="erb"><span></span><span class="x">&lt;html&gt;</span>
+<span class="x">  &lt;head&gt;</span>
+<span class="x">    &lt;title&gt;</span><span class="cp">&lt;%=</span> <span class="vi">@title</span> <span class="cp">%&gt;</span><span class="x">&lt;/title&gt;</span>
+<span class="x">    &lt;meta name=&quot;description&quot; content=&quot;</span><span class="cp">&lt;%=</span> <span class="vi">@meta</span> <span class="cp">%&gt;</span><span class="x">&quot; /&gt;</span>
+<span class="x">  &lt;/head&gt;</span>
+<span class="x">  &lt;body&gt;</span>
+<span class="x">    </span><span class="cp">&lt;%=</span> <span class="n">render</span> <span class="vi">@view_module</span><span class="p">,</span> <span class="vi">@view_template</span><span class="p">,</span> <span class="n">assigns</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="x">  &lt;/body&gt;</span>
+<span class="x">&lt;/html&gt;</span>
+</code></pre></div>
 
 <p>Then, in each controller action in the app, the developer must specify <code>title</code> and <code>meta</code> assigns:</p>
-
-<pre><code class="language-elixir">def index(conn, _params) do
-  conn
-  |&gt; assign(:title, &quot;My Awesome App&quot;)
-  |&gt; assign(:meta, &quot;...&quot;)
-  |&gt; render(&quot;index.html&quot;)
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">conn</span>
+  <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="s2">&quot;My Awesome App&quot;</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:meta</span><span class="p">,</span> <span class="s2">&quot;...&quot;</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">render</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>There are a few downsides to this. First, the title and meta description can dominate the controller action, making it harder to see the business logic. Second, it can easily end up being pretty ugly if you don&rsquo;t put it all on one line:</p>
-
-<pre><code class="language-elixir">def index(conn, _params) do
-  conn
-  |&gt; assign(:title, &quot;My Awesome App&quot;)
-  |&gt; assign(:meta, &quot;&quot;&quot;
-     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam feugiat 
-     nibh ligula. Maecenas egestas nibh cursus erat sodales, vitae congue nisi
-     tempus. Nam mattis et velit eu lacinia.
-     &quot;&quot;&quot;)
-  |&gt; render(&quot;index.html&quot;)
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">conn</span>
+  <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="s2">&quot;My Awesome App&quot;</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:meta</span><span class="p">,</span> <span class="sh">&quot;&quot;&quot;</span>
+<span class="sh">     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam feugiat </span>
+<span class="sh">     nibh ligula. Maecenas egestas nibh cursus erat sodales, vitae congue nisi</span>
+<span class="sh">     tempus. Nam mattis et velit eu lacinia.</span>
+<span class="sh">     &quot;&quot;&quot;</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">render</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>I think we can do better.</p>
 
 <h2 id="3-delegated-functions">3. Delegated Functions</h2>
 
 <p>Another alternative I&rsquo;ve seen is to delegate to functions on your view module, like this:</p>
-
-<pre><code class="language-erb">&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;&lt;%= @view_module.title(@view_template, assigns) %&gt;&lt;/title&gt;
-    &lt;meta name=&quot;description&quot; content=&quot;&lt;%= @view_module.meta(@view_template, assigns) %&gt;&quot; /&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;%= render @view_module, @view_template, assigns %&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
+<div class="highlight"><pre><code class="language-erb" data-lang="erb"><span></span><span class="x">&lt;html&gt;</span>
+<span class="x">  &lt;head&gt;</span>
+<span class="x">    &lt;title&gt;</span><span class="cp">&lt;%=</span> <span class="vi">@view_module</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="vi">@view_template</span><span class="p">,</span> <span class="n">assigns</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x">&lt;/title&gt;</span>
+<span class="x">    &lt;meta name=&quot;description&quot; content=&quot;</span><span class="cp">&lt;%=</span> <span class="vi">@view_module</span><span class="o">.</span><span class="n">meta</span><span class="p">(</span><span class="vi">@view_template</span><span class="p">,</span> <span class="n">assigns</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="x">&quot; /&gt;</span>
+<span class="x">  &lt;/head&gt;</span>
+<span class="x">  &lt;body&gt;</span>
+<span class="x">    </span><span class="cp">&lt;%=</span> <span class="n">render</span> <span class="vi">@view_module</span><span class="p">,</span> <span class="vi">@view_template</span><span class="p">,</span> <span class="n">assigns</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="x">  &lt;/body&gt;</span>
+<span class="x">&lt;/html&gt;</span>
+</code></pre></div>
 
 <p>Then, in your view module, you can define different titles or meta descriptions for different layouts, or set a default.</p>
-
-<pre><code class="language-elixir">defmodule MyApp.PageView do
-  use MyApp.Web, :view
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.PageView</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">MyApp.Web</span><span class="p">,</span> <span class="ss">:view</span>
   
-  def title(&quot;index.html&quot;, _assigns), do: &quot;My Awesome App&quot;
-  def title(_other, _assigns), do: &quot;Default Title&quot;
+  <span class="kd">def</span> <span class="n">title</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&quot;My Awesome App&quot;</span>
+  <span class="kd">def</span> <span class="n">title</span><span class="p">(</span><span class="n">_other</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&quot;Default Title&quot;</span>
   
-  def meta(&quot;index.html&quot;, _assigns), do: &quot;...&quot;
-  def meta(_other, _assigns), do: &quot;Default Meta&quot;
-end
-</code></pre>
+  <span class="kd">def</span> <span class="n">meta</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span>
+  <span class="kd">def</span> <span class="n">meta</span><span class="p">(</span><span class="n">_other</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&quot;Default Meta&quot;</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>This is pretty similar to the first approach outlined above.</p>
 
 <p>If you didn&rsquo;t want to have to define these functions on every view, you could create a mixin that would define default implementations of these <code>title</code> and <code>meta</code> functions.</p>
-
-<pre><code class="language-elixir">defmodule MyApp.SEO.Defaults do
-  defmacro __using__(_) do
-    quote do
-      def title(_other, _assigns), do: &quot;Default Title&quot;
-      def meta(_other, _assigns), do: &quot;Default Meta&quot;
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.SEO.Defaults</span> <span class="k">do</span>
+  <span class="kd">defmacro</span> <span class="n">__using__</span><span class="p">(</span><span class="bp">_</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">quote</span> <span class="k">do</span>
+      <span class="kd">def</span> <span class="n">title</span><span class="p">(</span><span class="n">_other</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&quot;Default Title&quot;</span>
+      <span class="kd">def</span> <span class="n">meta</span><span class="p">(</span><span class="n">_other</span><span class="p">,</span> <span class="n">_assigns</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="s2">&quot;Default Meta&quot;</span>
       
-      defoverridable [title: 2, meta: 2]
-    end
-  end
-end
-</code></pre>
+      <span class="n">defoverridable</span> <span class="p">[</span><span class="ss">title</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="ss">meta</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Then, <code>use</code> this module in your <code>web/web.ex</code> to make it affect all views.</p>
-
-<pre><code class="language-elixir">def view do
-  quote do
-    # ...
-    use MyApp.SEO.Defaults
-  end
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">view</span> <span class="k">do</span>
+  <span class="k">quote</span> <span class="k">do</span>
+    <span class="c1"># ...</span>
+    <span class="kn">use</span> <span class="nc">MyApp.SEO.Defaults</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>This approach has the advantage of cleaning up the controller, but I think it&rsquo;s a bit less clear where the titles and meta descriptions are being generated, and it&rsquo;s not clearly better than the <code>render_existing</code> approach.</p>
 
 <h2 id="4-use-a-plug">4. Use a Plug</h2>
 
 <p>A huge number of problems can be solved with Plug, so today, I thought I would try to use it to solve this problem. It&rsquo;s pretty simple to create a custom plug for this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.SEO.Plug</span> <span class="k">do</span>
+  <span class="kd">def</span> <span class="n">put_seo</span><span class="p">(%{</span><span class="ss">private</span><span class="p">:</span> <span class="p">%{</span><span class="ss">phoenix_action</span><span class="p">:</span> <span class="n">action</span><span class="p">}}</span> <span class="o">=</span> <span class="n">conn</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">settings</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="n">action</span><span class="p">]</span> <span class="o">||</span> <span class="p">[]</span>
 
-<pre><code class="language-elixir">defmodule MyApp.SEO.Plug do
-  def put_seo(%{private: %{phoenix_action: action}} = conn, settings) do
-    settings = settings[action] || []
-
-    conn
-    |&gt; assign(:title, settings[:title])
-    |&gt; assign(:meta, settings[:meta])
-  end
-end
-</code></pre>
+    <span class="n">conn</span>
+    <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:title</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="ss">:title</span><span class="p">])</span>
+    <span class="o">|&gt;</span> <span class="n">assign</span><span class="p">(</span><span class="ss">:meta</span><span class="p">,</span> <span class="n">settings</span><span class="p">[</span><span class="ss">:meta</span><span class="p">])</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The plug takes a &ldquo;settings&rdquo; argument, which we read from to determine what the <code>title</code> and <code>meta</code> assigns should be. I just include it in the <code>controller</code> section of <code>web/web.ex</code>:</p>
-
-<pre><code class="language-elixir">def controller do
-  quote do
-    # ...
-    import MyApp.SEO.Plug
-  end
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">controller</span> <span class="k">do</span>
+  <span class="k">quote</span> <span class="k">do</span>
+    <span class="c1"># ...</span>
+    <span class="kn">import</span> <span class="nc">MyApp.SEO.Plug</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>And then I can use it in my controllers, like so:</p>
-
-<pre><code class="language-elixir">defmodule MyApp.PageController do
-  use MyApp.Web, :controller
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.PageController</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">MyApp.Web</span><span class="p">,</span> <span class="ss">:controller</span>
   
-  @meta %{
-    index: %{
-      title: &quot;My Awesome App&quot;,
-      meta: &quot;&quot;&quot;
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam feugiat 
-      nibh ligula. Maecenas egestas nibh cursus erat sodales, vitae congue nisi
-      tempus. Nam mattis et velit eu lacinia.
-      &quot;&quot;&quot;
-    },
-    contact: %{
-      title: &quot;Contact Us&quot;
-      meta: &quot;...&quot;
-    }
-  }
+  <span class="na">@meta</span> <span class="p">%{</span>
+    <span class="ss">index</span><span class="p">:</span> <span class="p">%{</span>
+      <span class="ss">title</span><span class="p">:</span> <span class="s2">&quot;My Awesome App&quot;</span><span class="p">,</span>
+      <span class="ss">meta</span><span class="p">:</span> <span class="sh">&quot;&quot;&quot;</span>
+<span class="sh">      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam feugiat </span>
+<span class="sh">      nibh ligula. Maecenas egestas nibh cursus erat sodales, vitae congue nisi</span>
+<span class="sh">      tempus. Nam mattis et velit eu lacinia.</span>
+<span class="sh">      &quot;&quot;&quot;</span>
+    <span class="p">},</span>
+    <span class="ss">contact</span><span class="p">:</span> <span class="p">%{</span>
+      <span class="ss">title</span><span class="p">:</span> <span class="s2">&quot;Contact Us&quot;</span>
+      <span class="ss">meta</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
   
-  plug :put_seo, @meta
+  <span class="n">plug</span> <span class="ss">:put_seo</span><span class="p">,</span> <span class="na">@meta</span>
   
-  def index(conn, _params) do
-    # ...
-  end
+  <span class="kd">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
   
-  def contact(conn, _params) do
-    # ...
-  end
-end
-</code></pre>
+  <span class="kd">def</span> <span class="n">contact</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>And my layout looks like this:</p>
-
-<pre><code class="language-erb">&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;&lt;%= assigns[:title] || &quot;Default&quot; %&gt;&lt;/title&gt;
-    &lt;meta name=&quot;description&quot; content=&quot;&lt;%= assigns[:meta] || &quot;Default&quot; %&gt;&quot; /&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;%= render @view_module, @view_template, assigns %&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
-</code></pre>
+<div class="highlight"><pre><code class="language-erb" data-lang="erb"><span></span><span class="x">&lt;html&gt;</span>
+<span class="x">  &lt;head&gt;</span>
+<span class="x">    &lt;title&gt;</span><span class="cp">&lt;%=</span> <span class="n">assigns</span><span class="o">[</span><span class="ss">:title</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;Default&quot;</span> <span class="cp">%&gt;</span><span class="x">&lt;/title&gt;</span>
+<span class="x">    &lt;meta name=&quot;description&quot; content=&quot;</span><span class="cp">&lt;%=</span> <span class="n">assigns</span><span class="o">[</span><span class="ss">:meta</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;Default&quot;</span> <span class="cp">%&gt;</span><span class="x">&quot; /&gt;</span>
+<span class="x">  &lt;/head&gt;</span>
+<span class="x">  &lt;body&gt;</span>
+<span class="x">    </span><span class="cp">&lt;%=</span> <span class="n">render</span> <span class="vi">@view_module</span><span class="p">,</span> <span class="vi">@view_template</span><span class="p">,</span> <span class="n">assigns</span> <span class="cp">%&gt;</span><span class="x"></span>
+<span class="x">  &lt;/body&gt;</span>
+<span class="x">&lt;/html&gt;</span>
+</code></pre></div>
 
 <p>While I&rsquo;m not completely happy with it, (it would be nice to get all that text out of the controller), I think this is pretty clear. The controller actions are also uncluttered, which is a plus.</p>
 
@@ -472,8 +457,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

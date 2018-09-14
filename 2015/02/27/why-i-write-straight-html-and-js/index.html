@@ -10,7 +10,8 @@
 <title>Why I Write Straight HTML and JS</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -44,7 +45,7 @@ When I got started with Rails, I was just as much a fan of these technologies as
 
 <meta itemprop="datePublished" content="2015-02-27T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2015-02-27T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="680">
+<meta itemprop="wordCount" content="676">
 
 
 
@@ -106,32 +107,30 @@ When I got started with Rails, I was just as much a fan of these technologies as
 <h2 id="1-whitespace">1. Whitespace</h2>
 
 <p>Nearly all these languages achieve their &ldquo;simplicity&rdquo; through whitespace. They make code shorter by removing closing tags, whether those be <code>&lt;/p&gt;</code> tags or javascript <code>}</code>. You end up with code nesting that looks something like this:</p>
+<div class="highlight"><pre><code class="language-slim" data-lang="slim"><span></span><span class="nt">html</span>
+  <span class="nt">head</span>
+    <span class="nt">title</span> My first HTML project
+    <span class="nt">meta</span><span class="na"> content</span><span class="p">=</span><span class="s2">&quot;...&quot;</span>
+    <span class="nt">link</span><span class="na"> href</span><span class="p">=</span><span class="s2">&quot;...&quot;</span><span class="na"> type</span><span class="p">=</span><span class="s2">&quot;text/css&quot;</span>
 
-<pre><code class="language-slim">html
-  head
-    title My first HTML project
-    meta content=&quot;...&quot;
-    link href=&quot;...&quot; type=&quot;text/css&quot;
-
-  body
-    p Hello World
-</code></pre>
+  <span class="nt">body</span>
+    <span class="nt">p</span> Hello World
+</code></pre></div>
 
 <p>At first glance, this looks wonderful. Unfortunately, most code ends up looking more like this over time:</p>
+<div class="highlight"><pre><code class="language-slim" data-lang="slim"><span></span><span class="nc">.span2</span>
+  <span class="nt">h1</span><span class="na"> class</span><span class="p">=</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">icon_color_class</span><span class="si">}</span><span class="s2">&quot;</span>: i class=&quot;<span class="si">#{</span><span class="n">icon</span><span class="si">}</span>&quot;
+<span class="nc">.span10</span>
+  <span class="nt">h5</span><span class="nc">.pad-bottom-small</span><span class="p">=</span> <span class="n">text</span>
+  <span class="nt">ul</span><span class="nc">.unstyled</span>
+    <span class="p">-</span> <span class="k">if</span> <span class="n">collection</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="p">-</span> <span class="n">collection</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">item</span><span class="o">|</span>
+        <span class="nt">li</span><span class="p">=</span> <span class="n">item</span><span class="o">.</span><span class="n">name</span>
+    <span class="p">-</span> <span class="k">else</span>
+      <span class="nt">li</span> (None)
 
-<pre><code class="language-slim">.span2
-  h1 class=&quot;#{icon_color_class}&quot;: i class=&quot;#{icon}&quot;
-.span10
-  h5.pad-bottom-small= text
-  ul.unstyled
-    - if collection.size &gt; 0
-      - collection.each do |item|
-        li= item.name
-    - else
-      li (None)
-
-  = link_to link, url, class: link_color_class
-</code></pre>
+  <span class="p">=</span> <span class="n">link_to</span> <span class="n">link</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="ss">class</span><span class="p">:</span> <span class="n">link_color_class</span>
+</code></pre></div>
 
 <p>Here are the problems I have with this:</p>
 
@@ -295,8 +294,7 @@ language. SCSS is a good example. This used to be true of CoffeeScript, but now 
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

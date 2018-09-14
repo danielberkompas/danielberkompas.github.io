@@ -10,7 +10,8 @@
 <title>Rate Limiting a Phoenix API</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -110,22 +111,20 @@ It&rsquo;s true that in many cases rate limiting isn&rsquo;t worth the effort, b
 <p>If you&rsquo;re familiar with Ruby, plugs work very similarly to Rack middleware. However, instead of being a rare form of voodoo like Rack sometimes is to Ruby developers, plugs are very accessible in Elixir/Phoenix, and are used often.</p>
 
 <p>In its simplest form, a plug looks like this:</p>
-
-<pre><code class="language-elixir">def my_custom_plug(conn, options \\ []) do
-  conn
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">my_custom_plug</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span> <span class="p">\\</span> <span class="p">[])</span> <span class="k">do</span>
+  <span class="n">conn</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>This plug does nothing. It just takes a connection and returns it, which is all a good little plug <em>has</em> to do. To use this plug in a Phoenix controller, you just have to import the function and add it to the controller&rsquo;s plug pipeline:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.Controller</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">MyApp.Web</span><span class="p">,</span> <span class="ss">:controller</span>
+  <span class="kn">import</span> <span class="nc">MyPlug</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">my_custom_plug</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
 
-<pre><code class="language-elixir">defmodule MyApp.Controller do
-  use MyApp.Web, :controller
-  import MyPlug, only: [my_custom_plug: 2]
-
-  plug :my_custom_plug
-  plug :action
-end
-</code></pre>
+  <span class="n">plug</span> <span class="ss">:my_custom_plug</span>
+  <span class="n">plug</span> <span class="ss">:action</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The <code>my_custom_plug</code> function will then run on the connection before the
 controller action is called.</p>
@@ -135,127 +134,120 @@ controller action is called.</p>
 <p>The <a href="https://github.com/elixir-lang/plug">Plug</a> interface is ideal for rate limiting because it allows us to intercept the request before any real work is done. This prevents rejected requests from producing any serious load on the server.</p>
 
 <p>For my plug, I used a library called <a href="http://hex.pm/packages/ex_rated">ExRated</a> to do the brunt of the rate limiting work. It has a simple API:</p>
-
-<pre><code class="language-elixir">ExRated.check_rate(&quot;bucket_name&quot;, interval_in_milliseconds, maximum_requests)
-# =&gt; {:ok, count} or {:fail, count}
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="nc">ExRated</span><span class="o">.</span><span class="n">check_rate</span><span class="p">(</span><span class="s2">&quot;bucket_name&quot;</span><span class="p">,</span> <span class="n">interval_in_milliseconds</span><span class="p">,</span> <span class="n">maximum_requests</span><span class="p">)</span>
+<span class="c1"># =&gt; {:ok, count} or {:fail, count}</span>
+</code></pre></div>
 
 <p>Using this, it&rsquo;s very easy to construct a plug:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.RateLimit</span> <span class="k">do</span>
+  <span class="kn">import</span> <span class="nc">Phoenix.Controller</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">json</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
+  <span class="kn">import</span> <span class="nc">Plug.Conn</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">put_status</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
 
-<pre><code class="language-elixir">defmodule MyApp.RateLimit do
-  import Phoenix.Controller, only: [json: 2]
-  import Plug.Conn, only: [put_status: 2]
+  <span class="kd">def</span> <span class="n">rate_limit</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span> <span class="p">\\</span> <span class="p">[])</span> <span class="k">do</span>
+    <span class="k">case</span> <span class="n">check_rate</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">_count</span><span class="p">}</span>   <span class="o">-&gt;</span> <span class="n">conn</span> <span class="c1"># Do nothing, allow execution to continue</span>
+      <span class="p">{</span><span class="ss">:fail</span><span class="p">,</span> <span class="n">_count</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">render_error</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 
-  def rate_limit(conn, options \\ []) do
-    case check_rate(conn, options) do
-      {:ok, _count}   -&gt; conn # Do nothing, allow execution to continue
-      {:fail, _count} -&gt; render_error(conn)
-    end
-  end
+  <span class="kd">defp</span> <span class="n">check_rate</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">interval_milliseconds</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:interval_seconds</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">max_requests</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:max_requests</span><span class="p">]</span>
+    <span class="nc">ExRated</span><span class="o">.</span><span class="n">check_rate</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">(</span><span class="n">conn</span><span class="p">),</span> <span class="n">interval_milliseconds</span><span class="p">,</span> <span class="n">max_requests</span><span class="p">)</span>
+  <span class="k">end</span>
 
-  defp check_rate(conn, options) do
-    interval_milliseconds = options[:interval_seconds] * 1000
-    max_requests = options[:max_requests]
-    ExRated.check_rate(bucket_name(conn), interval_milliseconds, max_requests)
-  end
+  <span class="c1"># Bucket name should be a combination of ip address and request path, like so:</span>
+  <span class="c1">#</span>
+  <span class="c1"># &quot;127.0.0.1:/api/v1/authorizations&quot;</span>
+  <span class="kd">defp</span> <span class="n">bucket_name</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conn</span><span class="o">.</span><span class="n">path_info</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="n">ip</span>   <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">remote_ip</span> <span class="o">|&gt;</span> <span class="nc">Tuple</span><span class="o">.</span><span class="n">to_list</span> <span class="o">|&gt;</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="s2">&quot;</span><span class="si">#{</span><span class="n">ip</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+  <span class="k">end</span>
 
-  # Bucket name should be a combination of ip address and request path, like so:
-  #
-  # &quot;127.0.0.1:/api/v1/authorizations&quot;
-  defp bucket_name(conn) do
-    path = Enum.join(conn.path_info, &quot;/&quot;)
-    ip   = conn.remote_ip |&gt; Tuple.to_list |&gt; Enum.join(&quot;.&quot;)
-    &quot;#{ip}:#{path}&quot;
-  end
-
-  defp render_error(conn) do
-    conn
-    |&gt; put_status(:forbidden)
-    |&gt; json(%{error: &quot;Rate limit exceeded.&quot;})
-    |&gt; halt # Stop execution of further plugs, return response now
-  end
-end
-</code></pre>
+  <span class="kd">defp</span> <span class="n">render_error</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">conn</span>
+    <span class="o">|&gt;</span> <span class="n">put_status</span><span class="p">(</span><span class="ss">:forbidden</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">json</span><span class="p">(%{</span><span class="ss">error</span><span class="p">:</span> <span class="s2">&quot;Rate limit exceeded.&quot;</span><span class="p">})</span>
+    <span class="o">|&gt;</span> <span class="n">halt</span> <span class="c1"># Stop execution of further plugs, return response now</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>You can then use this plug to rate limit specific actions in your controller like so:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kn">import</span> <span class="nc">MyApp.RateLimit</span>
 
-<pre><code class="language-elixir">import MyApp.RateLimit
-
-plug :rate_limit, max_requests: 5, interval_seconds: 60 when action in [:create]
-plug :action
-</code></pre>
+<span class="n">plug</span> <span class="ss">:rate_limit</span><span class="p">,</span> <span class="ss">max_requests</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="ss">interval_seconds</span><span class="p">:</span> <span class="mi">60</span> <span class="ow">when</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">[</span><span class="ss">:create</span><span class="p">]</span>
+<span class="n">plug</span> <span class="ss">:action</span>
+</code></pre></div>
 
 <h2 id="customizing-for-authentication">Customizing for Authentication</h2>
 
 <p>The RateLimit plug as it currently exists is great for most use cases, but it still isn&rsquo;t adequate for authentication. This is because limiting based on IP address still allows an attacker to make thousands of attempts on a user account from different computers.</p>
 
 <p>To protect against this, we need to rate limit login attempts based on the <em>username</em>, not the IP address. The plug needs an optional <code>:bucket_name</code> parameter, so that this can be customized.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defp</span> <span class="n">check_rate</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">interval_milliseconds</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:interval_seconds</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>
+  <span class="n">max_requests</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:max_requests</span><span class="p">]</span>
+  <span class="n">bucket_name</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:bucket_name</span><span class="p">]</span> <span class="o">||</span> <span class="n">bucket_name</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
 
-<pre><code class="language-elixir">defp check_rate(conn, options) do
-  interval_milliseconds = options[:interval_seconds] * 1000
-  max_requests = options[:max_requests]
-  bucket_name = options[:bucket_name] || bucket_name(conn)
-
-  ExRated.check_rate(bucket_name, interval_milliseconds, max_requests)
-end
-</code></pre>
+  <span class="nc">ExRated</span><span class="o">.</span><span class="n">check_rate</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">interval_milliseconds</span><span class="p">,</span> <span class="n">max_requests</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>We then add a new function to our controller, setting the dynamic <code>:bucket_name</code> to &ldquo;authorization:{email}&rdquo;:</p>
-
-<pre><code class="language-elixir">def rate_limit_authentication(conn, options \\ []) do
-  options = Dict.merge(options, [bucket_name: &quot;authorization:&quot; &lt;&gt; conn.params.email])
-  MyApp.RateLimit.rate_limit(conn, options)
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">rate_limit_authentication</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span> <span class="p">\\</span> <span class="p">[])</span> <span class="k">do</span>
+  <span class="n">options</span> <span class="o">=</span> <span class="nc">Dict</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="p">[</span><span class="ss">bucket_name</span><span class="p">:</span> <span class="s2">&quot;authorization:&quot;</span> <span class="o">&lt;&gt;</span> <span class="n">conn</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">email</span><span class="p">])</span>
+  <span class="nc">MyApp.RateLimit</span><span class="o">.</span><span class="n">rate_limit</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>And use this instead of the old <code>:rate_limit</code> plug:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kn">import</span> <span class="nc">MyApp.RateLimit</span>
 
-<pre><code class="language-elixir">import MyApp.RateLimit
-
-plug :rate_limit_authentication, max_requests: 5, interval_seconds: 60
-plug :action
-</code></pre>
+<span class="n">plug</span> <span class="ss">:rate_limit_authentication</span><span class="p">,</span> <span class="ss">max_requests</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="ss">interval_seconds</span><span class="p">:</span> <span class="mi">60</span>
+<span class="n">plug</span> <span class="ss">:action</span>
+</code></pre></div>
 
 <p>This will then rate limit requests against the user&rsquo;s email address, not the IP address that the requests are coming from. So, no matter how many IPs the hacker has access to, he can&rsquo;t get around the rate limit.</p>
 
 <h2 id="the-finished-plug">The Finished Plug</h2>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.RateLimit</span> <span class="k">do</span>
+  <span class="kn">import</span> <span class="nc">Phoenix.Controller</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">json</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
+  <span class="kn">import</span> <span class="nc">Plug.Conn</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">put_status</span><span class="p">:</span> <span class="mi">2</span><span class="p">]</span>
 
-<pre><code class="language-elixir">defmodule MyApp.RateLimit do
-  import Phoenix.Controller, only: [json: 2]
-  import Plug.Conn, only: [put_status: 2]
+  <span class="kd">def</span> <span class="n">rate_limit</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span> <span class="p">\\</span> <span class="p">[])</span> <span class="k">do</span>
+    <span class="k">case</span> <span class="n">check_rate</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">_count</span><span class="p">}</span>   <span class="o">-&gt;</span> <span class="n">conn</span> <span class="c1"># Do nothing, pass on to the next plug</span>
+      <span class="p">{</span><span class="ss">:fail</span><span class="p">,</span> <span class="n">_count</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">render_error</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 
-  def rate_limit(conn, options \\ []) do
-    case check_rate(conn, options) do
-      {:ok, _count}   -&gt; conn # Do nothing, pass on to the next plug
-      {:fail, _count} -&gt; render_error(conn)
-    end
-  end
+  <span class="kd">defp</span> <span class="n">check_rate</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">interval_milliseconds</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:interval_seconds</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="n">max_requests</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:max_requests</span><span class="p">]</span>
+    <span class="n">bucket_name</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="ss">:bucket_name</span><span class="p">]</span> <span class="o">||</span> <span class="n">bucket_name</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
 
-  defp check_rate(conn, options) do
-    interval_milliseconds = options[:interval_seconds] * 1000
-    max_requests = options[:max_requests]
-    bucket_name = options[:bucket_name] || bucket_name(conn)
+    <span class="nc">ExRated</span><span class="o">.</span><span class="n">check_rate</span><span class="p">(</span><span class="n">bucket_name</span><span class="p">,</span> <span class="n">interval_milliseconds</span><span class="p">,</span> <span class="n">max_requests</span><span class="p">)</span>
+  <span class="k">end</span>
 
-    ExRated.check_rate(bucket_name, interval_milliseconds, max_requests)
-  end
+  <span class="c1"># Bucket name should be a combination of ip address and request path, like so:</span>
+  <span class="c1">#</span>
+  <span class="c1"># &quot;127.0.0.1:/api/v1/authorizations&quot;</span>
+  <span class="kd">defp</span> <span class="n">bucket_name</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conn</span><span class="o">.</span><span class="n">path_info</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+    <span class="n">ip</span>   <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">remote_ip</span> <span class="o">|&gt;</span> <span class="nc">Tuple</span><span class="o">.</span><span class="n">to_list</span> <span class="o">|&gt;</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+    <span class="s2">&quot;</span><span class="si">#{</span><span class="n">ip</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+  <span class="k">end</span>
 
-  # Bucket name should be a combination of ip address and request path, like so:
-  #
-  # &quot;127.0.0.1:/api/v1/authorizations&quot;
-  defp bucket_name(conn) do
-    path = Enum.join(conn.path_info, &quot;/&quot;)
-    ip   = conn.remote_ip |&gt; Tuple.to_list |&gt; Enum.join(&quot;.&quot;)
-    &quot;#{ip}:#{path}&quot;
-  end
-
-  defp render_error(conn) do
-    conn
-    |&gt; put_status(:forbidden)
-    |&gt; json(%{error: &quot;Rate limit exceeded.&quot;})
-    |&gt; halt # Stop execution of further plugs, return response now
-  end
-end
-</code></pre>
+  <span class="kd">defp</span> <span class="n">render_error</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">conn</span>
+    <span class="o">|&gt;</span> <span class="n">put_status</span><span class="p">(</span><span class="ss">:forbidden</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">json</span><span class="p">(%{</span><span class="ss">error</span><span class="p">:</span> <span class="s2">&quot;Rate limit exceeded.&quot;</span><span class="p">})</span>
+    <span class="o">|&gt;</span> <span class="n">halt</span> <span class="c1"># Stop execution of further plugs, return response now</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <h2 id="performance">Performance</h2>
 
@@ -398,8 +390,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

@@ -10,7 +10,8 @@
 <title>Changing Your Ecto Encryption Key</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -48,7 +49,7 @@ In an earlier post, I wrote about how to encrypt data with Ecto, Elixir&rsquo;s 
 
 <meta itemprop="datePublished" content="2015-07-09T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2015-07-09T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1256">
+<meta itemprop="wordCount" content="1254">
 
 
 
@@ -112,10 +113,9 @@ In an earlier post, I wrote about how to encrypt data with Ecto, Elixir&rsquo;s 
 <h2 id="tag-your-ciphertext">Tag Your Ciphertext</h2>
 
 <p>In order to migrate to a new key, you&rsquo;re going to need to be able to distinguish which key was used to encrypt any given text. This can be done very simply by prepending a single byte to every encrypted binary:</p>
-
-<pre><code class="language-elixir">key_id = &lt;&lt;1&gt;&gt;
-key_id &lt;&gt; &lt;&lt;5, 138, ...&gt;
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">key_id</span> <span class="o">=</span> <span class="p">&lt;&lt;</span><span class="mi">1</span><span class="p">&gt;&gt;</span>
+<span class="n">key_id</span> <span class="o">&lt;&gt;</span> <span class="p">&lt;&lt;</span><span class="mi">5</span><span class="p">,</span> <span class="mi">138</span><span class="p">,</span> <span class="n">...</span><span class="o">&gt;</span>
+</code></pre></div>
 
 <p>This byte is the ID of the key that was used, and the decryptor can easily use it to find the correct key.</p>
 
@@ -124,55 +124,51 @@ key_id &lt;&gt; &lt;&lt;5, 138, ...&gt;
 <h2 id="change-config">Change Config</h2>
 
 <p>We need to change our <code>config.exs</code> to support multiple keys:</p>
-
-<pre><code class="language-elixir">config :my_app, MyApp.AES,
-  keys: %{
-    &lt;&lt;1&gt;&gt; =&gt; :base64.decode(&quot;...&quot;), # assuming you store keys in base64
-    &lt;&lt;2&gt;&gt; =&gt; :base64.decode(&quot;...&quot;)  # otherwise, straight binary will do
-  },
-  default: &lt;&lt;1&gt;&gt; # The ID of the key we want to use
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">config</span> <span class="ss">:my_app</span><span class="p">,</span> <span class="nc">MyApp.AES</span><span class="p">,</span>
+  <span class="ss">keys</span><span class="p">:</span> <span class="p">%{</span>
+    <span class="p">&lt;&lt;</span><span class="mi">1</span><span class="p">&gt;&gt;</span> <span class="o">=&gt;</span> <span class="ss">:base64</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">),</span> <span class="c1"># assuming you store keys in base64</span>
+    <span class="p">&lt;&lt;</span><span class="mi">2</span><span class="p">&gt;&gt;</span> <span class="o">=&gt;</span> <span class="ss">:base64</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">)</span>  <span class="c1"># otherwise, straight binary will do</span>
+  <span class="p">},</span>
+  <span class="ss">default</span><span class="p">:</span> <span class="p">&lt;&lt;</span><span class="mi">1</span><span class="p">&gt;&gt;</span> <span class="c1"># The ID of the key we want to use</span>
+</code></pre></div>
 
 <p>The first key, <code>&lt;&lt;1&gt;&gt;</code>, is the legacy key we&rsquo;re migrating away from. <code>&lt;&lt;2&gt;&gt;</code> is the key we are migrating to. We&rsquo;ll leave the <code>:default</code> as key <code>&lt;&lt;1&gt;&gt;</code> until we are ready to make the switch.</p>
 
 <h2 id="change-encryptor">Change Encryptor</h2>
 
 <p>Now, we need to upgrade the <code>encrypt/1</code> function to prepend the key ID of the key that was used for the encryption:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="c1"># Store config in module attributes for slightly faster lookup at runtime,</span>
+<span class="c1"># and the ability to use them as function parameter defaults</span>
+<span class="na">@config</span>  <span class="nc">Application</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="ss">:my_app</span><span class="p">,</span> <span class="nc">MyApp.AES</span><span class="p">)</span>
+<span class="na">@keys</span>    <span class="na">@config</span><span class="p">[</span><span class="ss">:keys</span><span class="p">]</span>
+<span class="na">@default</span> <span class="na">@config</span><span class="p">[</span><span class="ss">:default</span><span class="p">]</span>
 
-<pre><code class="language-elixir"># Store config in module attributes for slightly faster lookup at runtime,
-# and the ability to use them as function parameter defaults
-@config  Application.get_env(:my_app, MyApp.AES)
-@keys    @config[:keys]
-@default @config[:default]
-
-# Add another parameter, to allow encrypting with a specific key
-def encrypt(ciphertext, key_id \\ @default) do
-  iv    = :crypto.strong_rand_bytes(16)
-  state = :crypto.stream_init(:aes_ctr, @keys[key_id], iv) # use specified key
-  {_state, ciphertext} = :crypto.stream_encrypt(state, to_string(plaintext))
-  key_id &lt;&gt; iv &lt;&gt; ciphertext # prepend key byte to iv and ciphertext
-end
-</code></pre>
+<span class="c1"># Add another parameter, to allow encrypting with a specific key</span>
+<span class="kd">def</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">,</span> <span class="n">key_id</span> <span class="p">\\</span> <span class="na">@default</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">iv</span>    <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">strong_rand_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span>
+  <span class="n">state</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_init</span><span class="p">(</span><span class="ss">:aes_ctr</span><span class="p">,</span> <span class="na">@keys</span><span class="p">[</span><span class="n">key_id</span><span class="p">],</span> <span class="n">iv</span><span class="p">)</span> <span class="c1"># use specified key</span>
+  <span class="p">{</span><span class="n">_state</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_encrypt</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">to_string</span><span class="p">(</span><span class="n">plaintext</span><span class="p">))</span>
+  <span class="n">key_id</span> <span class="o">&lt;&gt;</span> <span class="n">iv</span> <span class="o">&lt;&gt;</span> <span class="n">ciphertext</span> <span class="c1"># prepend key byte to iv and ciphertext</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The key ID will now be included in every ciphertext. We now just have to update the <code>decrypt/1</code> function to find this key ID properly:</p>
-
-<pre><code class="language-elixir">def decrypt(ciphertext) do
-  # The first byte is the key ID
-  &lt;&lt;key_id::binary-1, iv::binary-16, ciphertext::binary&gt;&gt; = ciphertext
-  state = :crypto.stream_init(:aes_ctr, @keys[key_id], iv) # use specified key
-  {_state, plaintext} = :crypto.stream_decrypt(state, ciphertext)
-  plaintext
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span> <span class="k">do</span>
+  <span class="c1"># The first byte is the key ID</span>
+  <span class="p">&lt;&lt;</span><span class="n">key_id</span><span class="o">::</span><span class="n">binary</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">iv</span><span class="o">::</span><span class="n">binary</span><span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="n">ciphertext</span><span class="o">::</span><span class="n">binary</span><span class="p">&gt;&gt;</span> <span class="o">=</span> <span class="n">ciphertext</span>
+  <span class="n">state</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_init</span><span class="p">(</span><span class="ss">:aes_ctr</span><span class="p">,</span> <span class="na">@keys</span><span class="p">[</span><span class="n">key_id</span><span class="p">],</span> <span class="n">iv</span><span class="p">)</span> <span class="c1"># use specified key</span>
+  <span class="p">{</span><span class="n">_state</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_decrypt</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">)</span>
+  <span class="n">plaintext</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>With that, our encryptor can encrypt and decrypt values generated by any of our keys. By extension, this means that Ecto can read encrypted data from the database, no matter which key was used to generate it.</p>
 
 <p>It&rsquo;s also a good idea to add a simple function to the encryptor so that other modules can access the current default key ID without having to know where it is stored in <code>config.exs</code></p>
-
-<pre><code class="language-elixir">def key_id do
-  @default
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">key_id</span> <span class="k">do</span>
+  <span class="na">@default</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <h2 id="change-model-s">Change Model(s)</h2>
 
@@ -192,92 +188,89 @@ with key <code>&lt;&lt;1&gt;&gt;</code> and successfully decrypt it using that k
 
 <p>In the likely event that you want to re-encrypt your data with the new key more quickly, you&rsquo;ll need to make some changes to your <code>User</code> model.
 First off, you want to track which rows have been migrated and which have not. Add an indexed binary field called <code>:encryption_key_id</code> to the model.</p>
-
-<pre><code class="language-elixir">schema &quot;users&quot; do
-  field :name, MyApp.EncryptedField
-  field :email, MyApp.EncryptedField
-  field :email_hash, MyApp.HashField
-  field :encryption_key_id, :binary
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">schema</span> <span class="s2">&quot;users&quot;</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="nc">MyApp.EncryptedField</span>
+  <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="nc">MyApp.EncryptedField</span>
+  <span class="n">field</span> <span class="ss">:email_hash</span><span class="p">,</span> <span class="nc">MyApp.HashField</span>
+  <span class="n">field</span> <span class="ss">:encryption_key_id</span><span class="p">,</span> <span class="ss">:binary</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Then, set this field with a callback. I&rsquo;ve renamed the <code>set_hashed_fields</code> callback to <code>set_defaults</code> for this example:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">before_insert</span> <span class="ss">:set_defaults</span>
+<span class="n">before_update</span> <span class="ss">:set_defaults</span>
 
-<pre><code class="language-elixir">before_insert :set_defaults
-before_update :set_defaults
-
-defp set_defaults(changeset) do
-  changeset
-  |&gt; put_change(:encryption_key_id, MyApp.AES.key_id)
-  |&gt; put_change(:email_hash, get_field(changeset, :email))
-end
-</code></pre>
+<span class="kd">defp</span> <span class="n">set_defaults</span><span class="p">(</span><span class="n">changeset</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">changeset</span>
+  <span class="o">|&gt;</span> <span class="n">put_change</span><span class="p">(</span><span class="ss">:encryption_key_id</span><span class="p">,</span> <span class="nc">MyApp.AES</span><span class="o">.</span><span class="n">key_id</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">put_change</span><span class="p">(</span><span class="ss">:email_hash</span><span class="p">,</span> <span class="n">get_field</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:email</span><span class="p">))</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The <code>:encryption_key_id</code> field will now contain the key ID which was used to encrypt the row. This will help us find rows which haven&rsquo;t been upgraded yet.</p>
 
 <h2 id="mix-task">Mix Task</h2>
 
 <p>We&rsquo;ve come to the final step, creating a mix task to proactively migrate up all of our data to the new key. Here&rsquo;s what it could look like:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="c1"># lib/mix/tasks/encryption.migrate.ex</span>
+<span class="kd">defmodule</span> <span class="nc">Mix.Tasks.Encryption.Migrate</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">Mix.Task</span>
 
-<pre><code class="language-elixir"># lib/mix/tasks/encryption.migrate.ex
-defmodule Mix.Tasks.Encryption.Migrate do
-  use Mix.Task
+  <span class="kn">import</span> <span class="nc">Ecto.Query</span>
+  <span class="kn">import</span> <span class="nc">Logger</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">info</span><span class="p">:</span> <span class="mi">1</span><span class="p">]</span>
 
-  import Ecto.Query
-  import Logger, only: [info: 1]
+  <span class="kn">alias</span> <span class="nc">MyApp.Repo</span>
 
-  alias MyApp.Repo
+  <span class="c1"># Store the current key ID in a module attribute. This is the key that we are</span>
+  <span class="c1"># going to migrate to, controlled by `:default` in `config.exs`.</span>
+  <span class="c1">#</span>
+  <span class="c1"># I&#39;m doing it this way rather than calling the function directly so we can</span>
+  <span class="c1"># use it in pattern matching below.</span>
+  <span class="na">@key_id</span> <span class="nc">MyApp.AES</span><span class="o">.</span><span class="n">key_id</span>
 
-  # Store the current key ID in a module attribute. This is the key that we are
-  # going to migrate to, controlled by `:default` in `config.exs`.
-  #
-  # I'm doing it this way rather than calling the function directly so we can
-  # use it in pattern matching below.
-  @key_id MyApp.AES.key_id
+  <span class="kd">def</span> <span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="k">do</span>
+    <span class="c1"># Ensure that MyApp.Repo is started and available for use</span>
+    <span class="nc">Mix.Task</span><span class="o">.</span><span class="n">run</span> <span class="s2">&quot;app.start&quot;</span><span class="p">,</span> <span class="n">args</span>
 
-  def run(args) do
-    # Ensure that MyApp.Repo is started and available for use
-    Mix.Task.run &quot;app.start&quot;, args
+    <span class="c1"># Migrate our User model</span>
+    <span class="c1"># You could migrate any other models that use encryption here.</span>
+    <span class="n">migrate</span> <span class="nc">MyApp.User</span>
+  <span class="k">end</span>
 
-    # Migrate our User model
-    # You could migrate any other models that use encryption here.
-    migrate MyApp.User
-  end
+  <span class="kd">defp</span> <span class="n">migrate</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">info</span> <span class="s2">&quot;=== Migrating </span><span class="si">#{</span><span class="n">model</span><span class="si">}</span><span class="s2"> Model ===&quot;</span>
+    <span class="n">ids</span> <span class="o">=</span> <span class="n">ids_for</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">info</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">length</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> records found needing migration&quot;</span>
 
-  defp migrate(model) do
-    info &quot;=== Migrating #{model} Model ===&quot;
-    ids = ids_for(model)
-    info &quot;#{length(ids)} records found needing migration&quot;
+    <span class="c1"># Migrate all the records found</span>
+    <span class="k">for</span> <span class="n">id</span> <span class="o">&lt;-</span> <span class="n">ids</span> <span class="k">do</span>
+      <span class="c1"># Records are fetched individually to ensure that they haven&#39;t changed</span>
+      <span class="c1"># between being loaded and saved. We don&#39;t want to overwrite any changes</span>
+      <span class="c1"># that occur while this task is running.</span>
+      <span class="nc">Repo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">id</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">migrate_record</span>
+    <span class="k">end</span>
 
-    # Migrate all the records found
-    for id &lt;- ids do
-      # Records are fetched individually to ensure that they haven't changed
-      # between being loaded and saved. We don't want to overwrite any changes
-      # that occur while this task is running.
-      Repo.get(model, id) |&gt; migrate_record
-    end
+    <span class="n">info</span> <span class="s2">&quot;=== Migration Complete ===&quot;</span>
+  <span class="k">end</span>
 
-    info &quot;=== Migration Complete ===&quot;
-  end
+  <span class="c1"># Returns all the IDs of records which, according to :encryption_key_id, have</span>
+  <span class="c1"># not yet migrated to @key_id.</span>
+  <span class="kd">defp</span> <span class="n">ids_for</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">from</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">model</span><span class="p">,</span> <span class="ss">where</span><span class="p">:</span>  <span class="n">m</span><span class="o">.</span><span class="n">encryption_key_id</span> <span class="o">!=</span> <span class="o">^</span><span class="na">@key_id</span><span class="p">,</span>
+                             <span class="ss">select</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">id</span>
+    <span class="nc">Repo</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+  <span class="k">end</span>
 
-  # Returns all the IDs of records which, according to :encryption_key_id, have
-  # not yet migrated to @key_id.
-  defp ids_for(model) do
-    query = from m in model, where:  m.encryption_key_id != ^@key_id,
-                             select: m.id
-    Repo.all(query)
-  end
+  <span class="c1"># Do nothing if the record has been automagically migrated by app usage since</span>
+  <span class="c1"># we queried for IDs at the start of this task.</span>
+  <span class="kd">defp</span> <span class="n">migrate_record</span><span class="p">(%{</span><span class="ss">encryption_key_id</span><span class="p">:</span> <span class="na">@key_id</span><span class="p">}),</span> <span class="ss">do</span><span class="p">:</span> <span class="no">nil</span>
 
-  # Do nothing if the record has been automagically migrated by app usage since
-  # we queried for IDs at the start of this task.
-  defp migrate_record(%{encryption_key_id: @key_id}), do: nil
-
-  # If the record doesn't match the above definition, and therefore has not been
-  # migrated, then simply save it back to the database. This will trigger
-  # MyApp.AES.encrypt, which will save the data encrypted with the new key.
-  defp migrate_record(record), do: Repo.update!(record)
-end
-</code></pre>
+  <span class="c1"># If the record doesn&#39;t match the above definition, and therefore has not been</span>
+  <span class="c1"># migrated, then simply save it back to the database. This will trigger</span>
+  <span class="c1"># MyApp.AES.encrypt, which will save the data encrypted with the new key.</span>
+  <span class="kd">defp</span> <span class="n">migrate_record</span><span class="p">(</span><span class="n">record</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="nc">Repo</span><span class="o">.</span><span class="n">update!</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <h2 id="the-great-migration">The Great Migration</h2>
 
@@ -430,8 +423,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

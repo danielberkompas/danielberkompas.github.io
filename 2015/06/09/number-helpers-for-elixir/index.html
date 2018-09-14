@@ -10,7 +10,8 @@
 <title>Number Helpers For Elixir</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -100,42 +101,41 @@ So, I created Number. It&rsquo;s basically a shallow clone of NumberHelper from 
 <p>So, I created <a href="https://github.com/danielberkompas/number">Number</a>. It&rsquo;s basically a shallow clone of NumberHelper from ActionView in Rails.  Now, Elixir users can have <code>number_to_currency</code> too!</p>
 
 <p></p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kn">import</span> <span class="nc">Number.Currency</span>
 
-<pre><code class="language-elixir">import Number.Currency
+<span class="n">number_to_currency</span><span class="p">(</span><span class="no">nil</span><span class="p">)</span>
+<span class="no">nil</span>
 
-number_to_currency(nil)
-nil
+<span class="n">number_to_currency</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="s2">&quot;$1,000&quot;</span>
 
-number_to_currency(1000)
-&quot;$1,000&quot;
+<span class="n">number_to_currency</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="ss">unit</span><span class="p">:</span> <span class="s2">&quot;£&quot;</span><span class="p">)</span>
+<span class="s2">&quot;£1,000&quot;</span>
 
-number_to_currency(1000, unit: &quot;£&quot;)
-&quot;£1,000&quot;
+<span class="n">number_to_currency</span><span class="p">(</span><span class="o">-</span><span class="mi">1000</span><span class="p">)</span>
+<span class="s2">&quot;-$1,000&quot;</span>
 
-number_to_currency(-1000)
-&quot;-$1,000&quot;
+<span class="n">number_to_currency</span><span class="p">(</span><span class="o">-</span><span class="mf">234234.23</span><span class="p">)</span>
+<span class="s2">&quot;-$234,234.23&quot;</span>
 
-number_to_currency(-234234.23)
-&quot;-$234,234.23&quot;
+<span class="n">number_to_currency</span><span class="p">(</span><span class="mf">1234567890.50</span><span class="p">)</span>
+<span class="s2">&quot;$1,234,567,890.50&quot;</span>
 
-number_to_currency(1234567890.50)
-&quot;$1,234,567,890.50&quot;
+<span class="n">number_to_currency</span><span class="p">(</span><span class="mf">1234567890.506</span><span class="p">)</span>
+<span class="s2">&quot;$1,234,567,890.51&quot;</span>
 
-number_to_currency(1234567890.506)
-&quot;$1,234,567,890.51&quot;
+<span class="n">number_to_currency</span><span class="p">(</span><span class="mf">1234567890.506</span><span class="p">,</span> <span class="ss">precision</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
+<span class="s2">&quot;$1,234,567,890.506&quot;</span>
 
-number_to_currency(1234567890.506, precision: 3)
-&quot;$1,234,567,890.506&quot;
+<span class="n">number_to_currency</span><span class="p">(</span><span class="o">-</span><span class="mf">1234567890.50</span><span class="p">,</span> <span class="ss">negative_format</span><span class="p">:</span> <span class="s2">&quot;(%u%n)&quot;</span><span class="p">)</span>
+<span class="s2">&quot;($1,234,567,890.50)&quot;</span>
 
-number_to_currency(-1234567890.50, negative_format: &quot;(%u%n)&quot;)
-&quot;($1,234,567,890.50)&quot;
+<span class="n">number_to_currency</span><span class="p">(</span><span class="mf">1234567890.50</span><span class="p">,</span> <span class="ss">unit</span><span class="p">:</span> <span class="s2">&quot;R$&quot;</span><span class="p">,</span> <span class="ss">separator</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="ss">delimiter</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="s2">&quot;R$1234567890,50&quot;</span>
 
-number_to_currency(1234567890.50, unit: &quot;R$&quot;, separator: &quot;,&quot;, delimiter: &quot;&quot;)
-&quot;R$1234567890,50&quot;
-
-number_to_currency(1234567890.50, unit: &quot;R$&quot;, separator: &quot;,&quot;, delimiter: &quot;&quot;, format: &quot;%n %u&quot;)
-&quot;1234567890,50 R$&quot;
-</code></pre>
+<span class="n">number_to_currency</span><span class="p">(</span><span class="mf">1234567890.50</span><span class="p">,</span> <span class="ss">unit</span><span class="p">:</span> <span class="s2">&quot;R$&quot;</span><span class="p">,</span> <span class="ss">separator</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="ss">delimiter</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="ss">format</span><span class="p">:</span> <span class="s2">&quot;%n %u&quot;</span><span class="p">)</span>
+<span class="s2">&quot;1234567890,50 R$&quot;</span>
+</code></pre></div>
 
 <p>As my free time permits, I expect to add more features to it, implementing those parts of Rails&rsquo;s NumberHelper that I consider useful to a broader audience.</p>
   </section>
@@ -260,8 +260,7 @@ number_to_currency(1234567890.50, unit: &quot;R$&quot;, separator: &quot;,&quot;
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

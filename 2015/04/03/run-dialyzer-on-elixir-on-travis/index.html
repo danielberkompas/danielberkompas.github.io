@@ -10,7 +10,8 @@
 <title>Run Dialyzer on Elixir on Travis CI</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -109,21 +110,20 @@ Dialyzer on</em>, because the paths in the PLT are <em>hard coded</em> when it i
 <h2 id="travis-yml">.travis.yml</h2>
 
 <p>With a prebuilt PLT, running dialyzer on Travis is simple:</p>
-
-<pre><code class="language-yaml">language: elixir
-otp_release:
-  - 17.4
-before_script:
-  # Set download location
-  - export PLT_FILENAME=elixir-${TRAVIS_ELIXIR_VERSION}_${TRAVIS_OTP_RELEASE}.plt
-  - export PLT_LOCATION=/home/travis/$PLT_FILENAME
-  # Download PLT from danielberkompas/travis_elixir_plts on Github
-  # Store in $PLT_LOCATION
-  - wget -O $PLT_LOCATION https://raw.github.com/danielberkompas/travis_elixir_plts/master/$PLT_FILENAME
-script:
-  - mix test
-  - dialyzer --no_check_plt --plt $PLT_LOCATION --no_native _build/test/lib/$YOUR_PROJECT_NAME/ebin
-</code></pre>
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span></span><span class="l l-Scalar l-Scalar-Plain">language</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">elixir</span>
+<span class="l l-Scalar l-Scalar-Plain">otp_release</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">17.4</span>
+<span class="l l-Scalar l-Scalar-Plain">before_script</span><span class="p p-Indicator">:</span>
+  <span class="c1"># Set download location</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">export PLT_FILENAME=elixir-${TRAVIS_ELIXIR_VERSION}_${TRAVIS_OTP_RELEASE}.plt</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">export PLT_LOCATION=/home/travis/$PLT_FILENAME</span>
+  <span class="c1"># Download PLT from danielberkompas/travis_elixir_plts on Github</span>
+  <span class="c1"># Store in $PLT_LOCATION</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">wget -O $PLT_LOCATION https://raw.github.com/danielberkompas/travis_elixir_plts/master/$PLT_FILENAME</span>
+<span class="l l-Scalar l-Scalar-Plain">script</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mix test</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dialyzer --no_check_plt --plt $PLT_LOCATION --no_native _build/test/lib/$YOUR_PROJECT_NAME/ebin</span>
+</code></pre></div>
 
 <p>A few notes on the options passed to Dialyzer here:</p>
 
@@ -265,8 +265,7 @@ dialyzer.plt</code> task which can be very helpful when generating local PLTs on
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

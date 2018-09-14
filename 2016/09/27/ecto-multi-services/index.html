@@ -10,7 +10,8 @@
 <title>Replace Callbacks with Ecto.Multi</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -132,69 +133,65 @@ These side effects need to be predictable and reliable. Often, they&rsquo;re som
 </blockquote>
 
 <p>One of the ways you can do this is by building simple &ldquo;Service&rdquo; modules around <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a>.<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> Since business logic usually revolves around an <a href="https://hexdocs.pm/ecto/Ecto.Schema.html">Ecto.Schema</a>, I often name service modules after the schema they interact with, such as <code>UserService</code> or <code>PostService</code>.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.UserService</span> <span class="k">do</span>
+  <span class="kn">alias</span> <span class="nc">MyApp</span><span class="o">.</span><span class="p">{</span><span class="nc">Mailer</span><span class="p">,</span> <span class="nc">NotificationEmail</span><span class="p">}</span>
+  <span class="kn">alias</span> <span class="nc">Ecto.Multi</span>
 
-<pre><code class="language-elixir">defmodule MyApp.UserService do
-  alias MyApp.{Mailer, NotificationEmail}
-  alias Ecto.Multi
+  <span class="kd">def</span> <span class="n">insert</span><span class="p">(</span><span class="n">user_changeset</span><span class="p">)</span> <span class="k">do</span>
+    <span class="nc">Multi</span><span class="o">.</span><span class="n">new</span>
+    <span class="o">|&gt;</span> <span class="nc">Multi</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="n">user_changeset</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="nc">Multi</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="ss">:notify_admin</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">notify_admin</span><span class="o">/</span><span class="mi">1</span><span class="p">)</span>
+  <span class="k">end</span>
 
-  def insert(user_changeset) do
-    Multi.new
-    |&gt; Multi.insert(:user, user_changeset)
-    |&gt; Multi.run(:notify_admin, &amp;notify_admin/1)
-  end
-
-  defp notify_admin(%{user: user}) do
-    user
-    |&gt; NotificationEmail.notify_admin
-    |&gt; Mailer.deliver
-  end
-end
-</code></pre>
+  <span class="kd">defp</span> <span class="n">notify_admin</span><span class="p">(%{</span><span class="ss">user</span><span class="p">:</span> <span class="n">user</span><span class="p">})</span> <span class="k">do</span>
+    <span class="n">user</span>
+    <span class="o">|&gt;</span> <span class="nc">NotificationEmail</span><span class="o">.</span><span class="n">notify_admin</span>
+    <span class="o">|&gt;</span> <span class="nc">Mailer</span><span class="o">.</span><span class="n">deliver</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>I often name the service module functions after the operations they enhance, such as <code>insert</code>, <code>update</code>, or <code>delete</code>. Of course, there&rsquo;s nothing preventing you from using other names for more custom functionality.</p>
 
 <p>As you can see in the example above, <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a> allows us to encapsulate our business logic into a struct which can then be passed around, appended to, and run as a database transaction.</p>
 
 <p>We can add arbitrary functions to the <code>Multi</code> operation, such as <code>notify_admin/1</code> which will cause the transaction to rollback if they return <code>{:error, ...}</code>. We can then call the whole thing with <code>Repo.transaction/1</code>:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">result</span> <span class="o">=</span>
+  <span class="p">%</span><span class="nc">User</span><span class="p">{}</span>
+  <span class="o">|&gt;</span> <span class="nc">User</span><span class="o">.</span><span class="n">changeset</span><span class="p">(</span><span class="n">user_params</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="nc">UserService</span><span class="o">.</span><span class="n">insert</span>
+  <span class="o">|&gt;</span> <span class="nc">Repo</span><span class="o">.</span><span class="n">transaction</span>
 
-<pre><code class="language-elixir">result =
-  %User{}
-  |&gt; User.changeset(user_params)
-  |&gt; UserService.insert
-  |&gt; Repo.transaction
-
-case result do
-  {:ok, %{user: user}} -&gt;
-    # handle success
-  {:error, :notify_admin, _failed_value, _changes_so_far} -&gt;
-    # handle the case that the email didn't send
-  {:error, _failed_operation, _failed_value, _changes_so_far} -&gt;
-    # handle the generic error case
-end
-</code></pre>
+<span class="k">case</span> <span class="n">result</span> <span class="k">do</span>
+  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">user</span><span class="p">:</span> <span class="n">user</span><span class="p">}}</span> <span class="o">-&gt;</span>
+    <span class="c1"># handle success</span>
+  <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="ss">:notify_admin</span><span class="p">,</span> <span class="n">_failed_value</span><span class="p">,</span> <span class="n">_changes_so_far</span><span class="p">}</span> <span class="o">-&gt;</span>
+    <span class="c1"># handle the case that the email didn&#39;t send</span>
+  <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_failed_operation</span><span class="p">,</span> <span class="n">_failed_value</span><span class="p">,</span> <span class="n">_changes_so_far</span><span class="p">}</span> <span class="o">-&gt;</span>
+    <span class="c1"># handle the generic error case</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The error states are very detailed and allow you to be as specific or general as you want to be with your error handling.</p>
 
 <p>Since each service function returns an <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a>, services can be chained together to execute as a single database transaction: <sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">user_operation</span> <span class="o">=</span> <span class="nc">UserService</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+<span class="n">log_operation</span> <span class="o">=</span> <span class="nc">LogService</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
 
-<pre><code class="language-elixir">user_operation = UserService.insert(user)
-log_operation = LogService.insert(user)
-
-user_operation
-|&gt; Multi.append(log_operation)
-|&gt; Repo.transaction
-</code></pre>
+<span class="n">user_operation</span>
+<span class="o">|&gt;</span> <span class="nc">Multi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_operation</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="nc">Repo</span><span class="o">.</span><span class="n">transaction</span>
+</code></pre></div>
 
 <p><a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a> structs are also inspectable using <code>Ecto.Multi.to_list/1</code>. This makes them pretty easy to unit test.</p>
-
-<pre><code class="language-elixir">user
-|&gt; UserService.insert
-|&gt; Multi.to_list
-# =&gt; [
-#   {:user, {:insert, user, []}}
-#   {:notify_admin, {:run, fun, []}}
-# ]
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">user</span>
+<span class="o">|&gt;</span> <span class="nc">UserService</span><span class="o">.</span><span class="n">insert</span>
+<span class="o">|&gt;</span> <span class="nc">Multi</span><span class="o">.</span><span class="n">to_list</span>
+<span class="c1"># =&gt; [</span>
+<span class="c1">#   {:user, {:insert, user, []}}</span>
+<span class="c1">#   {:notify_admin, {:run, fun, []}}</span>
+<span class="c1"># ]</span>
+</code></pre></div>
 
 <p>There are at least several other advantages to having a service layer built around <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a>:</p>
 
@@ -211,61 +208,58 @@ user_operation
 <p>For <code>before_create</code> or <code>before_update</code> logic, update your schema&rsquo;s changeset function(s) rather than using a service. Usually, this type of business logic only affects data, so it&rsquo;s a natural fit for your changeset function.</p>
 
 <p>For example, if we want to automatically promote or demote articles to our home page based on a <code>like_count</code> field, we could do that with changeset functions like so:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">changeset</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">schema</span>
+  <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">promote_popular</span>
+<span class="k">end</span>
 
-<pre><code class="language-elixir">def changeset(schema, params) do
-  schema
-  |&gt; cast(params)
-  |&gt; promote_popular
-end
-
-defp promote_popular(changeset) do
-  if get_field(changeset, :like_count) &gt; 1000 do
-    put_change(changeset, :promoted, true)
-  else
-    put_change(changeset, :promoted, false)
-  end
-end
-</code></pre>
+<span class="kd">defp</span> <span class="n">promote_popular</span><span class="p">(</span><span class="n">changeset</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">if</span> <span class="n">get_field</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:like_count</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1000</span> <span class="k">do</span>
+    <span class="n">put_change</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:promoted</span><span class="p">,</span> <span class="no">true</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="n">put_change</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:promoted</span><span class="p">,</span> <span class="no">false</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Or if we wanted to automatically encrypt a user&rsquo;s password:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">changeset</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">schema</span>
+  <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">validate_required</span><span class="p">([</span><span class="ss">:password</span><span class="p">])</span>
+  <span class="o">|&gt;</span> <span class="n">validate_confirmation</span><span class="p">(</span><span class="ss">:password</span><span class="p">)</span>
+  <span class="o">|&gt;</span> <span class="n">encrypt_password</span>
+<span class="k">end</span>
 
-<pre><code class="language-elixir">def changeset(schema, params) do
-  schema
-  |&gt; cast(params)
-  |&gt; validate_required([:password])
-  |&gt; validate_confirmation(:password)
-  |&gt; encrypt_password
-end
+<span class="kd">defp</span> <span class="n">encrypt_password</span><span class="p">(</span><span class="n">changeset</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">password</span> <span class="o">=</span> <span class="n">get_change</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:password</span><span class="p">)</span>
 
-defp encrypt_password(changeset) do
-  password = get_change(changeset, :password)
-
-  if password do
-    encrypted = Comeonin.Bcrypt.hashpwsalt(password)
-    changeset
-    |&gt; put_change(:encrypted_password, encrypted)
-    |&gt; delete_change(:password)
-    |&gt; delete_change(:password_confirmation)
-  else
-    changeset
-  end
-end
-</code></pre>
+  <span class="k">if</span> <span class="n">password</span> <span class="k">do</span>
+    <span class="n">encrypted</span> <span class="o">=</span> <span class="nc">Comeonin.Bcrypt</span><span class="o">.</span><span class="n">hashpwsalt</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+    <span class="n">changeset</span>
+    <span class="o">|&gt;</span> <span class="n">put_change</span><span class="p">(</span><span class="ss">:encrypted_password</span><span class="p">,</span> <span class="n">encrypted</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">delete_change</span><span class="p">(</span><span class="ss">:password</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">delete_change</span><span class="p">(</span><span class="ss">:password_confirmation</span><span class="p">)</span>
+  <span class="k">else</span>
+    <span class="n">changeset</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>For <code>after_create</code> or <code>after_update</code> logic, use an <a href="https://hexdocs.pm/ecto/Ecto.Multi.html">Ecto.Multi</a> service. This logic usually has to do with other database tables or external side effects, and therefore is a good fit for a service module. The documentation provides a good example:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">UserService</span> <span class="k">do</span>
+  <span class="kn">alias</span> <span class="nc">Ecto.Multi</span>
+  <span class="kn">import</span> <span class="nc">Ecto</span>
 
-<pre><code class="language-elixir">defmodule UserService do
-  alias Ecto.Multi
-  import Ecto
-
-  def password_reset(account, params) do
-    Multi.new
-    |&gt; Multi.update(:account, Account.password_reset_changeset(account, params))
-    |&gt; Multi.insert(:log, Log.password_reset_changeset(account, params))
-    |&gt; Multi.delete_all(:sessions, assoc(account, :sessions))
-  end
-end
-</code></pre>
+  <span class="kd">def</span> <span class="n">password_reset</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="nc">Multi</span><span class="o">.</span><span class="n">new</span>
+    <span class="o">|&gt;</span> <span class="nc">Multi</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="ss">:account</span><span class="p">,</span> <span class="nc">Account</span><span class="o">.</span><span class="n">password_reset_changeset</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+    <span class="o">|&gt;</span> <span class="nc">Multi</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="ss">:log</span><span class="p">,</span> <span class="nc">Log</span><span class="o">.</span><span class="n">password_reset_changeset</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+    <span class="o">|&gt;</span> <span class="nc">Multi</span><span class="o">.</span><span class="n">delete_all</span><span class="p">(</span><span class="ss">:sessions</span><span class="p">,</span> <span class="n">assoc</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="ss">:sessions</span><span class="p">))</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The only important convention for service modules is that they return an Ecto.Multi structs: what you name the modules and functions themselves is much less important. Do what makes sense for your application.</p>
 
@@ -407,8 +401,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

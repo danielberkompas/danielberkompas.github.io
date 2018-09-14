@@ -10,7 +10,8 @@
 <title>Fixtures for Ecto</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -40,7 +41,7 @@
 
 <meta itemprop="datePublished" content="2015-07-16T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2015-07-16T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="866">
+<meta itemprop="wordCount" content="865">
 
 
 
@@ -110,105 +111,96 @@
 <p><strong>Fourth, YAML is a bad DSL.</strong> Why write data for your ActiveRecord models in YAML? Why not just explicitly call <code>Model.create</code>? Rails itself acknowledges that YAML is a bad DSL by making the <code>db/seeds.rb</code> file a plain Ruby file where you use <code>Model.create</code> to create data. (The dichotomy between the fixtures YAML and the seeds.rb file confuses every Rails newbie I&rsquo;ve taught!)</p>
 
 <p>How exactly is this:</p>
-
-<pre><code class="language-yaml">daniel:
-  name: &quot;Daniel Berkompas&quot;
-  email: &quot;test@example.com&quot;
-</code></pre>
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span></span><span class="l l-Scalar l-Scalar-Plain">daniel</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&quot;Daniel</span><span class="nv"> </span><span class="s">Berkompas&quot;</span>
+  <span class="l l-Scalar l-Scalar-Plain">email</span><span class="p p-Indicator">:</span> <span class="s">&quot;test@example.com&quot;</span>
+</code></pre></div>
 
 <p>Better than this?</p>
-
-<pre><code class="language-ruby">User.create name: &quot;Daniel Berkompas&quot;, email: &quot;test@example.com&quot;
-</code></pre>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span></span><span class="no">User</span><span class="o">.</span><span class="n">create</span> <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;Daniel Berkompas&quot;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span>
+</code></pre></div>
 
 <p>Of course, the reason Rails does this is because inserting a row through ActiveRecord is <em>slow</em>, and since all the data has to be inserted before <em>every</em> test, fixtures would slow down your test suite a lot if it went through ActiveRecord.</p>
 
 <h2 id="factory-girl">Factory Girl</h2>
 
 <p>Many Rails developers use <a href="https://github.com/thoughtbot/factory_girl">FactoryGirl</a> instead of Rails&rsquo; built in fixtures. Using FactoryGirl, you define your fixtures using a DSL in Ruby files under <code>factories/model_name.rb</code>.</p>
-
-<pre><code class="language-ruby">FactoryGirl.define do
-  factory :user do
-    name &quot;Daniel Berkompas&quot;
-    email &quot;test@example.com&quot;
-  end
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span></span><span class="no">FactoryGirl</span><span class="o">.</span><span class="n">define</span> <span class="k">do</span>
+  <span class="n">factory</span> <span class="ss">:user</span> <span class="k">do</span>
+    <span class="nb">name</span> <span class="s2">&quot;Daniel Berkompas&quot;</span>
+    <span class="n">email</span> <span class="s2">&quot;test@example.com&quot;</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Then, to create the data:</p>
-
-<pre><code class="language-ruby">user = FactoryGirl.create(:user)
-</code></pre>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span></span><span class="n">user</span> <span class="o">=</span> <span class="no">FactoryGirl</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span>
+</code></pre></div>
 
 <p>This is better than Rails&rsquo; default in several respects. The fixtures are not loaded globally, and the code is more explicit. A user knows that they need to look for &ldquo;factory&rdquo; related stuff to figure out what values <code>:user</code> has.</p>
 
 <p>However, it still has two faults which annoy me in the projects where I use it. First, since it runs through ActiveRecord, it can be very slow to insert data. Second, the DSL seems unnecessary. How is the above better than this?</p>
-
-<pre><code class="language-ruby">User.create name: &quot;Daniel Berkompas&quot;, email: &quot;test@example.com&quot;
-</code></pre>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span></span><span class="no">User</span><span class="o">.</span><span class="n">create</span> <span class="nb">name</span><span class="p">:</span> <span class="s2">&quot;Daniel Berkompas&quot;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span>
+</code></pre></div>
 
 <p>I would prefer to see the code be still more explicit, fast, and without any DSLs, so that new developers don&rsquo;t have to learn a new DSL to write tests.</p>
 
 <h2 id="fixtures-for-elixir">Fixtures for Elixir</h2>
 
 <p>I suggest that you add a simple <code>MyApp.Fixtures</code> module to your <code>test/support</code> directory in your mix project. It could look something like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.Fixtures</span> <span class="k">do</span>
+  <span class="kn">alias</span> <span class="nc">MyApp.User</span>
 
-<pre><code class="language-elixir">defmodule MyApp.Fixtures do
-  alias MyApp.User
-
-  def fixture(:user) do
-    %User{name: &quot;Daniel Berkompas&quot;, email: &quot;test@example.com&quot;}
-  end
-end
-</code></pre>
+  <span class="kd">def</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%</span><span class="nc">User</span><span class="p">{</span><span class="ss">name</span><span class="p">:</span> <span class="s2">&quot;Daniel Berkompas&quot;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>If you wanted, the <code>fixture/1</code> function could also automatically insert the <code>User</code> record by calling <code>Repo.insert!/1</code>:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.Fixtures</span> <span class="k">do</span>
+  <span class="kn">alias</span> <span class="nc">MyApp.Repo</span>
+  <span class="kn">alias</span> <span class="nc">MyApp.User</span>
 
-<pre><code class="language-elixir">defmodule MyApp.Fixtures do
-  alias MyApp.Repo
-  alias MyApp.User
-
-  def fixture(:user) do
-    Repo.insert! %User{name: &quot;Daniel Berkompas&quot;, email: &quot;test@example.com&quot;}
-  end
-end
-</code></pre>
+  <span class="kd">def</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="k">do</span>
+    <span class="nc">Repo</span><span class="o">.</span><span class="n">insert!</span> <span class="p">%</span><span class="nc">User</span><span class="p">{</span><span class="ss">name</span><span class="p">:</span> <span class="s2">&quot;Daniel Berkompas&quot;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>It&rsquo;s trivial to add support for other models, and even associations:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.Fixtures</span> <span class="k">do</span>
+  <span class="kn">alias</span> <span class="nc">MyApp.Repo</span>
+  <span class="kn">alias</span> <span class="nc">MyApp.User</span>
+  <span class="kn">alias</span> <span class="nc">MyApp.Post</span>
 
-<pre><code class="language-elixir">defmodule MyApp.Fixtures do
-  alias MyApp.Repo
-  alias MyApp.User
-  alias MyApp.Post
+  <span class="kd">def</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="k">do</span>
+    <span class="nc">Repo</span><span class="o">.</span><span class="n">insert!</span> <span class="p">%</span><span class="nc">User</span><span class="p">{</span><span class="ss">name</span><span class="p">:</span> <span class="s2">&quot;Daniel Berkompas&quot;</span><span class="p">,</span> <span class="ss">email</span><span class="p">:</span> <span class="s2">&quot;test@example.com&quot;</span><span class="p">}</span>
+  <span class="k">end</span>
 
-  def fixture(:user) do
-    Repo.insert! %User{name: &quot;Daniel Berkompas&quot;, email: &quot;test@example.com&quot;}
-  end
-
-  def fixture(:post, assoc \\ []) do
-    user = assoc[:user] || fixture(:user)
-    Repo.insert! %Post{
-      title: &quot;Fixtures for Ecto&quot;
-      user_id: user.id
-    }
-  end
-end
-</code></pre>
+  <span class="kd">def</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:post</span><span class="p">,</span> <span class="n">assoc</span> <span class="p">\\</span> <span class="p">[])</span> <span class="k">do</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">assoc</span><span class="p">[</span><span class="ss">:user</span><span class="p">]</span> <span class="o">||</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span>
+    <span class="nc">Repo</span><span class="o">.</span><span class="n">insert!</span> <span class="p">%</span><span class="nc">Post</span><span class="p">{</span>
+      <span class="ss">title</span><span class="p">:</span> <span class="s2">&quot;Fixtures for Ecto&quot;</span>
+      <span class="ss">user_id</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span>
+    <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>You can then use this <code>Fixtures</code> module in your test like so:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.MyTest</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">ExUnit.Case</span>
+  <span class="kn">import</span> <span class="nc">MyApp.Fixtures</span>
 
-<pre><code class="language-elixir">defmodule MyApp.MyTest do
-  use ExUnit.Case
-  import MyApp.Fixtures
+  <span class="n">test</span> <span class="s2">&quot;some behavior&quot;</span> <span class="k">do</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span>
+    <span class="n">post</span> <span class="o">=</span> <span class="n">fixture</span><span class="p">(</span><span class="ss">:post</span><span class="p">,</span> <span class="ss">user</span><span class="p">:</span> <span class="n">user</span><span class="p">)</span>
 
-  test &quot;some behavior&quot; do
-    user = fixture(:user)
-    post = fixture(:post, user: user)
-
-    # test logic here
-  end
-end
-</code></pre>
+    <span class="c1"># test logic here</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <h2 id="benefits">Benefits</h2>
 
@@ -347,8 +339,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

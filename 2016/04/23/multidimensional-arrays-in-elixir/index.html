@@ -10,7 +10,8 @@
 <title>Multidimensional Arrays in Elixir</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -40,7 +41,7 @@
 
 <meta itemprop="datePublished" content="2016-04-23T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2016-04-23T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="942">
+<meta itemprop="wordCount" content="940">
 
 
 
@@ -96,74 +97,67 @@
 <p><img src="/img/tic_tac_toe.png" alt="Tic-tac-toe Game Board" /></p>
 
 <p>Most programming languages would represent this Tic-tac-toe board as a multidimensional array, like this:</p>
-
-<pre><code class="language-javascript">var board = [
-  [&quot;x&quot;, &quot;o&quot;, &quot;x&quot;],
-  [&quot;x&quot;, &quot;o&quot;, &quot;o&quot;],
-  [&quot;o&quot;, &quot;x&quot;, &quot;o&quot;]
-]
-</code></pre>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span></span><span class="kd">var</span> <span class="nx">board</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">]</span>
+<span class="p">]</span>
+</code></pre></div>
 
 <p>You could then access and change squares on the board with the <code>board[x][y]</code> syntax.</p>
-
-<pre><code class="language-javascript">board[0][0] // &quot;x&quot;
-board[0][0] = &quot;o&quot;
-</code></pre>
+<div class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span></span><span class="nx">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1">// &quot;x&quot;</span>
+<span class="nx">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;o&quot;</span>
+</code></pre></div>
 
 <p>However, if you try this in Elixir, it won&rsquo;t work.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">board</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">]</span>
+<span class="p">]</span>
 
-<pre><code class="language-elixir">board = [
-  [&quot;x&quot;, &quot;o&quot;, &quot;x&quot;],
-  [&quot;x&quot;, &quot;o&quot;, &quot;o&quot;],
-  [&quot;o&quot;, &quot;x&quot;, &quot;o&quot;]
-]
+<span class="n">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<span class="o">**</span> <span class="p">(</span><span class="nc">ArgumentError</span><span class="p">)</span> <span class="n">the</span> <span class="nc">Access</span> <span class="n">calls</span> <span class="k">for</span> <span class="n">keywords</span> <span class="n">expect</span> <span class="n">the</span> <span class="n">key</span> <span class="n">to</span> <span class="n">be</span> <span class="n">an</span> <span class="n">atom</span><span class="p">,</span> <span class="ss">got</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">(</span><span class="n">elixir</span><span class="p">)</span> <span class="n">lib</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">ex</span><span class="p">:</span><span class="mi">136</span><span class="p">:</span> <span class="nc">Access</span><span class="o">.</span><span class="n">fetch</span><span class="o">/</span><span class="mi">2</span>
+    <span class="p">(</span><span class="n">elixir</span><span class="p">)</span> <span class="n">lib</span><span class="o">/</span><span class="n">access</span><span class="o">.</span><span class="n">ex</span><span class="p">:</span><span class="mi">149</span><span class="p">:</span> <span class="nc">Access</span><span class="o">.</span><span class="n">get</span><span class="o">/</span><span class="mi">3</span>
+<span class="n">i</span>
 
-board[0][0]
-** (ArgumentError) the Access calls for keywords expect the key to be an atom, got: 0
-    (elixir) lib/access.ex:136: Access.fetch/2
-    (elixir) lib/access.ex:149: Access.get/3
-i
-
-board[0][0] = &quot;y&quot;
-** (CompileError) iex:3: cannot invoke remote function Access.get/2 inside match
-    (stdlib) lists.erl:1353: :lists.mapfoldl/3
-
-</code></pre>
+<span class="n">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
+<span class="o">**</span> <span class="p">(</span><span class="nc">CompileError</span><span class="p">)</span> <span class="n">iex</span><span class="p">:</span><span class="mi">3</span><span class="p">:</span> <span class="n">cannot</span> <span class="n">invoke</span> <span class="n">remote</span> <span class="n">function</span> <span class="nc">Access</span><span class="o">.</span><span class="n">get</span><span class="o">/</span><span class="mi">2</span> <span class="n">inside</span> <span class="n">match</span>
+    <span class="p">(</span><span class="n">stdlib</span><span class="p">)</span> <span class="n">lists</span><span class="o">.</span><span class="n">erl</span><span class="p">:</span><span class="mi">1353</span><span class="p">:</span> <span class="ss">:lists</span><span class="o">.</span><span class="n">mapfoldl</span><span class="o">/</span><span class="mi">3</span>
+</code></pre></div>
 
 <p>This is for several reasons. First of all, Elixir&rsquo;s <code>[]</code> syntax is powered by the <a href="http://elixir-lang.org/docs/stable/elixir/Access.html">Access behaviour</a>, which is only implemented for maps and keyword lists. So, if you wanted to get the value of the game board at coords <code>[0,0]</code>, while representing the board as an ordinary list, you&rsquo;d need to do this:</p>
-
-<pre><code class="language-elixir">board
-|&gt; Enum.at(0)
-|&gt; Enum.at(0)
-# =&gt; &quot;x&quot;
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">board</span>
+<span class="o">|&gt;</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># =&gt; &quot;x&quot;</span>
+</code></pre></div>
 
 <p>It&rsquo;s no easier if you decide to use a multidimensional tuple to represent the board; you just have to use the <code>elem/2</code> function instead of <code>Enum.at/2</code>:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">board</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">}</span>
+<span class="p">}</span>
 
-<pre><code class="language-elixir">board = {
-  {&quot;x&quot;, &quot;o&quot;, &quot;x&quot;},
-  {&quot;x&quot;, &quot;o&quot;, &quot;o&quot;},
-  {&quot;o&quot;, &quot;x&quot;, &quot;o&quot;}
-}
-
-board
-|&gt; elem(0)
-|&gt; elem(0)
-# =&gt; &quot;x&quot;
-</code></pre>
+<span class="n">board</span>
+<span class="o">|&gt;</span> <span class="n">elem</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="n">elem</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># =&gt; &quot;x&quot;</span>
+</code></pre></div>
 
 <p>While this is a little weird, it&rsquo;s manageable for <em>reading</em> from the board. But what about <em>writing</em> to the board? That&rsquo;s where the second difficulty comes in.</p>
 
 <p>Elixir variables are <em>immutable</em>. This means that we can&rsquo;t just mutate the game board variable at the <code>[0,0]</code> coords, we have to make a modified <em>copy</em> of the entire board.</p>
 
 <p>This is easy to do in a one-dimensonal list or tuple:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="c1"># Use List.replace_at/3 for lists</span>
+<span class="n">modified</span> <span class="o">=</span> <span class="nc">List</span><span class="o">.</span><span class="n">replace_at</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
 
-<pre><code class="language-elixir"># Use List.replace_at/3 for lists
-modified = List.replace_at(list, 0, &quot;y&quot;)
-
-# And put_elem/3 for tuples
-modified = put_elem(tuple, 0, &quot;y&quot;)
-</code></pre>
+<span class="c1"># And put_elem/3 for tuples</span>
+<span class="n">modified</span> <span class="o">=</span> <span class="n">put_elem</span><span class="p">(</span><span class="n">tuple</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</code></pre></div>
 
 <p>However, it becomes pretty complicated when you need to write to a position in a nested list. In that case, you would need to:</p>
 
@@ -174,112 +168,106 @@ modified = put_elem(tuple, 0, &quot;y&quot;)
 </ol>
 
 <p>Every nested Elixir data structure has this problem, and the good news is that Elixir has macros that do all of this for you. See the <a href="http://elixir-lang.org/docs/stable/elixir/Kernel.html#put_in/2"><code>put_in</code></a> macro, for example:</p>
-
-<pre><code class="language-elixir">map = %{user: %{age: 20}}
-put_in map[:user][:age], 21
-# =&gt; %{user: %{age: 21}}
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">map</span> <span class="o">=</span> <span class="p">%{</span><span class="ss">user</span><span class="p">:</span> <span class="p">%{</span><span class="ss">age</span><span class="p">:</span> <span class="mi">20</span><span class="p">}}</span>
+<span class="n">put_in</span> <span class="n">map</span><span class="p">[</span><span class="ss">:user</span><span class="p">][</span><span class="ss">:age</span><span class="p">],</span> <span class="mi">21</span>
+<span class="c1"># =&gt; %{user: %{age: 21}}</span>
+</code></pre></div>
 
 <p>The bad news is that the <a href="http://elixir-lang.org/docs/stable/elixir/Kernel.html#put_in/2"><code>put_in</code></a> macro also relies on the <a href="http://elixir-lang.org/docs/stable/elixir/Access.html">Access behaviour</a>, and therefore only works on maps and keyword lists, not regular lists and tuples. What to do?</p>
 
 <h2 id="solution-use-a-map">Solution: Use a Map</h2>
 
 <p>We can eliminate all of these difficulties if we represent the game board as a map rather than a list or tuple.</p>
-
-<pre><code class="language-elixir">board = %{
-  0 =&gt; %{0 =&gt; &quot;x&quot;, 1 =&gt; &quot;o&quot;, 2 =&gt; &quot;x&quot;},
-  1 =&gt; %{0 =&gt; &quot;x&quot;, 1 =&gt; &quot;o&quot;, 2 =&gt; &quot;o&quot;},
-  2 =&gt; %{0 =&gt; &quot;o&quot;, 1 =&gt; &quot;x&quot;, 2 =&gt; &quot;o&quot;}
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">board</span> <span class="o">=</span> <span class="p">%{</span>
+  <span class="mi">0</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="mi">0</span> <span class="o">=&gt;</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s2">&quot;x&quot;</span><span class="p">},</span>
+  <span class="mi">1</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="mi">0</span> <span class="o">=&gt;</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s2">&quot;o&quot;</span><span class="p">},</span>
+  <span class="mi">2</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="mi">0</span> <span class="o">=&gt;</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">=&gt;</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="mi">2</span> <span class="o">=&gt;</span> <span class="s2">&quot;o&quot;</span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>The keys of each nested map are zero-indexed, just like arrays in other languages. This allows you to use the <a href="http://elixir-lang.org/docs/stable/elixir/Access.html">Access behaviour</a>:</p>
-
-<pre><code class="language-elixir">board[0][0] # =&gt; &quot;x&quot;
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># =&gt; &quot;x&quot;</span>
+</code></pre></div>
 
 <p>It also allows you to use the <a href="http://elixir-lang.org/docs/stable/elixir/Kernel.html#put_in/2"><code>put_in</code></a> macro.</p>
-
-<pre><code class="language-elixir">board = put_in board[0][0], &quot;y&quot;
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">board</span> <span class="o">=</span> <span class="n">put_in</span> <span class="n">board</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;y&quot;</span>
+</code></pre></div>
 
 <p>This is just about as user-friendly as other languages, but it is still harder to manually write this map structure than it would be to write a nested list.</p>
 
 <p>We can make the experience nicer by creating a module that can generate these maps from lists and vice versa.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">Matrix</span> <span class="k">do</span>
+  <span class="na">@moduledoc</span> <span class="sh">&quot;&quot;&quot;</span>
+<span class="sh">  Helpers for working with multidimensional lists, also called matrices.</span>
+<span class="sh">  &quot;&quot;&quot;</span>
 
-<pre><code class="language-elixir">defmodule Matrix do
-  @moduledoc &quot;&quot;&quot;
-  Helpers for working with multidimensional lists, also called matrices.
-  &quot;&quot;&quot;
+  <span class="na">@doc</span> <span class="sh">&quot;&quot;&quot;</span>
+<span class="sh">  Converts a multidimensional list into a zero-indexed map.</span>
+<span class="sh">  </span>
+<span class="sh">  </span><span class="err">##</span><span class="sh"> Example</span>
+<span class="sh">  </span>
+<span class="sh">      iex&gt; list = [[&quot;x&quot;, &quot;o&quot;, &quot;x&quot;]]</span>
+<span class="sh">      ...&gt; Matrix.from_list(list)</span>
+<span class="sh">      %{0 =&gt; %{0 =&gt; &quot;x&quot;, 1 =&gt; &quot;o&quot;, 2 =&gt; &quot;x&quot;}}</span>
+<span class="sh">  &quot;&quot;&quot;</span>
+  <span class="kd">def</span> <span class="n">from_list</span><span class="p">(</span><span class="n">list</span><span class="p">)</span> <span class="ow">when</span> <span class="n">is_list</span><span class="p">(</span><span class="n">list</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">do_from_list</span><span class="p">(</span><span class="n">list</span><span class="p">)</span>
+  <span class="k">end</span>
 
-  @doc &quot;&quot;&quot;
-  Converts a multidimensional list into a zero-indexed map.
-  
-  ## Example
-  
-      iex&gt; list = [[&quot;x&quot;, &quot;o&quot;, &quot;x&quot;]]
-      ...&gt; Matrix.from_list(list)
-      %{0 =&gt; %{0 =&gt; &quot;x&quot;, 1 =&gt; &quot;o&quot;, 2 =&gt; &quot;x&quot;}}
-  &quot;&quot;&quot;
-  def from_list(list) when is_list(list) do
-    do_from_list(list)
-  end
+  <span class="kd">defp</span> <span class="n">do_from_list</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="n">map</span> <span class="p">\\</span> <span class="p">%{},</span> <span class="n">index</span> <span class="p">\\</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="kd">defp</span> <span class="n">do_from_list</span><span class="p">([],</span> <span class="n">map</span><span class="p">,</span> <span class="n">_index</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="n">map</span>
+  <span class="kd">defp</span> <span class="n">do_from_list</span><span class="p">([</span><span class="n">h</span><span class="o">|</span><span class="n">t</span><span class="p">],</span> <span class="n">map</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">map</span> <span class="o">=</span> <span class="nc">Map</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">map</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">do_from_list</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+    <span class="n">do_from_list</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">map</span><span class="p">,</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="kd">defp</span> <span class="n">do_from_list</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">_</span><span class="p">,</span> <span class="bp">_</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="n">other</span>
 
-  defp do_from_list(list, map \\ %{}, index \\ 0)
-  defp do_from_list([], map, _index), do: map
-  defp do_from_list([h|t], map, index) do
-    map = Map.put(map, index, do_from_list(h))
-    do_from_list(t, map, index + 1)
-  end
-  defp do_from_list(other, _, _), do: other
+  <span class="na">@doc</span> <span class="sh">&quot;&quot;&quot;</span>
+<span class="sh">  Converts a zero-indexed map into a multidimensional list.</span>
+<span class="sh">  </span>
+<span class="sh">  </span><span class="err">##</span><span class="sh"> Example</span>
+<span class="sh">  </span>
+<span class="sh">      iex&gt; matrix = %{0 =&gt; %{0 =&gt; &quot;x&quot;, 1 =&gt; &quot;o&quot;, 2 =&gt; &quot;x&quot;}}</span>
+<span class="sh">      ...&gt; Matrix.to_list(matrix)</span>
+<span class="sh">      [[&quot;x&quot;, &quot;o&quot;, &quot;x&quot;]]</span>
+<span class="sh">  &quot;&quot;&quot;</span>
+  <span class="kd">def</span> <span class="n">to_list</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="ow">when</span> <span class="n">is_map</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">do_to_list</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+  <span class="k">end</span>
 
-  @doc &quot;&quot;&quot;
-  Converts a zero-indexed map into a multidimensional list.
-  
-  ## Example
-  
-      iex&gt; matrix = %{0 =&gt; %{0 =&gt; &quot;x&quot;, 1 =&gt; &quot;o&quot;, 2 =&gt; &quot;x&quot;}}
-      ...&gt; Matrix.to_list(matrix)
-      [[&quot;x&quot;, &quot;o&quot;, &quot;x&quot;]]
-  &quot;&quot;&quot;
-  def to_list(matrix) when is_map(matrix) do
-    do_to_list(matrix)
-  end
-
-  defp do_to_list(matrix) when is_map(matrix) do
-    for {_index, value} &lt;- matrix,
-        into: [],
-        do: do_to_list(value)
-  end
-  defp do_to_list(other), do: other
-end
-</code></pre>
+  <span class="kd">defp</span> <span class="n">do_to_list</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="ow">when</span> <span class="n">is_map</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">for</span> <span class="p">{</span><span class="n">_index</span><span class="p">,</span> <span class="n">value</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">matrix</span><span class="p">,</span>
+        <span class="ss">into</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="ss">do</span><span class="p">:</span> <span class="n">do_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="kd">defp</span> <span class="n">do_to_list</span><span class="p">(</span><span class="n">other</span><span class="p">),</span> <span class="ss">do</span><span class="p">:</span> <span class="n">other</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <h2 id="conclusion">Conclusion</h2>
 
 <p>With the <code>Matrix</code> module in place, we can now manipulate multidimensional arrays just as well as other languages: <sup class="footnote-ref" id="fnref:memory"><a href="#fn:memory">1</a></sup></p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="c1"># Create the game board</span>
+<span class="n">board</span> <span class="o">=</span> <span class="nc">Matrix</span><span class="o">.</span><span class="n">from_list</span><span class="p">([</span>
+  <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">],</span>
+  <span class="p">[</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">]</span>
+<span class="p">])</span>
 
-<pre><code class="language-elixir"># Create the game board
-board = Matrix.from_list([
-  [&quot;x&quot;, &quot;o&quot;, &quot;x&quot;],
-  [&quot;x&quot;, &quot;o&quot;, &quot;o&quot;],
-  [&quot;o&quot;, &quot;x&quot;, &quot;o&quot;]
-])
+<span class="c1"># Access a value with coords</span>
+<span class="n">board</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># =&gt; &quot;o&quot;</span>
 
-# Access a value with coords
-board[1][2] # =&gt; &quot;o&quot;
+<span class="c1"># Update the value at coords</span>
+<span class="n">board</span> <span class="o">=</span> <span class="n">put_in</span> <span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;x&quot;</span>
 
-# Update the value at coords
-board = put_in board[2][0], &quot;x&quot;
-
-# Get a multidimensional list back:
-Matrix.to_list(board)
-# [
-#   [&quot;x&quot;, &quot;o&quot;, &quot;x&quot;],
-#   [&quot;x&quot;, &quot;o&quot;, &quot;o&quot;],
-#   [&quot;x&quot;, &quot;x&quot;, &quot;o&quot;]
-# ]
-</code></pre>
+<span class="c1"># Get a multidimensional list back:</span>
+<span class="nc">Matrix</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+<span class="c1"># [</span>
+<span class="c1">#   [&quot;x&quot;, &quot;o&quot;, &quot;x&quot;],</span>
+<span class="c1">#   [&quot;x&quot;, &quot;o&quot;, &quot;o&quot;],</span>
+<span class="c1">#   [&quot;x&quot;, &quot;x&quot;, &quot;o&quot;]</span>
+<span class="c1"># ]</span>
+</code></pre></div>
 
 <p>It would be nice if something like this was included in the standard library, but perhaps it isn&rsquo;t a common enough problem. Anyway, I hope it was helpful!</p>
 <div class="footnotes">
@@ -413,8 +401,7 @@ Matrix.to_list(board)
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

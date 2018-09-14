@@ -10,7 +10,8 @@
 <title>Manage Environment Variables in Elixir</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -102,28 +103,25 @@ I&rsquo;m currently developing a Twilio API client for Elixir. While I develop a
 <p></p>
 
 <p>Because I needed to have separate configuration files for each environment, so that I could test with different credentials, I set up <code>config/config.exs</code> like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kn">use</span> <span class="nc">Mix.Config</span>
 
-<pre><code class="language-elixir">use Mix.Config
-
-import_config &quot;#{Mix.env}.exs&quot;
-</code></pre>
+<span class="n">import_config</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="nc">Mix</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2">.exs&quot;</span>
+</code></pre></div>
 
 <p>I then created <code>config/development.exs</code> and <code>config/test.exs</code> files to store environment-specific settings.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="c1"># config/development.exs</span>
+<span class="kn">use</span> <span class="nc">Mix.Config</span>
 
-<pre><code class="language-elixir"># config/development.exs
-use Mix.Config
-
-config :ex_twilio, account_sid: &quot;SID HERE&quot;
-config :ex_twilio, auth_token:  &quot;TOKEN HERE&quot;
-</code></pre>
+<span class="n">config</span> <span class="ss">:ex_twilio</span><span class="p">,</span> <span class="ss">account_sid</span><span class="p">:</span> <span class="s2">&quot;SID HERE&quot;</span>
+<span class="n">config</span> <span class="ss">:ex_twilio</span><span class="p">,</span> <span class="ss">auth_token</span><span class="p">:</span>  <span class="s2">&quot;TOKEN HERE&quot;</span>
+</code></pre></div>
 
 <p>But I&rsquo;m going to be pushing this project to Github when it&rsquo;s ready, so I don&rsquo;t want to store my real credentials here. Instead, I want to use <code>ENV</code> variables. So, I update my <code>config/&lt;environment&gt;.exs</code> files to look like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kn">use</span> <span class="nc">Mix.Config</span>
 
-<pre><code class="language-elixir">use Mix.Config
-
-config :ex_twilio, account_sid: System.get_env(&quot;TWILIO_ACCOUNT_SID&quot;)
-config :ex_twilio, auth_token:  System.get_env(&quot;TWILIO_AUTH_TOKEN&quot;)
-</code></pre>
+<span class="n">config</span> <span class="ss">:ex_twilio</span><span class="p">,</span> <span class="ss">account_sid</span><span class="p">:</span> <span class="nc">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="s2">&quot;TWILIO_ACCOUNT_SID&quot;</span><span class="p">)</span>
+<span class="n">config</span> <span class="ss">:ex_twilio</span><span class="p">,</span> <span class="ss">auth_token</span><span class="p">:</span>  <span class="nc">System</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="s2">&quot;TWILIO_AUTH_TOKEN&quot;</span><span class="p">)</span>
+</code></pre></div>
 
 <p>After trying a variety of different solutions, it seems like the best way currently to get these variables to be set is to create a <code>.env</code> file in your project directory:</p>
 
@@ -254,8 +252,7 @@ export TWILIO_AUTH_TOKEN=&quot;&lt;TOKEN HERE&gt;&quot;
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

@@ -10,7 +10,8 @@
 <title>Better Pipelines with Monadex</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -106,48 +107,45 @@ The Problem: Network Requests I&rsquo;m building a Phoenix app where people can 
 <h2 id="the-pipeline-operator-isn-t-enough">The Pipeline Operator Isn&rsquo;t Enough</h2>
 
 <p>I started out with a naive solution, using Elixir&rsquo;s normally adequate pipe operator to tie the steps together:</p>
-
-<pre><code class="language-elixir">result = user
-         |&gt; assert_not_purchased_yet
-         |&gt; create_stripe_customer(stripe_token) # From Stripe.js
-         |&gt; create_stripe_charge
-         |&gt; update_database
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">user</span>
+         <span class="o">|&gt;</span> <span class="n">assert_not_purchased_yet</span>
+         <span class="o">|&gt;</span> <span class="n">create_stripe_customer</span><span class="p">(</span><span class="n">stripe_token</span><span class="p">)</span> <span class="c1"># From Stripe.js</span>
+         <span class="o">|&gt;</span> <span class="n">create_stripe_charge</span>
+         <span class="o">|&gt;</span> <span class="n">update_database</span>
+</code></pre></div>
 
 <p>The obvious problem with this is that regardless of the result of each function, the next function will be called. For example, <code>create_stripe_charge/1</code> will still run even if <code>create_stripe_customer/2</code> failed.</p>
 
 <p>I can work around this by making each function return either <code>{:ok, state}</code> or <code>{:error, reason}</code>. If a function gets <code>{:error, reason}</code>, it should do nothing, which would have the same result as if it wasn&rsquo;t called at all.</p>
 
 <p>Here&rsquo;s how that looks:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">create_stripe_customer</span><span class="p">({</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">state</span><span class="p">},</span> <span class="n">stripe_token</span><span class="p">)</span> <span class="k">do</span>
+  <span class="c1"># Create Stripe customer, return {:ok, state} or {:error, reason}</span>
+<span class="k">end</span>
+<span class="kd">def</span> <span class="n">create_stripe_customer</span><span class="p">({</span><span class="ss">:error</span><span class="p">,</span> <span class="bp">_</span><span class="p">}</span> <span class="o">=</span> <span class="n">error</span><span class="p">,</span> <span class="n">_stripe_token</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">error</span> <span class="c1"># just return the error</span>
+<span class="k">end</span>
 
-<pre><code class="language-elixir">def create_stripe_customer({:ok, state}, stripe_token) do
-  # Create Stripe customer, return {:ok, state} or {:error, reason}
-end
-def create_stripe_customer({:error, _} = error, _stripe_token) do
-  error # just return the error
-end
-
-def create_stripe_charge({:ok, state}) do
-  # Create stripe charge, return {:ok, state} or {:error, reason}
-end
-def create_stripe_charge({:error, _} = error) do
-  error
-end
-</code></pre>
+<span class="kd">def</span> <span class="n">create_stripe_charge</span><span class="p">({</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">state</span><span class="p">})</span> <span class="k">do</span>
+  <span class="c1"># Create stripe charge, return {:ok, state} or {:error, reason}</span>
+<span class="k">end</span>
+<span class="kd">def</span> <span class="n">create_stripe_charge</span><span class="p">({</span><span class="ss">:error</span><span class="p">,</span> <span class="bp">_</span><span class="p">}</span> <span class="o">=</span> <span class="n">error</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">error</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>This way, if <code>create_stripe_customer/2</code> returns an error, then <code>create_stripe_charge/1</code> will do nothing. We can repeat this pattern all the way down the chain, and pipeline will then look something like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">user</span>
+         <span class="o">|&gt;</span> <span class="n">assert_not_purchased_yet</span>
+         <span class="o">|&gt;</span> <span class="n">create_stripe_customer</span><span class="p">(</span><span class="n">stripe_token</span><span class="p">)</span> <span class="c1"># From Stripe.js</span>
+         <span class="o">|&gt;</span> <span class="n">create_stripe_charge</span>
+         <span class="o">|&gt;</span> <span class="n">update_database</span>
 
-<pre><code class="language-elixir">result = user
-         |&gt; assert_not_purchased_yet
-         |&gt; create_stripe_customer(stripe_token) # From Stripe.js
-         |&gt; create_stripe_charge
-         |&gt; update_database
-
-case result do
-  {:ok, state}     -&gt; # Display success to user
-  {:error, reason} -&gt; # Display error reason to user
-end
-</code></pre>
+<span class="k">case</span> <span class="n">result</span> <span class="k">do</span>
+  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>     <span class="o">-&gt;</span> <span class="c1"># Display success to user</span>
+  <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">reason</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="c1"># Display error reason to user</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>This works, but it isn&rsquo;t very elegant. I have to add a new function definition for each function in the pipeline to handle the error case.</p>
 
@@ -156,91 +154,86 @@ end
 <p>I knew enough about monads at this point to vaguely understand that they are a bit like pipelines. Maybe there was a kind of monad that could make this better?</p>
 
 <p>It turns out that there is. The excellent <a href="https://github.com/rob-brown/MonadEx">Monadex</a> library for Elixir provides just what I needed, the <code>Monad.Result</code> monad. Rather than talk theory, let&rsquo;s just look at how we use this thing:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.Purchase</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">Monad.Operators</span> <span class="c1"># Brings in the ~&gt;&gt; bind operator</span>
 
-<pre><code class="language-elixir">defmodule MyApp.Purchase do
-  use Monad.Operators # Brings in the ~&gt;&gt; bind operator
+  <span class="c1"># Import functions from the Monad.Result module.</span>
+  <span class="c1"># These will be used to wrap the state that we pass through</span>
+  <span class="c1"># all of our functions.</span>
+  <span class="kn">import</span> <span class="nc">Monad.Result</span><span class="p">,</span> <span class="ss">only</span><span class="p">:</span> <span class="p">[</span><span class="ss">success?</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                              <span class="ss">unwrap!</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                              <span class="ss">success</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                              <span class="ss">error</span><span class="p">:</span> <span class="mi">1</span><span class="p">]</span>
 
-  # Import functions from the Monad.Result module.
-  # These will be used to wrap the state that we pass through
-  # all of our functions.
-  import Monad.Result, only: [success?: 1,
-                              unwrap!: 1,
-                              success: 1,
-                              error: 1]
+  <span class="kd">def</span> <span class="n">create</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">stripe_token</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="c1"># Wrap user with the &quot;success&quot; monad state</span>
+             <span class="o">~&gt;&gt;</span> <span class="k">fn</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">assert_not_purchased_yet</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="k">end</span>
+             <span class="o">~&gt;&gt;</span> <span class="k">fn</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">create_stripe_customer</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">stripe_token</span><span class="p">)</span> <span class="k">end</span>
+             <span class="o">~&gt;&gt;</span> <span class="k">fn</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">create_stripe_charge</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="k">end</span>
+             <span class="o">~&gt;&gt;</span> <span class="k">fn</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">update_database</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="k">end</span>
 
-  def create(user, stripe_token) do
-    result = success(user) # Wrap user with the &quot;success&quot; monad state
-             ~&gt;&gt; fn user -&gt; assert_not_purchased_yet(user) end
-             ~&gt;&gt; fn user -&gt; create_stripe_customer(user, stripe_token) end
-             ~&gt;&gt; fn user -&gt; create_stripe_charge(user) end
-             ~&gt;&gt; fn user -&gt; update_database(user) end
+    <span class="k">if</span> <span class="n">success?</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1"># %Monad.Result{type: :success, value: user}</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="n">unwrap!</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="c1"># Same as result.value</span>
+      <span class="c1"># Display success to user</span>
+    <span class="k">else</span>
+      <span class="c1"># Display error to user</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 
-    if success?(result) # %Monad.Result{type: :success, value: user}
-      value = unwrap!(result) # Same as result.value
-      # Display success to user
-    else
-      # Display error to user
-    end
-  end
-
-  # ...
-end
-</code></pre>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>First, we <code>use</code> the <code>Monad.Operators</code> module. This brings in the <code>~&gt;&gt;</code> operator which we&rsquo;ll get to in a minute. Next, we import most of the functions from <code>Monad.Result</code>.</p>
 
 <p>Underneath the hood, a <code>Monad.Result</code> is just a struct that wraps state, not all that different from a <code>{:ok, state}</code> or <code>{:error, reason}</code> tuple.</p>
-
-<pre><code class="language-elixir">%Monad.Result{type: :error | :success, value: state}
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="p">%</span><span class="nc">Monad.Result</span><span class="p">{</span><span class="ss">type</span><span class="p">:</span> <span class="ss">:error</span> <span class="o">|</span> <span class="ss">:success</span><span class="p">,</span> <span class="ss">value</span><span class="p">:</span> <span class="n">state</span><span class="p">}</span>
+</code></pre></div>
 
 <p>So, the first thing we do is wrap our state, the <code>user</code> variable, with a
 <code>Monad.Result</code> struct. Since this is the first part of our pipeline, we&rsquo;ll start with a <code>:success</code> struct.</p>
-
-<pre><code class="language-elixir">success(user) # =&gt; %Monad.Result{type: :success, value: user}
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="c1"># =&gt; %Monad.Result{type: :success, value: user}</span>
+</code></pre></div>
 
 <p>The <code>~&gt;&gt;</code> operator, when used with the <code>Monad.Result</code> monad, will ensure that the next function in the pipeline only runs if the previous one returned a <code>:success</code> result. Otherwise, it terminates immediately and returns the last <code>Monad.Result</code> that was returned.</p>
 
 <p>If we use a <code>~&gt;&gt;</code> pipeline instead of the regular <code>|&gt;</code> pipeline, our functions can then look like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">assert_not_purchased_yet</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="n">purchased?</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">true</span>  <span class="o">-&gt;</span> <span class="n">error</span><span class="p">(</span><span class="s2">&quot;Already purchased.&quot;</span><span class="p">)</span>
+    <span class="no">false</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="c1"># Return whatever state the next function needs</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 
-<pre><code class="language-elixir">def assert_not_purchased_yet(user) do
-  case purchased?(user) do
-    true  -&gt; error(&quot;Already purchased.&quot;)
-    false -&gt; success(user) # Return whatever state the next function needs
-  end
-end
+<span class="kd">def</span> <span class="n">create_stripe_customer</span><span class="p">(%{</span><span class="ss">stripe_customer_id</span><span class="p">:</span> <span class="n">id</span><span class="p">}</span> <span class="o">=</span> <span class="n">user</span><span class="p">)</span> <span class="ow">when</span> <span class="n">id</span> <span class="o">!=</span> <span class="no">nil</span> <span class="k">do</span>
+  <span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="c1"># The user already has a stripe customer id, so do nothing</span>
+<span class="k">end</span>
+<span class="kd">def</span> <span class="n">create_stripe_customer</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">stripe_token</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="nc">Stripe.Customer</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># pseudocode</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">_customer</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">reason</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">error</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 
-def create_stripe_customer(%{stripe_customer_id: id} = user) when id != nil do
-  success(user) # The user already has a stripe customer id, so do nothing
-end
-def create_stripe_customer(user, stripe_token) do
-  case Stripe.Customer.create(user) do # pseudocode
-    {:ok, _customer} -&gt; success(user)
-    {:error, reason} -&gt; error(reason)
-  end
-end
+<span class="kd">def</span> <span class="n">create_stripe_charge</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="nc">Stripe.Charge</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">...</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># pseudocode</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">_charge</span><span class="p">}</span>   <span class="o">-&gt;</span> <span class="n">success</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">reason</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">error</span><span class="p">(</span><span class="n">reason</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
 
-def create_stripe_charge(user) do
-  case Stripe.Charge.create(...) do # pseudocode
-    {:ok, _charge}   -&gt; success(user)
-    {:error, reason} -&gt; error(reason)
-  end
-end
-
-# etc ...
-</code></pre>
+<span class="c1"># etc ...</span>
+</code></pre></div>
 
 <p>Much cleaner! Now, we&rsquo;ll only make the Stripe network calls if the previous step was successful. There&rsquo;s no nested tree of <code>if</code> statements, just a simple pipeline. And we can operate on the result of all these operations very simply:</p>
-
-<pre><code class="language-elixir">if success?(result) do
-  # Get the value out of the monad
-  value = unwrap!(result)
-  # render success
-else
-  # render error
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="k">if</span> <span class="n">success?</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="k">do</span>
+  <span class="c1"># Get the value out of the monad</span>
+  <span class="n">value</span> <span class="o">=</span> <span class="n">unwrap!</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+  <span class="c1"># render success</span>
+<span class="k">else</span>
+  <span class="c1"># render error</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <h2 id="errors-prevented">Errors Prevented</h2>
 
@@ -381,8 +374,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

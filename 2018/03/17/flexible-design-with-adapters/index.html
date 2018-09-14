@@ -10,7 +10,8 @@
 <title>Flexible Design with Adapters</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -160,61 +161,56 @@ struct to represent credit card charges.</p>
 
 <p>You&rsquo;d use these structs exclusively throughout your app, never depending on
 vendor-specific structs or types.</p>
-
-<pre><code class="language-elixir">%MyApp.Payment.Charge{
-  gateway_id: &quot;[id of charge on gateway]&quot;,
-  amount_cents: 1_000,
-  currency: &quot;usd&quot;,
-  # ...
-}
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="p">%</span><span class="nc">MyApp.Payment.Charge</span><span class="p">{</span>
+  <span class="ss">gateway_id</span><span class="p">:</span> <span class="s2">&quot;[id of charge on gateway]&quot;</span><span class="p">,</span>
+  <span class="ss">amount_cents</span><span class="p">:</span> <span class="mi">1_000</span><span class="p">,</span>
+  <span class="ss">currency</span><span class="p">:</span> <span class="s2">&quot;usd&quot;</span><span class="p">,</span>
+  <span class="c1"># ...</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>Next, you&rsquo;d identify which features you need from your vendor, and codify
 those into an <code>Adapter</code> behaviour. In this case, <code>Gateway</code> seems to be a good
 name.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.Payment.Gateway</span> <span class="k">do</span>
+  <span class="kn">alias</span> <span class="nc">MyApp.Payment</span><span class="o">.</span><span class="p">{</span><span class="nc">Charge</span><span class="p">,</span> <span class="nc">GatewayError</span><span class="p">}</span>
 
-<pre><code class="language-elixir">defmodule MyApp.Payment.Gateway do
-  alias MyApp.Payment.{Charge, GatewayError}
-
-  @callback create_charge(Charge.t) :: {:ok, Charge.t} | {:error, GatewayError.t}
-end
-</code></pre>
+  <span class="na">@callback</span> <span class="n">create_charge</span><span class="p">(</span><span class="nc">Charge</span><span class="o">.</span><span class="n">t</span><span class="p">)</span> <span class="o">::</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="nc">Charge</span><span class="o">.</span><span class="n">t</span><span class="p">}</span> <span class="o">|</span> <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="nc">GatewayError</span><span class="o">.</span><span class="n">t</span><span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>You&rsquo;d then implement that behaviour for your chosen vendor.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.Payment.StripeGateway</span> <span class="k">do</span>
+  <span class="na">@behaviour</span> <span class="nc">MyApp.Payment.Gateway</span>
 
-<pre><code class="language-elixir">defmodule MyApp.Payment.StripeGateway do
-  @behaviour MyApp.Payment.Gateway
-
-  @impl true
-  def create_charge(charge) do
-    # ...
-  end
-end
-</code></pre>
+  <span class="na">@impl</span> <span class="no">true</span>
+  <span class="kd">def</span> <span class="n">create_charge</span><span class="p">(</span><span class="n">charge</span><span class="p">)</span> <span class="k">do</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Inside your context, when you need to make a call to your vendor, you fetch
 an <code>Adapter</code> module from configuration and call it:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.Payment</span> <span class="k">do</span>
+  <span class="kd">def</span> <span class="n">create_charge</span><span class="p">(</span><span class="n">attrs</span> <span class="p">\\</span> <span class="p">%{})</span> <span class="k">do</span>
+    <span class="p">%</span><span class="nc">MyApp.Payment.Charge</span><span class="p">{}</span>
+    <span class="o">|&gt;</span> <span class="n">struct</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">gateway</span><span class="p">()</span><span class="o">.</span><span class="n">create_charge</span><span class="p">()</span>
+  <span class="k">end</span>
 
-<pre><code class="language-elixir">defmodule MyApp.Payment do
-  def create_charge(attrs \\ %{}) do
-    %MyApp.Payment.Charge{}
-    |&gt; struct(attrs)
-    |&gt; gateway().create_charge()
-  end
-
-  defp gateway do
-    :my_app
-    |&gt; Application.get_env(__MODULE__, [])
-    |&gt; Keyword.fetch!(:gateway)
-  end
-end
-</code></pre>
+  <span class="kd">defp</span> <span class="n">gateway</span> <span class="k">do</span>
+    <span class="ss">:my_app</span>
+    <span class="o">|&gt;</span> <span class="nc">Application</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="bp">__MODULE__</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="o">|&gt;</span> <span class="nc">Keyword</span><span class="o">.</span><span class="n">fetch!</span><span class="p">(</span><span class="ss">:gateway</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Finally, you&rsquo;d configure your context to use the desired <code>Adapter</code>.</p>
-
-<pre><code class="language-elixir">config :my_app, MyApp.Payment,
-  gateway: MyApp.Payment.StripeGateway
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">config</span> <span class="ss">:my_app</span><span class="p">,</span> <span class="nc">MyApp.Payment</span><span class="p">,</span>
+  <span class="ss">gateway</span><span class="p">:</span> <span class="nc">MyApp.Payment.StripeGateway</span>
+</code></pre></div>
 
 <p>Congratulations, you now have an adapter-based design!</p>
 
@@ -374,8 +370,7 @@ pattern if you want to see it in action:</p>
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

@@ -10,7 +10,8 @@
 <title>ExTwiml</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -104,37 +105,35 @@ I&rsquo;ve been toying recently ideas on how to bring next-generation Erlang (El
 <p></p>
 
 <p>It looks like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">YourModule</span> <span class="k">do</span>
+  <span class="kn">import</span> <span class="nc">ExTwiml</span>
 
-<pre><code class="language-elixir">defmodule YourModule do
-  import ExTwiml
-
-  def render do
-    twiml do
-      play &quot;/assets/welcome.mp3&quot;
-      gather digits: 4, finish_on_key: &quot;#&quot; do
-        say &quot;&quot;&quot;
-        Please enter the last four digits of your credit card number, followed
-        by the pound sign.
-        &quot;&quot;&quot;, voice: &quot;woman&quot;
-      end
-    end
-  end
-end
-</code></pre>
+  <span class="kd">def</span> <span class="n">render</span> <span class="k">do</span>
+    <span class="n">twiml</span> <span class="k">do</span>
+      <span class="n">play</span> <span class="s2">&quot;/assets/welcome.mp3&quot;</span>
+      <span class="n">gather</span> <span class="ss">digits</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="ss">finish_on_key</span><span class="p">:</span> <span class="s2">&quot;</span><span class="err">#</span><span class="s2">&quot;</span> <span class="k">do</span>
+        <span class="n">say</span> <span class="sh">&quot;&quot;&quot;</span>
+<span class="sh">        Please enter the last four digits of your credit card number, followed</span>
+<span class="sh">        by the pound sign.</span>
+<span class="sh">        &quot;&quot;&quot;</span><span class="p">,</span> <span class="ss">voice</span><span class="p">:</span> <span class="s2">&quot;woman&quot;</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Calling <code>YourModule.render</code> will return the following XML as a string:</p>
-
-<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;Response&gt;
-  &lt;Play&gt;/assets/welcome.mp3&lt;/Play&gt;
-  &lt;Gather digits=&quot;4&quot; finishOnKey=&quot;#&quot;&gt;
-    &lt;Say voice=&quot;woman&quot;&gt;
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="nt">&lt;Response&gt;</span>
+  <span class="nt">&lt;Play&gt;</span>/assets/welcome.mp3<span class="nt">&lt;/Play&gt;</span>
+  <span class="nt">&lt;Gather</span> <span class="na">digits=</span><span class="s">&quot;4&quot;</span> <span class="na">finishOnKey=</span><span class="s">&quot;#&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Say</span> <span class="na">voice=</span><span class="s">&quot;woman&quot;</span><span class="nt">&gt;</span>
       Please enter the last four digits of your credit card number, followed by
       the pound sign.
-    &lt;/Say&gt;
-  &lt;/Gather&gt;
-&lt;/Response&gt;
-</code></pre>
+    <span class="nt">&lt;/Say&gt;</span>
+  <span class="nt">&lt;/Gather&gt;</span>
+<span class="nt">&lt;/Response&gt;</span>
+</code></pre></div>
 
 <p>The library is called <a href="https://github.com/danielberkompas/ex_twiml">ExTwiml</a>. It&rsquo;s available from Github or <a href="https://hex.pm/packages/ex_twiml">Hex</a>.</p>
   </section>
@@ -259,8 +258,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

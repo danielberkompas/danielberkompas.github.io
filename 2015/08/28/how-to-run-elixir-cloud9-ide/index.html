@@ -10,7 +10,8 @@
 <title>How to Run Elixir in Cloud9&#39;s IDE</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -97,17 +98,16 @@ Cloud9 doesn&rsquo;t provide an Elixir-specific workspace template, so you have 
 <li>Select the &ldquo;Custom&rdquo; template.</li>
 <li>When the workspace loads, run the following commands in the console:</li>
 </ol>
-
-<pre><code class="language-bash"># For some reason, installing Elixir tries to remove this file
-# and if it doesn't exist, Elixir won't install. So, we create it.
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span><span class="c1"># For some reason, installing Elixir tries to remove this file</span>
+<span class="c1"># and if it doesn&#39;t exist, Elixir won&#39;t install. So, we create it.</span>
 sudo touch /etc/init.d/couchdb
 
-# Standard Ubuntu Elixir installation instructions
+<span class="c1"># Standard Ubuntu Elixir installation instructions</span>
 wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
 sudo dpkg -i erlang-solutions_1.0_all.deb
 sudo apt-get update
 sudo apt-get install elixir
-</code></pre>
+</code></pre></div>
 
 <p>With that, you&rsquo;re ready to code! <code>iex</code>, <code>elixir</code>, and <code>mix</code> should all be available, and Cloud9 has syntax coloring for Elixir code as well. Happy coding!</p>
 
@@ -233,8 +233,7 @@ sudo apt-get install elixir
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

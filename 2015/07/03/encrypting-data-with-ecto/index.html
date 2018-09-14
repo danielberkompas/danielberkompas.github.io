@@ -10,7 +10,8 @@
 <title>Encrypting Data With Ecto</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -126,47 +127,44 @@ In the future, as privacy becomes more and more of an issue, we&rsquo;re going t
 <p>Before we can encrypt anything, we&rsquo;re going to need to create a module to handle encryption and decryption. Erlang comes with a good <a href="http://www.erlang.org/doc/man/crypto.html">crypto</a> module, which will serve as our base.</p>
 
 <p>For this use case, I&rsquo;ve chosen to use AES encryption in CTR mode, but you could just as easily use any other type of encryption supported by <a href="http://www.erlang.org/doc/man/crypto.html">crypto</a>.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.AES</span> <span class="k">do</span>
+  <span class="c1"># Encrypts each plaintext with a different, random IV. This is much more</span>
+  <span class="c1"># secure than reusing the same IV, and is highly recommended.</span>
+  <span class="kd">def</span> <span class="n">encrypt</span><span class="p">(</span><span class="n">plaintext</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">iv</span>    <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">strong_rand_bytes</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="c1"># Random IVs for each encryption</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_init</span><span class="p">(</span><span class="ss">:aes_ctr</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
 
-<pre><code class="language-elixir">defmodule MyApp.AES do
-  # Encrypts each plaintext with a different, random IV. This is much more
-  # secure than reusing the same IV, and is highly recommended.
-  def encrypt(plaintext) do
-    iv    = :crypto.strong_rand_bytes(16) # Random IVs for each encryption
-    state = :crypto.stream_init(:aes_ctr, key, iv)
+    <span class="p">{</span><span class="n">_state</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_encrypt</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">to_string</span><span class="p">(</span><span class="n">plaintext</span><span class="p">))</span>
+    <span class="n">iv</span> <span class="o">&lt;&gt;</span> <span class="n">ciphertext</span> <span class="c1"># Prepend IV to ciphertext, for easier decryption</span>
+  <span class="k">end</span>
 
-    {_state, ciphertext} = :crypto.stream_encrypt(state, to_string(plaintext))
-    iv &lt;&gt; ciphertext # Prepend IV to ciphertext, for easier decryption
-  end
+  <span class="kd">def</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">ciphertext</span><span class="p">)</span> <span class="k">do</span>
+    <span class="c1"># Split the IV that was used off the front of the binary. It&#39;s the first</span>
+    <span class="c1"># 16 bytes.</span>
+    <span class="p">&lt;&lt;</span><span class="n">iv</span><span class="o">::</span><span class="n">binary</span><span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="n">ciphertext</span><span class="o">::</span><span class="n">binary</span><span class="p">&gt;&gt;</span> <span class="o">=</span> <span class="n">ciphertext</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_init</span><span class="p">(</span><span class="ss">:aes_ctr</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">iv</span><span class="p">)</span>
 
-  def decrypt(ciphertext) do
-    # Split the IV that was used off the front of the binary. It's the first
-    # 16 bytes.
-    &lt;&lt;iv::binary-16, ciphertext::binary&gt;&gt; = ciphertext
-    state = :crypto.stream_init(:aes_ctr, key, iv)
+    <span class="p">{</span><span class="n">_state</span><span class="p">,</span> <span class="n">plaintext</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:crypto</span><span class="o">.</span><span class="n">stream_decrypt</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">)</span>
+    <span class="n">plaintext</span>
+  <span class="k">end</span>
 
-    {_state, plaintext} = :crypto.stream_decrypt(state, ciphertext)
-    plaintext
-  end
-
-  # Convenience function to get the application's configuration key.
-  defp key do
-    Application.get_env(:encryption, MyApp.AES)[:key]
-  end
-end
-</code></pre>
+  <span class="c1"># Convenience function to get the application&#39;s configuration key.</span>
+  <span class="kd">defp</span> <span class="n">key</span> <span class="k">do</span>
+    <span class="nc">Application</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="ss">:encryption</span><span class="p">,</span> <span class="nc">MyApp.AES</span><span class="p">)[</span><span class="ss">:key</span><span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>The module can then be used pretty simply:</p>
-
-<pre><code class="language-elixir">MyApp.AES.encrypt(&quot;hello world!&quot;)
-|&gt; MyApp.AES.decrypt
-# =&gt; &quot;hello world!&quot;
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="nc">MyApp.AES</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="s2">&quot;hello world!&quot;</span><span class="p">)</span>
+<span class="o">|&gt;</span> <span class="nc">MyApp.AES</span><span class="o">.</span><span class="n">decrypt</span>
+<span class="c1"># =&gt; &quot;hello world!&quot;</span>
+</code></pre></div>
 
 <p>You can configure the key to use in the <code>config.exs</code> for your app:</p>
-
-<pre><code class="language-elixir">config :my_app, MyApp.AES,
-       key: :base64.decode(&quot;...&quot;), # assuming your key is in base64
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">config</span> <span class="ss">:my_app</span><span class="p">,</span> <span class="nc">MyApp.AES</span><span class="p">,</span>
+       <span class="ss">key</span><span class="p">:</span> <span class="ss">:base64</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">),</span> <span class="c1"># assuming your key is in base64</span>
+</code></pre></div>
 
 <p>Now that we have an encryptor, we can look at integrating it with Ecto.</p>
 
@@ -175,56 +173,53 @@ end
 <p>To implement transparent encryption and decryption of fields, we need to add a layer of code in Ecto&rsquo;s row insertion and loading logic, so that we can encrypt the fields on save, and decrypt them when they are read. Fortunately, Ecto has exactly what we need in <a href="http://hexdocs.pm/ecto/Ecto.Type.html">Ecto.Type</a>.</p>
 
 <p><a href="http://hexdocs.pm/ecto/Ecto.Type.html">Ecto.Type</a> lets you define custom field types for Ecto&rsquo;s <code>schema</code>, allowing you to modify the value of a field when it is loaded or saved. Here&rsquo;s a custom <code>EncryptedField</code> type:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.EncryptedField</span> <span class="k">do</span>
+  <span class="kn">import</span> <span class="nc">MyApp.AES</span>
 
-<pre><code class="language-elixir">defmodule MyApp.EncryptedField do
-  import MyApp.AES
+  <span class="c1"># Assert that this module behaves like an Ecto.Type so that the compiler can</span>
+  <span class="c1"># warn us if we forget to implement the 4 callback functions below.</span>
+  <span class="na">@behaviour</span> <span class="nc">Ecto.Type</span>
 
-  # Assert that this module behaves like an Ecto.Type so that the compiler can
-  # warn us if we forget to implement the 4 callback functions below.
-  @behaviour Ecto.Type
+  <span class="c1"># This defines the base type of this kind of field in the database.</span>
+  <span class="kd">def</span> <span class="n">type</span><span class="p">,</span> <span class="ss">do</span><span class="p">:</span> <span class="ss">:binary</span>
 
-  # This defines the base type of this kind of field in the database.
-  def type, do: :binary
+  <span class="c1"># This is called on a value in queries if it is not a string.</span>
+  <span class="kd">def</span> <span class="n">cast</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+  <span class="k">end</span>
 
-  # This is called on a value in queries if it is not a string.
-  def cast(value) do
-    {:ok, to_string(value)}
-  end
+  <span class="c1"># This is called when the field value is about to be written to the database</span>
+  <span class="kd">def</span> <span class="n">dump</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">ciphertext</span> <span class="o">=</span> <span class="n">value</span> <span class="o">|&gt;</span> <span class="n">to_string</span> <span class="o">|&gt;</span> <span class="n">encrypt</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">ciphertext</span><span class="p">}</span>
+  <span class="k">end</span>
 
-  # This is called when the field value is about to be written to the database
-  def dump(value) do
-    ciphertext = value |&gt; to_string |&gt; encrypt
-    {:ok, ciphertext}
-  end
-
-  # This is called when the field is loaded from the database
-  def load(value) do
-    {:ok, decrypt(value)}
-  end
-end
-</code></pre>
+  <span class="c1"># This is called when the field is loaded from the database</span>
+  <span class="kd">def</span> <span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">decrypt</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>We&rsquo;re almost done! Now, since the encryptor we wrote operates directly on binary, the fields we encrypt should be <code>:binary</code> fields in the database. Suppose we have an <code>Ecto.Model</code> with a binary name attribute like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.User</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">Ecto.Model</span>
 
-<pre><code class="language-elixir">defmodule MyApp.User do
-  use Ecto.Model
-
-  schema &quot;users&quot; do
-    field :name, :binary
-  end
-end
-</code></pre>
+  <span class="n">schema</span> <span class="s2">&quot;users&quot;</span> <span class="k">do</span>
+    <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:binary</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>To encrypt the name field, you just need to specify the <code>MyApp.EncryptedField</code> type instead of <code>:binary</code>:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.User</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">Ecto.Model</span>
 
-<pre><code class="language-elixir">defmodule MyApp.User do
-  use Ecto.Model
-
-  schema &quot;users&quot; do
-    field :name, MyApp.EncryptedField
-  end
-end
-</code></pre>
+  <span class="n">schema</span> <span class="s2">&quot;users&quot;</span> <span class="k">do</span>
+    <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="nc">MyApp.EncryptedField</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>That&rsquo;s it! The field will be transparently encrypted and decrypted as the model struct is saved to or loaded from the database.</p>
 
@@ -244,67 +239,64 @@ specifically <em>not</em> to produce the same ciphertext twice for security reas
 <p>So, how can you query for the email address? The answer is to <strong>add another field</strong> to the database called <code>:email_hash</code>, which will contain a <em>hash</em> of the <code>:email</code> field&rsquo;s contents. This is both secure and convenient: secure because the contents can&rsquo;t be reconstructed from a good hash; convenient, because hash algorithms produce the same result for the same plaintext every time.</p>
 
 <p>Let&rsquo;s implement another <code>Ecto.Type</code>, which will automatically hash the value of a field using the recommended SHA256 algorithm:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.HashField</span> <span class="k">do</span>
+  <span class="na">@behaviour</span> <span class="nc">Ecto.Type</span>
 
-<pre><code class="language-elixir">defmodule MyApp.HashField do
-  @behaviour Ecto.Type
+  <span class="kd">def</span> <span class="n">type</span><span class="p">,</span> <span class="ss">do</span><span class="p">:</span> <span class="ss">:binary</span>
 
-  def type, do: :binary
+  <span class="kd">def</span> <span class="n">cast</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+  <span class="k">end</span>
 
-  def cast(value) do
-    {:ok, to_string(value)}
-  end
+  <span class="kd">def</span> <span class="n">dump</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">hash</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+  <span class="k">end</span>
 
-  def dump(value) do
-    {:ok, hash(value)}
-  end
+  <span class="kd">def</span> <span class="n">load</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">value</span><span class="p">}</span>
+  <span class="k">end</span>
 
-  def load(value) do
-    {:ok, value}
-  end
-
-  def hash(value) do
-    :crypto.hash(:sha256, value)
-  end
-end
-</code></pre>
+  <span class="kd">def</span> <span class="n">hash</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+    <span class="ss">:crypto</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="ss">:sha256</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>Then, we add this field to the schema:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">MyApp.User</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">Ecto.Model</span>
 
-<pre><code class="language-elixir">defmodule MyApp.User do
-  use Ecto.Model
+  <span class="n">schema</span> <span class="s2">&quot;users&quot;</span> <span class="k">do</span>
+    <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="nc">MyApp.EncryptedField</span>
+    <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="nc">MyApp.EncryptedField</span>
+    <span class="n">field</span> <span class="ss">:email_hash</span><span class="p">,</span> <span class="nc">MyApp.HashField</span>
+  <span class="k">end</span>
 
-  schema &quot;users&quot; do
-    field :name, MyApp.EncryptedField
-    field :email, MyApp.EncryptedField
-    field :email_hash, MyApp.HashField
-  end
+  <span class="c1"># We must ensure that the email_hash field is always a hash of the same value</span>
+  <span class="c1"># held in the email field, or queries will be inaccurate.</span>
+  <span class="n">before_insert</span> <span class="ss">:set_hashed_fields</span>
+  <span class="n">before_update</span> <span class="ss">:set_hashed_fields</span>
 
-  # We must ensure that the email_hash field is always a hash of the same value
-  # held in the email field, or queries will be inaccurate.
-  before_insert :set_hashed_fields
-  before_update :set_hashed_fields
-
-  defp set_hashed_fields(changeset) do
-    changeset
-    |&gt; put_change(:email_hash, get_field(changeset, :email))
-  end
-end
-</code></pre>
+  <span class="kd">defp</span> <span class="n">set_hashed_fields</span><span class="p">(</span><span class="n">changeset</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">changeset</span>
+    <span class="o">|&gt;</span> <span class="n">put_change</span><span class="p">(</span><span class="ss">:email_hash</span><span class="p">,</span> <span class="n">get_field</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:email</span><span class="p">))</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>And now, we can easily query on the <code>:email_hash</code> field, because Ecto will automatically use our <code>HashField</code> module to convert our search term to a hash:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;test@example.com&quot;</span>
 
-<pre><code class="language-elixir">email = &quot;test@example.com&quot;
+<span class="nc">MyApp.Repo</span><span class="o">.</span><span class="n">get_by</span><span class="p">(</span><span class="nc">MyApp.User</span><span class="p">,</span> <span class="ss">email_hash</span><span class="p">:</span> <span class="n">email</span><span class="p">)</span>
+<span class="nc">MyApp.Repo</span><span class="o">.</span><span class="n">one</span><span class="p">(</span><span class="n">from</span> <span class="n">u</span> <span class="ow">in</span> <span class="nc">MyApp.User</span><span class="p">,</span> <span class="ss">where</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">email_hash</span> <span class="o">==</span> <span class="o">^</span><span class="n">email</span><span class="p">)</span>
 
-MyApp.Repo.get_by(MyApp.User, email_hash: email)
-MyApp.Repo.one(from u in MyApp.User, where: u.email_hash == ^email)
-
-# Both produce this query:
-#
-# SELECT u0.&quot;id&quot;, u0.&quot;name&quot;, u0.&quot;email&quot;, u0.&quot;email_hash&quot;, u0.&quot;inserted_at&quot;,
-# u0.&quot;updated_at&quot; FROM &quot;users&quot; AS u0 WHERE (u0.&quot;email_hash&quot; = $1) [&lt;&lt;151, 61,
-# 254, 70, 62, 200, 87, 133, 245, 249, 90, 245, 186, 57, 6, 238, 219, 45, 147,
-# 28, 36, 230, 152, 36, 168, 158, 166, 93, 186, 78, 129, 59&gt;&gt;]
-</code></pre>
+<span class="c1"># Both produce this query:</span>
+<span class="c1">#</span>
+<span class="c1"># SELECT u0.&quot;id&quot;, u0.&quot;name&quot;, u0.&quot;email&quot;, u0.&quot;email_hash&quot;, u0.&quot;inserted_at&quot;,</span>
+<span class="c1"># u0.&quot;updated_at&quot; FROM &quot;users&quot; AS u0 WHERE (u0.&quot;email_hash&quot; = $1) [&lt;&lt;151, 61,</span>
+<span class="c1"># 254, 70, 62, 200, 87, 133, 245, 249, 90, 245, 186, 57, 6, 238, 219, 45, 147,</span>
+<span class="c1"># 28, 36, 230, 152, 36, 168, 158, 166, 93, 186, 78, 129, 59&gt;&gt;]</span>
+</code></pre></div>
 
 <p>And, we&rsquo;re done!</p>
 
@@ -453,8 +445,7 @@ MyApp.Repo.one(from u in MyApp.User, where: u.email_hash == ^email)
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

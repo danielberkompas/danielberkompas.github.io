@@ -8,3 +8,7 @@ sup {
 .footnotes ol li {
   margin-bottom: 1em;
 }
+
+.post h2 {
+  margin-bottom: 20px;
+}

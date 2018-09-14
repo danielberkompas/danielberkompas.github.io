@@ -10,7 +10,8 @@
 <title>GenServers as Concurrent Objects</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -96,107 +97,98 @@
 <h2 id="a-sample-object">A Sample Object</h2>
 
 <p>In an object oriented language, such as Ruby, we might implement a <code>BankAccount</code> class like this:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span></span><span class="k">class</span> <span class="nc">BankAccount</span>
+  <span class="kp">attr_reader</span> <span class="ss">:balance</span>
 
-<pre><code class="language-ruby">class BankAccount
-  attr_reader :balance
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">starting_balance</span><span class="p">)</span>
+    <span class="vi">@balance</span> <span class="o">=</span> <span class="n">starting_balance</span>
+  <span class="k">end</span>
 
-  def initialize(starting_balance)
-    @balance = starting_balance
-  end
+  <span class="k">def</span> <span class="nf">deposit</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span>
+    <span class="vi">@balance</span> <span class="o">+=</span> <span class="n">amount</span>
+  <span class="k">end</span>
 
-  def deposit(amount)
-    @balance += amount
-  end
-
-  def withdraw(amount)
-    @balance -= amount
-  end
-end
-</code></pre>
+  <span class="k">def</span> <span class="nf">withdraw</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span>
+    <span class="vi">@balance</span> <span class="o">-=</span> <span class="n">amount</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>This class could then be used like this:</p>
-
-<pre><code class="language-ruby">account = BankAccount.new(0.0)
-account.deposit(50.0)
-account.withdraw(25.0)
-account.balance # =&gt; 25.0
-</code></pre>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span></span><span class="n">account</span> <span class="o">=</span> <span class="no">BankAccount</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">0</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">account</span><span class="o">.</span><span class="n">deposit</span><span class="p">(</span><span class="mi">50</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">account</span><span class="o">.</span><span class="n">withdraw</span><span class="p">(</span><span class="mi">25</span><span class="o">.</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">account</span><span class="o">.</span><span class="n">balance</span> <span class="c1"># =&gt; 25.0</span>
+</code></pre></div>
 
 <h2 id="a-genserver-equivalent">A GenServer Equivalent</h2>
 
 <p>In Elixir, we can implement a <code>GenServer</code> that behaves very similarly:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="c1"># Create a new GenServer process with an initial state (balance) of 0, using the</span>
+<span class="c1"># BankAccount module to process messages to the process. Returns a process ID.</span>
+<span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">account</span><span class="p">}</span> <span class="o">=</span> <span class="nc">GenServer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="nc">BankAccount</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">])</span>
 
-<pre><code class="language-elixir"># Create a new GenServer process with an initial state (balance) of 0, using the
-# BankAccount module to process messages to the process. Returns a process ID.
-{:ok, account} = GenServer.start(BankAccount, [0.0])
+<span class="c1"># Send messages to the process to deposit or withdraw amounts.</span>
+<span class="c1"># cast/2 runs asynchronously and doesn&#39;t wait for a response.</span>
+<span class="nc">GenServer</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="p">{</span><span class="ss">:deposit</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">})</span>
+<span class="nc">GenServer</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="p">{</span><span class="ss">:withdraw</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">})</span>
 
-# Send messages to the process to deposit or withdraw amounts.
-# cast/2 runs asynchronously and doesn't wait for a response.
-GenServer.cast(account, {:deposit, 50.0})
-GenServer.cast(account, {:withdraw, 25.0})
-
-# Query the process for the balance, and waits for a response.
-GenServer.call(account, :balance) # =&gt; 25.0
-</code></pre>
+<span class="c1"># Query the process for the balance, and waits for a response.</span>
+<span class="nc">GenServer</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="ss">:balance</span><span class="p">)</span> <span class="c1"># =&gt; 25.0</span>
+</code></pre></div>
 
 <p><code>GenServer</code> here will fire callbacks on the <code>BankAccount</code> module in response to the messages sent to the process.</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">defmodule</span> <span class="nc">BankAccount</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="nc">GenServer</span>
 
-<pre><code class="language-elixir">defmodule BankAccount do
-  use GenServer
+  <span class="c1"># Casts don&#39;t reply to the caller, but simply modify the state</span>
+  <span class="kd">def</span> <span class="n">handle_cast</span><span class="p">({</span><span class="ss">:deposit</span><span class="p">,</span> <span class="n">amount</span><span class="p">},</span> <span class="n">balance</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">balance</span> <span class="o">+</span> <span class="n">amount</span><span class="p">}</span>
+  <span class="k">end</span>
 
-  # Casts don't reply to the caller, but simply modify the state
-  def handle_cast({:deposit, amount}, balance) do
-    {:noreply, balance + amount}
-  end
+  <span class="kd">def</span> <span class="n">handle_cast</span><span class="p">({</span><span class="ss">:withdraw</span><span class="p">,</span> <span class="n">amount</span><span class="p">},</span> <span class="n">balance</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">balance</span> <span class="o">-</span> <span class="n">amount</span><span class="p">}</span>
+  <span class="k">end</span>
 
-  def handle_cast({:withdraw, amount}, balance) do
-    {:noreply, balance - amount}
-  end
-
-  # Calls return a value, as well as the modified state
-  def handle_call(:balance, balance) do
-    {:reply, balance, balance}
-  end
-end
-</code></pre>
+  <span class="c1"># Calls return a value, as well as the modified state</span>
+  <span class="kd">def</span> <span class="n">handle_call</span><span class="p">(</span><span class="ss">:balance</span><span class="p">,</span> <span class="n">balance</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:reply</span><span class="p">,</span> <span class="n">balance</span><span class="p">,</span> <span class="n">balance</span><span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <p>We can hide all the GenServer implementation behind a public API on the <code>BankAccount</code> module. (Not shown) Our code will then look very similar to Ruby&rsquo;s:</p>
-
-<pre><code class="language-elixir">{:ok, account} = BankAccount.start(0.0)
-BankAccount.deposit(account, 50.0)
-BankAccount.withdraw(account, 25.0)
-BankAccount.balance(account) # =&gt; 25.0
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">account</span><span class="p">}</span> <span class="o">=</span> <span class="nc">BankAccount</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="nc">BankAccount</span><span class="o">.</span><span class="n">deposit</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">)</span>
+<span class="nc">BankAccount</span><span class="o">.</span><span class="n">withdraw</span><span class="p">(</span><span class="n">account</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">)</span>
+<span class="nc">BankAccount</span><span class="o">.</span><span class="n">balance</span><span class="p">(</span><span class="n">account</span><span class="p">)</span> <span class="c1"># =&gt; 25.0</span>
+</code></pre></div>
 
 <h2 id="genserver-singletons">GenServer &ldquo;Singletons&rdquo;</h2>
 
 <p>It is possible to refer to <code>GenServer</code> processes by a name rather than by a process ID. In this case, a <code>GenServer</code> behaves more like a singleton rather than an object instance, because there is only one process running.</p>
 
 <p>This naming is accomplished by passing the <code>:name</code> option to <code>GenServer.start</code>:</p>
-
-<pre><code class="language-elixir">GenServer.start(BankAccount, [0.0], name: BankAccount)
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="nc">GenServer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="nc">BankAccount</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span> <span class="ss">name</span><span class="p">:</span> <span class="nc">BankAccount</span><span class="p">)</span>
+</code></pre></div>
 
 <p>You can then send messages to the <code>BankAccount</code> process using its name:</p>
-
-<pre><code class="language-elixir">GenServer.cast(BankAccount, {:deposit, 50.0})
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="nc">GenServer</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="nc">BankAccount</span><span class="p">,</span> <span class="p">{</span><span class="ss">:deposit</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">})</span>
+</code></pre></div>
 
 <p>If we reimplemented our <code>BankAccount</code> module as a named GenServer, (not shown) we could use it like this:</p>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="c1"># In our application initialization</span>
+<span class="nc">BankAccount</span><span class="o">.</span><span class="n">start</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])</span>
 
-<pre><code class="language-elixir"># In our application initialization
-BankAccount.start([0.0])
-
-# Then, anywhere in our code:
-BankAccount.deposit(50.0)
-BankAccount.withdraw(25.0)
-BankAccount.balance # =&gt; 25.0
-</code></pre>
+<span class="c1"># Then, anywhere in our code:</span>
+<span class="nc">BankAccount</span><span class="o">.</span><span class="n">deposit</span><span class="p">(</span><span class="mf">50.0</span><span class="p">)</span>
+<span class="nc">BankAccount</span><span class="o">.</span><span class="n">withdraw</span><span class="p">(</span><span class="mf">25.0</span><span class="p">)</span>
+<span class="nc">BankAccount</span><span class="o">.</span><span class="n">balance</span> <span class="c1"># =&gt; 25.0</span>
+</code></pre></div>
 
 <p>This <code>BankAccount</code> process can then be called from other nodes (think, microservices) in your cluster like so:</p>
-
-<pre><code class="language-elixir">GenServer.call({BankAccount, :accounts@localhost}, :balance) # =&gt; 25.0
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="nc">GenServer</span><span class="o">.</span><span class="n">call</span><span class="p">({</span><span class="nc">BankAccount</span><span class="p">,</span> <span class="ss">:accounts</span><span class="na">@localhost</span><span class="p">},</span> <span class="ss">:balance</span><span class="p">)</span> <span class="c1"># =&gt; 25.0</span>
+</code></pre></div>
 
 <p>No JSON APIs required!</p>
 
@@ -339,8 +331,7 @@ BankAccount.balance # =&gt; 25.0
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

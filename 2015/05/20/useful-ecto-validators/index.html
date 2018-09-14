@@ -10,7 +10,8 @@
 <title>Useful Ecto Validators</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -98,40 +99,36 @@
 <h2 id="validate-url">validate_url</h2>
 
 <p>This validator will ensure that a URL is parseable by the Erlang <code>http_uri</code> module. I obviously could have gone for a huge regular expression here, but this seemed a little more trustworthy.</p>
-
-<pre><code class="language-elixir">def validate_url(changeset, field, options \\ []) do
-  validate_change changeset, field, fn _, url -&gt;
-    case url |&gt; String.to_char_list |&gt; :http_uri.parse do
-      {:ok, _} -&gt; []
-      {:error, msg} -&gt; [{field, options[:message] || &quot;invalid url: #{inspect msg}&quot;}]
-    end
-  end
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">validate_url</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">options</span> <span class="p">\\</span> <span class="p">[])</span> <span class="k">do</span>
+  <span class="n">validate_change</span> <span class="n">changeset</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="k">fn</span> <span class="bp">_</span><span class="p">,</span> <span class="n">url</span> <span class="o">-&gt;</span>
+    <span class="k">case</span> <span class="n">url</span> <span class="o">|&gt;</span> <span class="nc">String</span><span class="o">.</span><span class="n">to_char_list</span> <span class="o">|&gt;</span> <span class="ss">:http_uri</span><span class="o">.</span><span class="n">parse</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="bp">_</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="p">[]</span>
+      <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">msg</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="p">[{</span><span class="n">field</span><span class="p">,</span> <span class="n">options</span><span class="p">[</span><span class="ss">:message</span><span class="p">]</span> <span class="o">||</span> <span class="s2">&quot;invalid url: </span><span class="si">#{</span><span class="n">inspect</span> <span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}]</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <h3 id="usage">Usage</h3>
-
-<pre><code class="language-elixir">validate_url(changeset, :url, message: &quot;URL is not a valid URL!&quot;)
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">validate_url</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:url</span><span class="p">,</span> <span class="ss">message</span><span class="p">:</span> <span class="s2">&quot;URL is not a valid URL!&quot;</span><span class="p">)</span>
+</code></pre></div>
 
 <h2 id="validate-array-inclusion">validate_array_inclusion</h2>
 
 <p>I wrote this validator because of PostgreSQL&rsquo;s Array field type. Ecto already has a <code>validate_inclusion</code> validator which will ensure that a given value is a member of a given array. However, in order to validate a Postgres array field, I needed to validate that all <em>members</em> of array A are also members of array B.</p>
 
 <p>This function does the trick:</p>
-
-<pre><code class="language-elixir">def validate_array_inclusion(changeset, field, allowed, options \\ []) do
-  validate_change changeset, field, fn _field, values -&gt;
-    valid? = Enum.all? for value &lt;- values, do: value in allowed
-    if valid?, do: [], else: [{field, options[:message] || &quot;is invalid&quot;}]
-  end
-end
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="kd">def</span> <span class="n">validate_array_inclusion</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">allowed</span><span class="p">,</span> <span class="n">options</span> <span class="p">\\</span> <span class="p">[])</span> <span class="k">do</span>
+  <span class="n">validate_change</span> <span class="n">changeset</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="k">fn</span> <span class="n">_field</span><span class="p">,</span> <span class="n">values</span> <span class="o">-&gt;</span>
+    <span class="n">valid?</span> <span class="o">=</span> <span class="nc">Enum</span><span class="o">.</span><span class="n">all?</span> <span class="k">for</span> <span class="n">value</span> <span class="o">&lt;-</span> <span class="n">values</span><span class="p">,</span> <span class="ss">do</span><span class="p">:</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">allowed</span>
+    <span class="k">if</span> <span class="n">valid?</span><span class="p">,</span> <span class="ss">do</span><span class="p">:</span> <span class="p">[],</span> <span class="ss">else</span><span class="p">:</span> <span class="p">[{</span><span class="n">field</span><span class="p">,</span> <span class="n">options</span><span class="p">[</span><span class="ss">:message</span><span class="p">]</span> <span class="o">||</span> <span class="s2">&quot;is invalid&quot;</span><span class="p">}]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
 
 <h3 id="usage-1">Usage</h3>
-
-<pre><code class="language-elixir">validate_array_inclusion(changeset, :notify, ~w(email sms phone), message: &quot;custom message here&quot;)
-</code></pre>
+<div class="highlight"><pre><code class="language-elixir" data-lang="elixir"><span></span><span class="n">validate_array_inclusion</span><span class="p">(</span><span class="n">changeset</span><span class="p">,</span> <span class="ss">:notify</span><span class="p">,</span> <span class="sx">~w(email sms phone)</span><span class="p">,</span> <span class="ss">message</span><span class="p">:</span> <span class="s2">&quot;custom message here&quot;</span><span class="p">)</span>
+</code></pre></div>
 
 <p>This will ensure that the &ldquo;notify&rdquo; array only contains some subset of the values <code>[&quot;email&quot;, &quot;sms&quot;, &quot;phone&quot;]</code>.</p>
   </section>
@@ -256,8 +253,7 @@ end
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

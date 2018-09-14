@@ -10,7 +10,8 @@
 <title>Build Dialyzer PLTs on Travis CI</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -110,20 +111,19 @@ wouldn&rsquo;t be able to reliably get an identical virtual machine like the one
 </ol>
 
 <p>Since Travis allows running builds against multiple versions of Elixir and OTP, getting a PLT for each possible combination is a cinch:</p>
-
-<pre><code class="language-yaml">language: elixir
-elixir:
-  - 1.0.0
-  - 1.0.1
-  - 1.0.2
-  - 1.0.3
-  - 1.0.4
-otp_release:
-  - 17.4
-  - 17.3
-  - 17.1
-  - 17.0
-</code></pre>
+<div class="highlight"><pre><code class="language-yaml" data-lang="yaml"><span></span><span class="l l-Scalar l-Scalar-Plain">language</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">elixir</span>
+<span class="l l-Scalar l-Scalar-Plain">elixir</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1.0.0</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1.0.1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1.0.2</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1.0.3</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1.0.4</span>
+<span class="l l-Scalar l-Scalar-Plain">otp_release</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">17.4</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">17.3</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">17.1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">17.0</span>
+</code></pre></div>
 
 <p>You&rsquo;ll find more details in the <a href="https://github.com/danielberkompas/travis_elixir_plt_generator">README</a>.</p>
   </section>
@@ -248,8 +248,7 @@ otp_release:
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 

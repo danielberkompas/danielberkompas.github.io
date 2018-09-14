@@ -10,7 +10,8 @@
 <title>Undo a Commit in Git</title>
 <link rel="shortcut icon" href="https://blog.danielberkompas.com/images/favicon.ico">
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/style.css">
-<link rel="stylesheet" href="https://blog.danielberkompas.com/css/highlight.css">
+
+<link rel="stylesheet" href="https://blog.danielberkompas.com/css/syntax.css">
 
 <link rel="stylesheet" href="https://blog.danielberkompas.com/css/overrides.css">
 
@@ -87,14 +88,13 @@
   </header>
   <section id="post-body">
     <p>I keep forgetting how to do this, so I thought I&rsquo;d post this for my own future benefit:</p>
-
-<pre><code class="language-bash">// Completely deletes the most recent commit
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>// Completely deletes the most recent commit
 $ git reset --hard HEAD~1
 
-// Removes the most recent commit, but leaves changes intact. Useful if you
+// Removes the most recent commit, but leaves changes intact. Useful <span class="k">if</span> you
 // might want to make a new commit.
 $ git reset --soft HEAD~1
-</code></pre>
+</code></pre></div>
 
   </section>
 </article>
@@ -218,8 +218,7 @@ $ git reset --soft HEAD~1
     </section>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="https://blog.danielberkompas.com/js/main.js"></script>
-<script src="https://blog.danielberkompas.com/js/highlight.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+
 
 
 
