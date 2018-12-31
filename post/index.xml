@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Bits &amp; Sundry</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 10 Sep 2018 11:33:12 -0700</lastBuildDate>
+    <lastBuildDate>Mon, 31 Dec 2018 14:58:07 -0800</lastBuildDate>
     
 	<atom:link href="https://blog.danielberkompas.com/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Cloak 1.0.0 Alpha Released!</title>
+      <link>https://blog.danielberkompas.com/2018/12/31/cloak-1.0.0-alpha-released/</link>
+      <pubDate>Mon, 31 Dec 2018 14:58:07 -0800</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/2018/12/31/cloak-1.0.0-alpha-released/</guid>
+      <description>It&amp;rsquo;s been a long journey for my Elixir encryption library, Cloak, but we&amp;rsquo;re finally getting close to a full 1.0.0 release! Since I first published the library on Hex in 2015, both I myself and the community have added:
+ Support for a wide variety of data types Local configuration through Vaults Stronger encryption with AES.GCM support A fully functional key rotation task, using cursors Guides and documentation A 200% performance increase!</description>
+    </item>
     
     <item>
       <title>Is the Elixir Hype Real?</title>

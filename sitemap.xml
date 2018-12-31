@@ -3,6 +3,11 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://blog.danielberkompas.com/2018/12/31/cloak-1.0.0-alpha-released/</loc>
+    <lastmod>2018-12-31T14:58:07-08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://blog.danielberkompas.com/2018/09/10/is-the-elixir-hype-real/</loc>
     <lastmod>2018-09-10T11:33:12-07:00</lastmod>
   </url>
@@ -223,12 +228,18 @@
   
   <url>
     <loc>https://blog.danielberkompas.com/</loc>
-    <lastmod>2018-09-10T11:33:12-07:00</lastmod>
+    <lastmod>2018-12-31T14:58:07-08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://blog.danielberkompas.com/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://blog.danielberkompas.com/tags/cloak/</loc>
+    <lastmod>2018-12-31T14:58:07-08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -246,7 +257,7 @@
   
   <url>
     <loc>https://blog.danielberkompas.com/tags/elixir/</loc>
-    <lastmod>2018-09-10T11:33:12-07:00</lastmod>
+    <lastmod>2018-12-31T14:58:07-08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -281,7 +292,7 @@
   
   <url>
     <loc>https://blog.danielberkompas.com/post/</loc>
-    <lastmod>2018-09-10T11:33:12-07:00</lastmod>
+    <lastmod>2018-12-31T14:58:07-08:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -303,7 +314,7 @@
   
   <url>
     <loc>https://blog.danielberkompas.com/tags/</loc>
-    <lastmod>2018-08-22T20:05:17-07:00</lastmod>
+    <lastmod>2018-12-31T14:58:07-08:00</lastmod>
     <priority>0</priority>
   </url>
   

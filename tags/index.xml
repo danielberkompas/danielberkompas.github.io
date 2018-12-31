@@ -6,10 +6,19 @@
     <description>Recent content in Tags on Bits &amp; Sundry</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 22 Aug 2018 20:05:17 -0700</lastBuildDate>
+    <lastBuildDate>Mon, 31 Dec 2018 14:58:07 -0800</lastBuildDate>
     
 	<atom:link href="https://blog.danielberkompas.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Cloak</title>
+      <link>https://blog.danielberkompas.com/tags/cloak/</link>
+      <pubDate>Mon, 31 Dec 2018 14:58:07 -0800</pubDate>
+      
+      <guid>https://blog.danielberkompas.com/tags/cloak/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Conference</title>
@@ -32,7 +41,7 @@
     <item>
       <title>Elixir</title>
       <link>https://blog.danielberkompas.com/tags/elixir/</link>
-      <pubDate>Mon, 10 Sep 2018 11:33:12 -0700</pubDate>
+      <pubDate>Mon, 31 Dec 2018 14:58:07 -0800</pubDate>
       
       <guid>https://blog.danielberkompas.com/tags/elixir/</guid>
       <description></description>
